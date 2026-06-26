@@ -1,0 +1,56 @@
+{
+  "id": "yoonu-covoiturage-senegal",
+  "name": "Yoonu - Covoiturage Sénégal",
+  "short_name": "Yoonu",
+  "description": "Application de covoiturage longue distance au Sénégal. Trajets Dakar, Thiès, Touba, Saint-Louis, Ziguinchor et toutes les régions.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#e8520a",
+  "orientation": "portrait",
+  "lang": "fr",
+  "categories": ["travel", "transportation"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Yoonu - Accueil"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Yoonu - Trajets disponibles"
+    }
+  ]
+}
