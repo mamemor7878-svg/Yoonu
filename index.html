@@ -2637,7 +2637,7 @@
             title: 'Notez votre trajet',
             desc: `Comment s'est passé votre trajet ${b.from} → ${b.to} du ${b.date} ?`,
             time: b.createdAt, read: false,
-            tripId: b.tripId, driverId: b.driverId, driverName: b.driverName
+            bookingId: d.id, tripId: b.tripId, driverId: b.driverId, driverName: b.driverName
           });
         }
       });
@@ -2674,7 +2674,7 @@
     }
     list.innerHTML = notifs.map(n => {
       const notifKey = `notif_${n.id.replace(/[^a-zA-Z0-9]/g,'_')}`;
-      if (n.type === 'rate') window[notifKey] = { tripId: n.tripId, driverId: n.driverId, driverName: n.driverName||'Conducteur' };
+      if (n.type === 'rate') window[notifKey] = { bookingId: n.bookingId, driverId: n.driverId, driverName: n.driverName||'Conducteur' };
       return `
       <div class="notif-item ${n.read ? '' : 'unread'}" id="notif-${n.id.replace(/[^a-zA-Z0-9]/g,'_')}">
         <div class="notif-icon">${n.icon}</div>
@@ -2695,7 +2695,7 @@
   window.openRateTripFromKey = function(key) {
     const d = window[key];
     if (!d) return;
-    openRateTrip(d.tripId, d.driverId, d.driverName);
+    openRateTrip(d.bookingId, d.driverId, d.driverName);
   }
 
   function updateNotifBadge(count) {
