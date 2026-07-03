@@ -2552,6 +2552,7 @@
   }
 
   // ===== NOTIFICATIONS =====
+  let lastLoadedNotifs = [];
   async function loadNotifications() {
     const notifs = [];
     const today = new Date().toISOString().slice(0,10);
@@ -2650,6 +2651,7 @@
     const list = document.getElementById('notif-list');
     list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
     const notifs = await loadNotifications();
+    lastLoadedNotifs = notifs;
     if (notifs.length === 0) {
       list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.5 21a1.5 1.5 0 0 0 3 0"/></svg></div><div class="empty-text">Aucune notification</div></div>';
       return;
@@ -2693,9 +2695,26 @@
   }
 
   window.markAllRead = async function() {
+    const toUpdate = lastLoadedNotifs.filter(n => !n.read);
+    const updates = toUpdate.map(n => {
+      try {
+        if (n.type === 'booking') {
+          return updateDoc(doc(db, 'bookings', n.id), { readByDriver: true });
+        } else if (n.type === 'accepted') {
+          return updateDoc(doc(db, 'bookings', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'refused') {
+          return updateDoc(doc(db, 'bookings', n.id.replace(/_refused$/, '')), { readRefused: true });
+        }
+      } catch(e) {}
+      return Promise.resolve();
+    });
+    try { await Promise.all(updates); } catch(e) {}
+
+    lastLoadedNotifs = lastLoadedNotifs.map(n => n.type === 'rate' ? n : { ...n, read: true });
     document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
     document.querySelectorAll('.notif-dot').forEach(el => el.remove());
-    updateNotifBadge(0);
+    const unread = lastLoadedNotifs.filter(n => !n.read).length;
+    updateNotifBadge(unread);
     showToast('Toutes les notifications lues ✅','success');
   }
 
