@@ -315,6 +315,15 @@
   .modal-handle { width: 42px; height: 5px; background: var(--border); border-radius: 3px; margin: 0 auto 20px; }
   .modal-title { font-size: 19px; font-weight: 800; margin-bottom: 16px; letter-spacing: -.3px; }
 
+  .success-badge {
+    width: 68px; height: 68px; border-radius: 50%; margin: 4px auto 16px;
+    background: linear-gradient(135deg, var(--green), #0fa860);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 26px -8px rgba(23,201,120,.5);
+    animation: popIn .45s var(--ease);
+  }
+  @keyframes popIn { 0%{transform:scale(0);opacity:0} 70%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+
   /* TOAST */
   .toast {
     position: fixed; bottom: 106px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -410,7 +419,7 @@
 
   /* Rating modal */
   .stars-input { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
-  .stars-input span { font-size: 34px; cursor: pointer; opacity: .3; transition: all .15s var(--ease); }
+  .stars-input span { cursor: pointer; opacity: .3; transition: all .15s var(--ease); color: #f5c400; display: inline-flex; }
   .stars-input span.on { opacity: 1; transform: scale(1.1); }
 
   /* Badge non-lus nav */
@@ -606,7 +615,7 @@
     <div class="section-title" style="margin-bottom:16px">Publier un trajet</div>
 
     <div class="form-section">
-      <h3>Itinéraire</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7.5 16 16.5"/></svg>Itinéraire</h3>
       <div class="input-group">
         <label>Ville de départ</label>
         <select id="pub-from">
@@ -708,7 +717,7 @@
     </div>
 
     <div class="form-section">
-      <h3>Date et heure</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Date et heure</h3>
       <div class="form-row">
         <div class="input-group">
           <label>Date</label>
@@ -723,7 +732,7 @@
     </div>
 
     <div class="form-section">
-      <h3>Places et prix</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg>Places et prix</h3>
       <div class="form-row">
         <div class="input-group">
           <label>Places dispo</label>
@@ -743,7 +752,7 @@
     </div>
 
     <div class="form-section">
-      <h3>Options</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h11M4 12h7M4 18h11"/><circle cx="19" cy="6" r="2"/><circle cx="14" cy="18" r="2"/></svg>Options</h3>
       <div class="options-grid">
         <button class="option-toggle" onclick="toggleOption(this,'clim')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"/></svg> Climatisé</button>
         <button class="option-toggle" onclick="toggleOption(this,'music')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg> Musique OK</button>
@@ -753,7 +762,7 @@
     </div>
 
     <div class="form-section">
-      <h3>Note pour les passagers (optionnel)</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg>Note pour les passagers (optionnel)</h3>
       <textarea id="pub-note" placeholder="Ex: Je pars de la gare routière de Dakar..."></textarea>
     </div>
 
@@ -841,17 +850,17 @@
 <!-- CHAT SCREEN -->
 <div id="chat-screen">
   <div class="chat-header">
-    <span class="chat-back" onclick="closeChat()">←</span>
+    <span class="chat-back" onclick="closeChat()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></span>
     <div class="conv-avatar" id="chat-avatar" style="width:36px;height:36px;font-size:14px">M</div>
     <div style="margin-left:8px">
       <div id="chat-name" style="font-weight:700">Nom</div>
-      <div style="font-size:12px;color:var(--text-muted)">en ligne</div>
+      <div style="font-size:12px;color:var(--green);display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>en ligne</div>
     </div>
   </div>
   <div class="chat-messages" id="chat-messages"></div>
   <div id="edit-msg-bar" style="display:none;padding:8px 16px;background:rgba(232,82,10,.1);border-top:1px solid var(--orange);font-size:12px;color:var(--orange);display:none;align-items:center;justify-content:space-between">
-    <span>✏️ Modification en cours...</span>
-    <button onclick="cancelEditMsg()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px">✕</button>
+    <span style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Modification en cours...</span>
+    <button onclick="cancelEditMsg()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   </div>
   <div class="chat-input-row">
     <input type="text" id="chat-input" placeholder="Votre message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
@@ -865,7 +874,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-route">Dakar → Thiès</div>
     <div id="modal-content"></div>
-    <button class="btn btn-primary" onclick="bookTrip()" style="margin-top:16px">Réserver ma place</button>
+    <button class="btn btn-primary" onclick="bookTrip()" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Réserver ma place</button>
     <button class="btn btn-ghost" onclick="closeModal()">Fermer</button>
   </div>
 </div>
@@ -873,7 +882,7 @@
 <!-- ===== EDIT PROFILE PANEL ===== -->
 <div class="panel" id="panel-edit-profile">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-edit-profile')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-edit-profile')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title">Modifier le profil</div>
   </div>
   <div class="panel-body">
@@ -883,7 +892,7 @@
     </div>
 
     <div class="form-section">
-      <h3>Informations personnelles</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg>Informations personnelles</h3>
       <div class="input-group">
         <label>Prénom et Nom</label>
         <input type="text" id="edit-name" placeholder="Mamadou Diallo"/>
@@ -899,7 +908,7 @@
     </div>
 
     <div class="form-section">
-      <h3>Mon véhicule (optionnel)</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>Mon véhicule (optionnel)</h3>
       <div class="input-group">
         <label>Marque et modèle</label>
         <input type="text" id="edit-car-model" placeholder="Ex: Toyota Corolla"/>
@@ -915,7 +924,7 @@
     </div>
 
     <div class="form-section">
-      <h3>À propos de moi (optionnel)</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11.5v5"/></svg>À propos de moi (optionnel)</h3>
       <textarea id="edit-bio" placeholder="Parlez-vous un peu de vous en tant que conducteur..."></textarea>
     </div>
 
@@ -926,7 +935,7 @@
 <!-- ===== MY TRIPS PANEL ===== -->
 <div class="panel" id="panel-my-trips">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-my-trips')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-my-trips')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title">Mes trajets</div>
   </div>
   <div class="panel-body">
@@ -943,7 +952,7 @@
 <!-- ===== PANEL THÈME ===== -->
 <div class="panel" id="panel-theme">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-theme')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-theme')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title" style="display:flex;align-items:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20c1.4 0 2-.9 2-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.8-.6-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-5.5-4.5-9.5-9-9.5Z"/><circle cx="7.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="11" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8" r="1.1" fill="currentColor" stroke="none"/></svg> Apparence</div>
   </div>
   <div class="panel-body">
@@ -974,7 +983,7 @@
 <!-- ===== PANEL PASSAGERS D'UN TRAJET ===== -->
 <div class="panel" id="panel-passengers">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-passengers')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-passengers')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title">Demandes de réservation</div>
   </div>
   <div class="panel-body">
@@ -988,7 +997,7 @@
 <!-- ===== NOTIFICATIONS PANEL ===== -->
 <div class="panel" id="panel-notifications">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-notifications')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-notifications')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title">Notifications</div>
     <button onclick="markAllRead()" style="background:none;border:none;color:var(--orange);font-size:13px;cursor:pointer;margin-left:auto">Tout lire</button>
   </div>
@@ -1000,13 +1009,13 @@
 <!-- ===== EDIT TRIP PANEL ===== -->
 <div class="panel" id="panel-edit-trip">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-edit-trip')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-edit-trip')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title">Modifier le trajet</div>
   </div>
   <div class="panel-body">
     <input type="hidden" id="edit-trip-id"/>
     <div class="form-section">
-      <h3>Itinéraire</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7.5 16 16.5"/></svg>Itinéraire</h3>
       <div class="input-group">
         <label>Ville de départ</label>
         <select id="edit-trip-from">
@@ -1107,7 +1116,7 @@
       </div>
     </div>
     <div class="form-section">
-      <h3>Date et heure</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Date et heure</h3>
       <div class="form-row">
         <div class="input-group">
           <label>Date</label>
@@ -1121,7 +1130,7 @@
       </div>
     </div>
     <div class="form-section">
-      <h3>Places et prix</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg>Places et prix</h3>
       <div class="form-row">
         <div class="input-group">
           <label>Places dispo</label>
@@ -1140,7 +1149,7 @@
       </div>
     </div>
     <div class="form-section">
-      <h3>Note pour les passagers</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg>Note pour les passagers</h3>
       <textarea id="edit-trip-note" placeholder="Ex: Je pars de la gare routière..."></textarea>
     </div>
     <button class="btn btn-primary" onclick="saveEditTrip()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg> Enregistrer les modifications</button>
@@ -1183,7 +1192,7 @@
 <!-- ===== MY REVIEWS PANEL ===== -->
 <div class="panel" id="panel-my-reviews">
   <div class="panel-header">
-    <button class="panel-back" onclick="closePanel('panel-my-reviews')">←</button>
+    <button class="panel-back" onclick="closePanel('panel-my-reviews')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <div class="panel-title">Mes avis reçus</div>
   </div>
   <div class="panel-body">
@@ -1203,11 +1212,13 @@
 <div class="modal-overlay" id="booking-confirm-modal">
   <div class="modal" style="text-align:center">
     <div class="modal-handle"></div>
-    <div style="font-size:56px;margin-bottom:8px">✅</div>
+    <div class="success-badge">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
     <div style="font-size:20px;font-weight:800;color:var(--orange);margin-bottom:8px">Réservation envoyée !</div>
     <div style="font-size:14px;color:var(--text-muted);margin-bottom:16px">Votre demande a bien été envoyée au conducteur. Vous serez notifié dès qu'il accepte.</div>
     <div id="booking-confirm-details" style="background:var(--dark3);border-radius:12px;padding:14px;margin-bottom:20px;border:1px solid var(--border);text-align:left"></div>
-    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px">⏳ En attente de confirmation du conducteur</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente de confirmation du conducteur</div>
     <button class="btn btn-primary" onclick="document.getElementById('booking-confirm-modal').classList.remove('open');openMyTrips()">Voir mes réservations</button>
     <button class="btn btn-ghost" onclick="document.getElementById('booking-confirm-modal').classList.remove('open')">Retour à l'accueil</button>
   </div>
@@ -1219,11 +1230,11 @@
     <div class="modal-title">Noter le conducteur</div>
     <p style="color:var(--text-muted);font-size:14px;margin-bottom:12px" id="rate-driver-name">Conducteur</p>
     <div class="stars-input">
-      <span onclick="setRating(1)">★</span>
-      <span onclick="setRating(2)">★</span>
-      <span onclick="setRating(3)">★</span>
-      <span onclick="setRating(4)">★</span>
-      <span onclick="setRating(5)">★</span>
+      <span onclick="setRating(1)"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg></span>
+      <span onclick="setRating(2)"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg></span>
+      <span onclick="setRating(3)"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg></span>
+      <span onclick="setRating(4)"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg></span>
+      <span onclick="setRating(5)"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg></span>
     </div>
     <div class="input-group" style="margin-top:12px">
       <label>Commentaires prédéfinis (optionnel)</label>
@@ -1237,7 +1248,7 @@
       </div>
       <textarea id="rate-comment" placeholder="Ou écrivez votre propre commentaire..."></textarea>
     </div>
-    <button class="btn btn-primary" onclick="submitRating()" style="margin-top:8px">Envoyer l'avis</button>
+    <button class="btn btn-primary" onclick="submitRating()" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2.5-7.5L3 11Z"/></svg> Envoyer l'avis</button>
     <button class="btn btn-ghost" onclick="document.getElementById('rate-modal').classList.remove('open')">Annuler</button>
   </div>
 </div>
