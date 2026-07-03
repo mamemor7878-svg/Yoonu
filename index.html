@@ -6,6 +6,11 @@
 <title>Yoonu — Covoiturage Sénégal</title>
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#e8520a"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Yoonu"/>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -840,6 +845,11 @@
       <div><div class="menu-label">Apparence</div><div class="menu-sub">Changer la couleur de l'application</div></div>
       <div class="menu-arrow">›</div>
     </div>
+    <div class="menu-item" id="menu-install" onclick="openInstallApp()" style="display:none">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M9 18h6"/><path d="M12 6v6M9 9.5l3 3 3-3"/></svg></div>
+      <div><div class="menu-label">Installer l'application</div><div class="menu-sub">Ajouter Yoonu à votre écran d'accueil</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
     <div class="menu-item" onclick="signOut()" style="margin-top:8px">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></div>
       <div><div class="menu-label" style="color:var(--red)">Se déconnecter</div></div>
@@ -1268,6 +1278,19 @@
     </div>
     <button class="btn btn-primary" onclick="submitRating()" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2.5-7.5L3 11Z"/></svg> Envoyer l'avis</button>
     <button class="btn btn-ghost" onclick="document.getElementById('rate-modal').classList.remove('open')">Annuler</button>
+  </div>
+</div>
+
+<!-- INSTALL APP MODAL -->
+<div class="modal-overlay" id="install-modal">
+  <div class="modal" style="text-align:center">
+    <div class="modal-handle"></div>
+    <div class="success-badge" style="background:linear-gradient(135deg,var(--orange-light),var(--orange));box-shadow:0 10px 26px -8px rgba(232,82,10,.5)">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M9 18h6"/></svg>
+    </div>
+    <div class="modal-title" style="justify-content:center">Installer Yoonu</div>
+    <div id="install-instructions" style="text-align:left;color:var(--text-muted);font-size:14px;line-height:1.6"></div>
+    <button class="btn btn-primary" id="install-modal-btn" onclick="document.getElementById('install-modal').classList.remove('open')" style="margin-top:20px">Compris</button>
   </div>
 </div>
 
@@ -1708,6 +1731,54 @@
     btn.classList.toggle('on');
     if (selectedOptions.includes(val)) selectedOptions = selectedOptions.filter(o=>o!==val);
     else selectedOptions.push(val);
+  }
+
+  // ===== INSTALLATION PWA (Ajout à l'écran d'accueil) =====
+  let deferredInstallPrompt = null;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+
+  if (!isStandalone) {
+    const menuInstall = document.getElementById('menu-install');
+    if (menuInstall) menuInstall.style.display = 'flex';
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const menuInstall = document.getElementById('menu-install');
+    if (menuInstall && !isStandalone) menuInstall.style.display = 'flex';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    const menuInstall = document.getElementById('menu-install');
+    if (menuInstall) menuInstall.style.display = 'none';
+    showToast('Yoonu installée avec succès ✅', 'success');
+  });
+
+  window.openInstallApp = async function() {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      if (outcome === 'accepted') return;
+    }
+    // Pas de prompt natif dispo (iOS, ou navigateur non compatible) → instructions manuelles
+    const box = document.getElementById('install-instructions');
+    if (isIOS) {
+      box.innerHTML = `
+        <p style="margin-bottom:10px">Sur iPhone/iPad, l'installation se fait depuis Safari :</p>
+        <p style="margin-bottom:8px"><b>1.</b> Appuyez sur l'icône <b>Partager</b> <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 16V4M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> en bas de l'écran.</p>
+        <p style="margin-bottom:8px"><b>2.</b> Faites défiler et appuyez sur <b>"Sur l'écran d'accueil"</b>.</p>
+        <p>Appuyez sur <b>"Ajouter"</b> en haut à droite.</p>`;
+    } else {
+      box.innerHTML = `
+        <p style="margin-bottom:10px">Pour installer Yoonu sur cet appareil :</p>
+        <p style="margin-bottom:8px"><b>1.</b> Ouvrez le menu ⋮ de votre navigateur (en haut à droite).</p>
+        <p>Sur Chrome/Edge, appuyez sur <b>"Installer l'application"</b> ou <b>"Ajouter à l'écran d'accueil"</b>.</p>`;
+    }
+    document.getElementById('install-modal').classList.add('open');
   }
 
   // ===== THÈME =====
@@ -2686,5 +2757,12 @@
   }
 </script>
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW registration failed:', err));
+    });
+  }
+</script>
 </body>
 </html>
