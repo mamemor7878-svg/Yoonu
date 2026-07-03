@@ -110,6 +110,7 @@
   #auth-screen {
     min-height: 100vh; padding: 40px 24px;
     display: flex; flex-direction: column; justify-content: center;
+    background: radial-gradient(110% 60% at 50% 0%, var(--orange-dim), transparent 65%);
   }
   .auth-logo { font-size: 38px; font-weight: 800; color: var(--orange); margin-bottom: 8px; letter-spacing: -1.5px; }
   .auth-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 40px; }
@@ -233,6 +234,7 @@
   .driver-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,var(--orange-light),var(--orange)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color:#fff; }
   .driver-info { font-size: 13px; color: var(--text-muted); }
   .driver-name { color: var(--text); font-weight: 700; }
+  .rating-chip { margin-left: auto; display: flex; align-items: center; gap: 5px; background: rgba(245,196,0,.14); color: #b8860b; font-weight: 800; font-size: 12.5px; padding: 5px 10px; border-radius: 100px; }
 
   /* PUBLISH */
   .form-section { background: var(--dark3); border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow-card); }
@@ -775,11 +777,12 @@
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="stat-trips">0</div><div class="stat-label">Trajets</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-rating">5.0</div><div class="stat-label">Note</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-year">2025</div><div class="stat-label">Membre</div></div>
+      <div class="stat-card"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--orange)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg><div class="stat-num" id="stat-trips">0</div><div class="stat-label">Trajets</div></div>
+      <div class="stat-card"><svg viewBox="0 0 24 24" width="16" height="16" fill="var(--orange)" stroke="none" style="margin-bottom:6px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg><div class="stat-num" id="stat-rating">5.0</div><div class="stat-label">Note</div></div>
+      <div class="stat-card"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--orange)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg><div class="stat-num" id="stat-year">2025</div><div class="stat-label">Membre</div></div>
     </div>
 
+    <div class="section-title" style="margin:22px 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted)">Compte</div>
     <div class="menu-item" onclick="openEditProfile()">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
       <div><div class="menu-label">Modifier le profil</div><div class="menu-sub">Nom, photo, véhicule</div></div>
@@ -1504,12 +1507,12 @@
         trips.push(data);
       });
       if (trips.length === 0) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">🚗</div><div class="empty-text">Aucun trajet disponible</div></div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">Aucun trajet disponible</div></div>';
         return;
       }
       list.innerHTML = trips.map(t => tripCard(t)).join('');
     } catch(e) {
-      list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur de chargement</div></div>';
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>';
     }
   }
 
@@ -1521,20 +1524,32 @@
         <div class="trip-price">${Number(t.price).toLocaleString('fr-FR')}<span> FCFA</span></div>
       </div>
       <div class="trip-meta">
-        <div class="trip-badge">📅 ${t.date||''}</div>
-        <div class="trip-badge">⏰ ${t.time||''}</div>
-        <div class="trip-badge">💺 ${t.seats} place${t.seats>1?'s':''}</div>
+        <div class="trip-badge">${ICON_CALENDAR} ${t.date||''}</div>
+        <div class="trip-badge">${ICON_CLOCK} ${t.time||''}</div>
+        <div class="trip-badge">${ICON_SEAT} ${t.seats} place${t.seats>1?'s':''}</div>
         ${opts}
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(t.driverName||'?')[0].toUpperCase()}</div>
-        <div class="driver-info"><div class="driver-name">${t.driverName||'Conducteur'}</div>⭐ ${t.driverRating||5}</div>
+        <div class="driver-info"><div class="driver-name">${t.driverName||'Conducteur'}</div></div>
+        <div class="rating-chip">${ICON_STAR_FILL} ${t.driverRating||5}</div>
       </div>
     </div>`;
   }
 
+  const ICON_CALENDAR = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>';
+  const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>';
+  const ICON_SEAT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg>';
+  const ICON_STAR_FILL = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg>';
+  const ICON_PRICE = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 15.5c.6.6 1.5 1 2.5 1 1.9 0 3.2-1 3.2-2.4 0-3-6-1.7-6-4.7 0-1.4 1.3-2.4 3.2-2.4 1 0 1.9.4 2.5 1M12 6v1.3M12 16.7V18"/></svg>';
+
   function optEmoji(o) {
-    const map = {clim:'❄️', music:'🎵', bagage:'🧳', femme:'👩'};
+    const map = {
+      clim:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"/></svg>',
+      music:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',
+      bagage:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+      femme:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5l-8-3z"/></svg>'
+    };
     return map[o]||'✓';
   }
 
@@ -1556,14 +1571,15 @@
     document.getElementById('modal-content').innerHTML = `
       <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${t.note||'Aucune note du conducteur'}</p>
       <div class="trip-meta" style="margin-bottom:12px">
-        <div class="trip-badge">📅 ${t.date||''}</div>
-        <div class="trip-badge">⏰ ${t.time||''}</div>
-        <div class="trip-badge">💺 ${t.seats} places</div>
-        <div class="trip-badge">💰 ${Number(t.price).toLocaleString('fr-FR')} FCFA</div>
+        <div class="trip-badge">${ICON_CALENDAR} ${t.date||''}</div>
+        <div class="trip-badge">${ICON_CLOCK} ${t.time||''}</div>
+        <div class="trip-badge">${ICON_SEAT} ${t.seats} places</div>
+        <div class="trip-badge">${ICON_PRICE} ${Number(t.price).toLocaleString('fr-FR')} FCFA</div>
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(t.driverName||'?')[0].toUpperCase()}</div>
-        <div><div class="driver-name">${t.driverName||'Conducteur'}</div><div style="font-size:12px;color:var(--text-muted)">⭐ ${t.driverRating||5} — ${t.driverPhone||''}</div></div>
+        <div><div class="driver-name">${t.driverName||'Conducteur'}</div><div style="font-size:12px;color:var(--text-muted)">${t.driverPhone||''}</div></div>
+        <div class="rating-chip">${ICON_STAR_FILL} ${t.driverRating||5}</div>
       </div>`;
     document.getElementById('trip-modal').classList.add('open');
   }
@@ -1895,7 +1911,7 @@
       const badge = document.getElementById('msg-badge');
       if (newMsgs > 0) { badge.textContent = newMsgs; badge.style.display = 'flex'; }
       else { badge.style.display = 'none'; }
-    } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur de chargement</div></div>'; }
+    } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>'; }
   }
 
   window.openChatFromConvKey = function(key) {
@@ -2110,7 +2126,7 @@
         </div>`;
       }
     } catch(e) {
-      list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur de chargement</div></div>';
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>';
       console.error(e);
     }
   }
