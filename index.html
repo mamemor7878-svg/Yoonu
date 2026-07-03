@@ -1269,12 +1269,12 @@
     <div class="input-group" style="margin-top:12px">
       <label>Commentaires prédéfinis (optionnel)</label>
       <div class="comment-suggestions">
-        <button class="comment-chip" onclick="selectComment(this,'Très bon conducteur, ponctuel ✅')">Ponctuel ✅</button>
-        <button class="comment-chip" onclick="selectComment(this,'Conduite sécurisée et agréable 🚗')">Bonne conduite 🚗</button>
-        <button class="comment-chip" onclick="selectComment(this,'Véhicule propre et confortable 👍')">Véhicule propre 👍</button>
-        <button class="comment-chip" onclick="selectComment(this,'Très sympathique et communicatif 😊')">Sympathique 😊</button>
-        <button class="comment-chip" onclick="selectComment(this,'Je recommande ce conducteur ⭐')">Je recommande ⭐</button>
-        <button class="comment-chip" onclick="selectComment(this,'Arrivé légèrement en retard ⏰')">Retard ⏰</button>
+        <button class="comment-chip" data-text="Très bon conducteur, ponctuel ✅" onclick="selectComment(this,'Très bon conducteur, ponctuel ✅')">Ponctuel ✅</button>
+        <button class="comment-chip" data-text="Conduite sécurisée et agréable 🚗" onclick="selectComment(this,'Conduite sécurisée et agréable 🚗')">Bonne conduite 🚗</button>
+        <button class="comment-chip" data-text="Véhicule propre et confortable 👍" onclick="selectComment(this,'Véhicule propre et confortable 👍')">Véhicule propre 👍</button>
+        <button class="comment-chip" data-text="Très sympathique et communicatif 😊" onclick="selectComment(this,'Très sympathique et communicatif 😊')">Sympathique 😊</button>
+        <button class="comment-chip" data-text="Je recommande ce conducteur ⭐" onclick="selectComment(this,'Je recommande ce conducteur ⭐')">Je recommande ⭐</button>
+        <button class="comment-chip" data-text="Arrivé légèrement en retard ⏰" onclick="selectComment(this,'Arrivé légèrement en retard ⏰')">Retard ⏰</button>
       </div>
       <textarea id="rate-comment" placeholder="Ou écrivez votre propre commentaire..."></textarea>
     </div>
@@ -1382,6 +1382,20 @@
     document.getElementById('stat-rating').textContent = data.rating != null ? Number(data.rating).toFixed(1) : '5.0';
     const year = data.createdAt ? new Date(data.createdAt.seconds * 1000).getFullYear() : new Date().getFullYear();
     document.getElementById('stat-year').textContent = year;
+    // Calcul en direct depuis les avis réels (plus fiable que le champ mis en cache)
+    refreshProfileRatingLive(user.uid);
+  }
+
+  async function refreshProfileRatingLive(uid) {
+    try {
+      const snap = await getDocs(query(collection(db, 'reviews'), where('driverId','==',uid)));
+      let total = 0, count = 0;
+      snap.forEach(r => { total += (r.data().rating||5); count++; });
+      if (count > 0) {
+        const avg = total / count;
+        document.getElementById('stat-rating').textContent = avg.toFixed(1);
+      }
+    } catch(e) { /* garde la valeur en cache affichée en cas d'échec */ }
   }
 
   // ===== AUTH MODE (phone/email) =====
@@ -2483,13 +2497,15 @@
         rating: ratingValue, comment, from, to,
         createdAt: serverTimestamp()
       });
-      // Mettre à jour la note moyenne du conducteur
-      const revSnap = await getDocs(query(collection(db, 'reviews'), where('driverId','==',ratingDriverId)));
-      let total = 0, count = 0;
-      revSnap.forEach(r => { total += r.data().rating; count++; });
-      const avg = count > 0 ? Math.round((total / count) * 10) / 10 : 5;
-      await setDoc(doc(db, 'users', ratingDriverId), { rating: avg }, { merge: true });
-      // Marquer le booking comme noté
+      // Mettre à jour la note moyenne du conducteur (best-effort : peut être bloqué par les règles de sécurité Firestore, ce n'est pas bloquant)
+      try {
+        const revSnap = await getDocs(query(collection(db, 'reviews'), where('driverId','==',ratingDriverId)));
+        let total = 0, count = 0;
+        revSnap.forEach(r => { total += r.data().rating; count++; });
+        const avg = count > 0 ? Math.round((total / count) * 10) / 10 : 5;
+        await setDoc(doc(db, 'users', ratingDriverId), { rating: avg }, { merge: true });
+      } catch(e) { /* La mise en cache de la note peut échouer selon les règles Firestore, on continue quand même */ }
+      // Marquer le booking comme noté (toujours exécuté, même si la mise à jour ci-dessus échoue)
       if (ratingBookingId) {
         await setDoc(doc(db, 'bookings', ratingBookingId), { status: 'rated', rated: true }, { merge: true });
       }
@@ -2546,9 +2562,9 @@
 
   // ===== COMMENT SUGGESTIONS =====
   window.selectComment = function(btn, text) {
-    document.querySelectorAll('.comment-chip').forEach(c => c.classList.remove('selected'));
-    btn.classList.add('selected');
-    document.getElementById('rate-comment').value = text;
+    btn.classList.toggle('selected');
+    const selectedTexts = Array.from(document.querySelectorAll('.comment-chip.selected')).map(c => c.dataset.text);
+    document.getElementById('rate-comment').value = selectedTexts.join('. ');
   }
 
   // ===== NOTIFICATIONS =====
