@@ -1,0 +1,8 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.mamemor7878_svg.twa",
+      "sha256_cert_fingerprints": ["32:76:69:1C:30:54:AC:8A:0A:FC:B1:F5:FF:13:9E:21:63:84:8D:9A:92:E5:40:49:F3:3A:1C:A8:91:15:BF:F0"]
+    }
+}]
