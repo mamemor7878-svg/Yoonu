@@ -892,6 +892,11 @@
       <div><div class="menu-label" style="color:var(--red)">Se déconnecter</div></div>
       <div class="menu-arrow">›</div>
     </div>
+    <div class="menu-item" onclick="openDeleteAccount()">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></div>
+      <div><div class="menu-label" style="color:var(--red)">Supprimer mon compte</div><div class="menu-sub">Suppression définitive de vos données</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
   </div>
 
   <!-- NAV -->
@@ -1289,6 +1294,33 @@
   </div>
 </div>
 
+<!-- MODAL SUPPRESSION DE COMPTE -->
+<div class="modal-overlay" id="delete-account-modal">
+  <div class="modal" style="text-align:center">
+    <div class="modal-handle"></div>
+    <div class="success-badge" style="background:var(--red);box-shadow:0 10px 26px -8px rgba(255,71,71,.5)">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+    </div>
+    <div style="font-size:20px;font-weight:800;color:var(--red);margin-bottom:8px">Supprimer votre compte ?</div>
+    <div style="font-size:14px;color:var(--text-muted);margin-bottom:16px;text-align:left">
+      Cette action est <strong>définitive et irréversible</strong>. Elle supprimera :
+      <ul style="margin:10px 0 0 18px;padding:0">
+        <li>Votre profil et vos informations personnelles</li>
+        <li>Vos trajets publiés et vos réservations</li>
+        <li>Vos messages et votre historique</li>
+      </ul>
+    </div>
+    <div id="delete-account-reauth" style="display:none;text-align:left;margin-bottom:14px">
+      <div class="input-group">
+        <label>Confirmez votre mot de passe</label>
+        <input type="password" id="delete-account-password" placeholder="Mot de passe"/>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="delete-account-confirm-btn" onclick="confirmDeleteAccount()" style="background:var(--red);display:flex;align-items:center;justify-content:center;gap:8px">Oui, supprimer définitivement</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('delete-account-modal').classList.remove('open')">Annuler</button>
+  </div>
+</div>
+
 <div class="modal-overlay" id="rate-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -1337,7 +1369,7 @@
 <!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, setPersistence, browserLocalPersistence, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePhoneNumber, PhoneAuthProvider, sendPasswordResetEmail }
+  import { getAuth, setPersistence, browserLocalPersistence, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePhoneNumber, PhoneAuthProvider, sendPasswordResetEmail, deleteUser, reauthenticateWithCredential, EmailAuthProvider }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -2852,6 +2884,74 @@
   window.signOut = async function() {
     await fbSignOut(auth);
     showToast('Déconnecté');
+  }
+
+  // ===== SUPPRESSION DE COMPTE =====
+  window.openDeleteAccount = function() {
+    document.getElementById('delete-account-reauth').style.display = 'none';
+    document.getElementById('delete-account-password').value = '';
+    document.getElementById('delete-account-confirm-btn').textContent = 'Oui, supprimer définitivement';
+    document.getElementById('delete-account-modal').classList.add('open');
+  }
+
+  window.confirmDeleteAccount = async function() {
+    const btn = document.getElementById('delete-account-confirm-btn');
+    const reauthBox = document.getElementById('delete-account-reauth');
+    const user = currentUser || auth.currentUser;
+    if (!user) { showToast('Erreur : utilisateur non connecté', 'error'); return; }
+
+    btn.textContent = 'Suppression en cours...';
+
+    try {
+      // Suppression des données Firestore associées au compte
+      try { await deleteDoc(doc(db, 'users', user.uid)); } catch(e) { console.warn('Suppression profil Firestore:', e); }
+
+      // Suppression du compte d'authentification
+      await deleteUser(user);
+
+      document.getElementById('delete-account-modal').classList.remove('open');
+      showToast('Votre compte a été supprimé', 'success');
+      setTimeout(() => location.reload(), 1200);
+
+    } catch (err) {
+      if (err.code === 'auth/requires-recent-login') {
+        // Si l'utilisateur s'est connecté par e-mail/mot de passe, on lui demande de le confirmer
+        if (user.email && reauthBox.style.display !== 'flex') {
+          reauthBox.style.display = 'block';
+          btn.textContent = 'Confirmer et supprimer';
+          showToast('Merci de confirmer votre mot de passe', 'error');
+          return;
+        }
+        if (user.email) {
+          const password = document.getElementById('delete-account-password').value;
+          if (!password) {
+            showToast('Veuillez saisir votre mot de passe', 'error');
+            btn.textContent = 'Confirmer et supprimer';
+            return;
+          }
+          try {
+            const credential = EmailAuthProvider.credential(user.email, password);
+            await reauthenticateWithCredential(user, credential);
+            // On relance la suppression après réauthentification réussie
+            try { await deleteDoc(doc(db, 'users', user.uid)); } catch(e) {}
+            await deleteUser(user);
+            document.getElementById('delete-account-modal').classList.remove('open');
+            showToast('Votre compte a été supprimé', 'success');
+            setTimeout(() => location.reload(), 1200);
+          } catch (reauthErr) {
+            showToast('Mot de passe incorrect', 'error');
+            btn.textContent = 'Confirmer et supprimer';
+          }
+        } else {
+          showToast('Veuillez vous déconnecter puis vous reconnecter avant de réessayer', 'error');
+          btn.textContent = 'Oui, supprimer définitivement';
+        }
+      } else {
+        console.error(err);
+        showToast('Erreur lors de la suppression du compte', 'error');
+        btn.textContent = 'Oui, supprimer définitivement';
+      }
+    }
   }
 
   // ===== UI =====
