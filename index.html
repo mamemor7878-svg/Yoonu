@@ -1651,6 +1651,23 @@
     };
     await setDoc(doc(db, 'users', currentUser.uid), profileData);
     showToast('Bienvenue sur Yoonu !','success');
+
+    // Basculer immédiatement vers l'application principale (sans nécessiter de redémarrage de l'app)
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    let freshData = profileData;
+    try {
+      const freshDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      if (freshDoc.exists()) freshData = freshDoc.data();
+    } catch(e) {}
+    refreshProfileUI(currentUser, freshData);
+    loadTrips();
+    loadConversations();
+    checkPendingRatings();
+    refreshNotifBadge();
+    if (!sessionStorage.getItem('yoonu-welcomed')) {
+      sessionStorage.setItem('yoonu-welcomed', '1');
+    }
   }
 
   function showStep(id) {
