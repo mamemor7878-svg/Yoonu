@@ -290,6 +290,9 @@
   .form-section h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; text-transform: uppercase; letter-spacing: .7px; font-weight: 700; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .form-row > .input-group { min-width: 0; }
+  /* Réserve la hauteur de 2 lignes sur les libellés pour garder les champs alignés
+     même si un des deux libellés est plus long et passe à la ligne */
+  .form-row > .input-group label { min-height: 28px; display: flex; align-items: flex-end; }
   .form-row input { width: 100%; max-width: 100%; box-sizing: border-box; min-width: 0; }
   .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
   .option-toggle {
@@ -1871,7 +1874,7 @@
       priceInput.placeholder = '3500';
     } else {
       seatsLabel.textContent = 'Places recherchées';
-      priceLabel.textContent = 'Prix proposé (FCFA, optionnel)';
+      priceLabel.textContent = 'Prix proposé (FCFA)';
       titleEl.textContent = 'Places et budget';
       noteTitle.textContent = 'Note pour les conducteurs (optionnel)';
       submitLabel.textContent = 'Publier ma demande';
@@ -2087,7 +2090,7 @@
       priceInput.placeholder = '15000';
       marqueLabel.textContent = 'Marque';
     } else {
-      priceLabel.textContent = 'Budget / jour (FCFA, optionnel)';
+      priceLabel.textContent = 'Budget / jour (FCFA)';
       priceTitle.textContent = 'Budget et chauffeur';
       submitLabel.textContent = 'Publier ma recherche';
       priceInput.placeholder = 'À négocier';
