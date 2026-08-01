@@ -267,6 +267,14 @@
   .driver-name { color: var(--text); font-weight: 700; }
   .rating-chip { margin-left: auto; display: flex; align-items: center; gap: 5px; background: rgba(245,196,0,.14); color: #b8860b; font-weight: 800; font-size: 12.5px; padding: 5px 10px; border-radius: 100px; }
 
+  /* Badge type trajet (conducteur / passager) */
+  .type-badge {
+    display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:800;
+    padding:4px 9px; border-radius:100px; margin-bottom:10px;
+  }
+  .type-badge.tb-conducteur { background: var(--orange-dim); color: var(--orange); }
+  .type-badge.tb-passager { background: rgba(90,140,255,.14); color: #5a8cff; }
+
   /* PUBLISH */
   .form-section { background: var(--dark3); border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow-card); }
   .form-section h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; text-transform: uppercase; letter-spacing: .7px; font-weight: 700; }
@@ -281,6 +289,15 @@
   }
   .option-toggle.on { border-color: var(--orange); background: var(--orange-dim); color: var(--orange); }
   .option-toggle:active { transform: scale(.96); }
+
+  /* Toggle Conducteur / Passager (publish + home) */
+  .mode-toggle { display: flex; background: var(--dark3); border-radius: 15px; padding: 4px; margin-bottom: 18px; border: 1px solid var(--border); }
+  .mode-toggle-btn {
+    flex: 1; padding: 11px; border: none; background: none; border-radius: 11px;
+    font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text-muted);
+    cursor: pointer; transition: all .2s var(--ease); display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .mode-toggle-btn.active { background: linear-gradient(135deg,var(--orange-light),var(--orange)); color: white; box-shadow: 0 6px 16px -6px rgba(232,82,10,.5); }
 
   /* MESSAGES */
   .conv-item {
@@ -638,8 +655,13 @@
     <div class="greeting">Bonjour, <span id="user-greeting">voyageur</span></div>
     <div class="greeting-sub">Où allez-vous aujourd'hui ?</div>
 
+    <div class="mode-toggle" id="home-mode-toggle">
+      <button class="mode-toggle-btn active" id="home-mode-conducteur" onclick="setHomeType('conducteur')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets conducteurs</button>
+      <button class="mode-toggle-btn" id="home-mode-passager" onclick="setHomeType('passager')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes passagers</button>
+    </div>
+
     <div class="search-card">
-      <h3>Rechercher un trajet</h3>
+      <h3 id="search-card-title">Rechercher un trajet</h3>
       <div style="position:relative">
         <div class="search-row">
           <div class="search-dot"></div>
@@ -662,7 +684,7 @@
       <div class="map-pin end"></div>
     </div>
 
-    <div class="section-title">Trajets disponibles</div>
+    <div class="section-title" id="trips-list-title">Trajets disponibles</div>
     <div id="trips-list">
       <div class="skeleton-card"><div class="skeleton-line" style="width:60%;margin-bottom:10px"></div><div class="skeleton-line" style="width:40%;margin-bottom:14px"></div><div class="skeleton-line" style="width:90%"></div></div>
       <div class="skeleton-card"><div class="skeleton-line" style="width:50%;margin-bottom:10px"></div><div class="skeleton-line" style="width:35%;margin-bottom:14px"></div><div class="skeleton-line" style="width:80%"></div></div>
@@ -672,6 +694,11 @@
   <!-- PUBLISH -->
   <div id="page-publish" class="page">
     <div class="section-title" style="margin-bottom:16px">Publier un trajet</div>
+
+    <div class="mode-toggle" id="publish-mode-toggle">
+      <button class="mode-toggle-btn active" id="pub-mode-conducteur" onclick="setPublishType('conducteur')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Je conduis</button>
+      <button class="mode-toggle-btn" id="pub-mode-passager" onclick="setPublishType('passager')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Je cherche un trajet</button>
+    </div>
 
     <div class="form-section">
       <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7.5 16 16.5"/></svg>Itinéraire</h3>
@@ -791,10 +818,10 @@
     </div>
 
     <div class="form-section">
-      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg>Places et prix</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg><span id="pub-seats-price-title">Places et prix</span></h3>
       <div class="form-row">
         <div class="input-group">
-          <label>Places dispo</label>
+          <label id="pub-seats-label">Places dispo</label>
           <select id="pub-seats">
             <option value="1">1 place</option>
             <option value="2">2 places</option>
@@ -804,7 +831,7 @@
           </select>
         </div>
         <div class="input-group">
-          <label>Prix (FCFA)</label>
+          <label id="pub-price-label">Prix (FCFA)</label>
           <input type="number" id="pub-price" placeholder="3500" oninput="updatePriceHint()"/>
           <div id="price-hint" style="font-size:12px;color:var(--text-muted);margin-top:6px;min-height:16px"></div>
         </div>
@@ -822,11 +849,11 @@
     </div>
 
     <div class="form-section">
-      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg>Note pour les passagers (optionnel)</h3>
+      <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg><span id="pub-note-title">Note pour les passagers (optionnel)</span></h3>
       <textarea id="pub-note" placeholder="Ex: Je pars de la gare routière de Dakar..."></textarea>
     </div>
 
-    <button class="btn btn-primary" onclick="publishTrip()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Publier le trajet</button>
+    <button class="btn btn-primary" onclick="publishTrip()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> <span id="pub-submit-label">Publier le trajet</span></button>
   </div>
 
   <!-- MESSAGES -->
@@ -944,7 +971,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-route">Dakar → Thiès</div>
     <div id="modal-content"></div>
-    <button class="btn btn-primary" onclick="bookTrip()" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Réserver ma place</button>
+    <button class="btn btn-primary" id="modal-action-btn" onclick="bookTrip()" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span id="modal-action-label">Réserver ma place</span></button>
     <button class="btn btn-ghost" onclick="closeModal()">Fermer</button>
   </div>
 </div>
@@ -1010,8 +1037,8 @@
   </div>
   <div class="panel-body">
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Conducteur</button>
-      <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Passager</button>
+      <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Mes publications</button>
+      <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Mes réservations</button>
     </div>
     <div id="my-trips-list">
       <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
@@ -1403,6 +1430,8 @@
   let changePhoneConfirmation = null;
   let isEmailSignup = false;
   let unreadCount = 0;
+  let currentPublishType = 'conducteur';
+  let currentHomeType = 'conducteur';
 
   // ===== AUTH STATE =====
   onAuthStateChanged(auth, async (user) => {
@@ -1675,6 +1704,52 @@
     document.getElementById(id).classList.add('active');
   }
 
+  // ===== TOGGLE MODE HOME (conducteur / passager) =====
+  window.setHomeType = function(type) {
+    currentHomeType = type;
+    document.getElementById('home-mode-conducteur').classList.toggle('active', type === 'conducteur');
+    document.getElementById('home-mode-passager').classList.toggle('active', type === 'passager');
+    const titleEl = document.getElementById('search-card-title');
+    const listTitleEl = document.getElementById('trips-list-title');
+    if (type === 'conducteur') {
+      titleEl.textContent = 'Rechercher un trajet';
+      listTitleEl.textContent = 'Trajets disponibles';
+    } else {
+      titleEl.textContent = 'Rechercher une demande de passager';
+      listTitleEl.textContent = 'Passagers en recherche de conducteur';
+    }
+    loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
+  }
+
+  // ===== TOGGLE MODE PUBLISH (conducteur / passager) =====
+  window.setPublishType = function(type) {
+    currentPublishType = type;
+    document.getElementById('pub-mode-conducteur').classList.toggle('active', type === 'conducteur');
+    document.getElementById('pub-mode-passager').classList.toggle('active', type === 'passager');
+    const seatsLabel = document.getElementById('pub-seats-label');
+    const priceLabel = document.getElementById('pub-price-label');
+    const titleEl = document.getElementById('pub-seats-price-title');
+    const noteTitle = document.getElementById('pub-note-title');
+    const submitLabel = document.getElementById('pub-submit-label');
+    const priceInput = document.getElementById('pub-price');
+    if (type === 'conducteur') {
+      seatsLabel.textContent = 'Places dispo';
+      priceLabel.textContent = 'Prix (FCFA)';
+      titleEl.textContent = 'Places et prix';
+      noteTitle.textContent = 'Note pour les passagers (optionnel)';
+      submitLabel.textContent = 'Publier le trajet';
+      priceInput.placeholder = '3500';
+    } else {
+      seatsLabel.textContent = 'Places recherchées';
+      priceLabel.textContent = 'Prix proposé (FCFA, optionnel)';
+      titleEl.textContent = 'Places et budget';
+      noteTitle.textContent = 'Note pour les conducteurs (optionnel)';
+      submitLabel.textContent = 'Publier ma demande';
+      priceInput.placeholder = 'À négocier';
+    }
+    updatePriceHint();
+  }
+
   // ===== TRIPS =====
   async function loadTrips(fromFilter='', toFilter='') {
     const list = document.getElementById('trips-list');
@@ -1686,16 +1761,19 @@
       const trips = [];
       snap.forEach(d => {
         const data = { id: d.id, ...d.data() };
+        const type = data.type || 'conducteur';
+        if (type !== currentHomeType) return;
         // Masquer trajets passés
         if (data.date && data.date < today) return;
-        // Masquer trajets complets (0 places)
-        if (data.seats != null && data.seats <= 0) return;
+        // Masquer trajets complets (0 places) — uniquement pertinent côté conducteur
+        if (type === 'conducteur' && data.seats != null && data.seats <= 0) return;
         if (fromFilter && !data.from.toLowerCase().includes(fromFilter.toLowerCase())) return;
         if (toFilter && !data.to.toLowerCase().includes(toFilter.toLowerCase())) return;
         trips.push(data);
       });
       if (trips.length === 0) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">Aucun trajet disponible</div></div>';
+        const emptyLabel = currentHomeType === 'passager' ? 'Aucune demande de passager pour l\'instant' : 'Aucun trajet disponible';
+        list.innerHTML = `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">${emptyLabel}</div></div>`;
         return;
       }
       list.innerHTML = trips.map(t => tripCard(t)).join('');
@@ -1705,21 +1783,31 @@
   }
 
   function tripCard(t) {
+    const type = t.type || 'conducteur';
+    const isPassager = type === 'passager';
     const opts = (t.options||[]).map(o => `<div class="trip-badge">${optEmoji(o)} ${o}</div>`).join('');
+    const priceLabel = isPassager
+      ? (t.price ? `${Number(t.price).toLocaleString('fr-FR')}<span> FCFA proposé</span>` : `<span style="font-size:14px">À négocier</span>`)
+      : `${Number(t.price).toLocaleString('fr-FR')}<span> FCFA</span>`;
+    const typeBadge = isPassager
+      ? `<div class="type-badge tb-passager"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/></svg> Cherche un conducteur</div>`
+      : `<div class="type-badge tb-conducteur"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/></svg> Propose un trajet</div>`;
+    const seatsLabel = isPassager ? `${t.seats} personne${t.seats>1?'s':''}` : `${t.seats} place${t.seats>1?'s':''}`;
     return `<div class="trip-card" onclick="openTrip(${JSON.stringify(t).replace(/"/g,'&quot;')})">
+      ${typeBadge}
       <div class="trip-header">
         <div class="trip-route">${t.from} <span class="arrow">→</span> ${t.to}</div>
-        <div class="trip-price">${Number(t.price).toLocaleString('fr-FR')}<span> FCFA</span></div>
+        <div class="trip-price">${priceLabel}</div>
       </div>
       <div class="trip-meta">
         <div class="trip-badge">${ICON_CALENDAR} ${t.date||''}</div>
         <div class="trip-badge">${ICON_CLOCK} ${t.time||''}</div>
-        <div class="trip-badge">${ICON_SEAT} ${t.seats} place${t.seats>1?'s':''}</div>
+        <div class="trip-badge">${ICON_SEAT} ${seatsLabel}</div>
         ${opts}
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(t.driverName||'?')[0].toUpperCase()}</div>
-        <div class="driver-info"><div class="driver-name">${t.driverName||'Conducteur'}${(t.driverRating||5) >= 4.5 ? `<span class="trust-badge">${ICON_SHIELD_CHECK} Fiable</span>` : ''}</div></div>
+        <div class="driver-info"><div class="driver-name">${t.driverName||(isPassager?'Passager':'Conducteur')}${(t.driverRating||5) >= 4.5 ? `<span class="trust-badge">${ICON_SHIELD_CHECK} Fiable</span>` : ''}</div></div>
         <div class="rating-chip">${ICON_STAR_FILL} ${t.driverRating||5}</div>
       </div>
     </div>`;
@@ -1778,7 +1866,8 @@
     const dist = Math.abs(CITY_DIST_FROM_DAKAR[from] - CITY_DIST_FROM_DAKAR[to]) || Math.abs(CITY_DIST_FROM_DAKAR[from]) + Math.abs(CITY_DIST_FROM_DAKAR[to]);
     const min = Math.round(dist * 25 / 50) * 50;
     const max = Math.round(dist * 40 / 50) * 50;
-    hintEl.textContent = `💡 Prix indicatif pour ce trajet : ${min.toLocaleString('fr-FR')} – ${max.toLocaleString('fr-FR')} FCFA (estimation approximative)`;
+    const prefix = currentPublishType === 'passager' ? '💡 Budget indicatif pour ce trajet : ' : '💡 Prix indicatif pour ce trajet : ';
+    hintEl.textContent = `${prefix}${min.toLocaleString('fr-FR')} – ${max.toLocaleString('fr-FR')} FCFA (estimation approximative)`;
   }
 
   window.searchTrips = function() {
@@ -1789,25 +1878,48 @@
 
   window.openTrip = function(t) {
     currentTripData = t;
+    const isPassager = (t.type||'conducteur') === 'passager';
     document.getElementById('modal-route').textContent = `${t.from} → ${t.to}`;
+    const priceText = isPassager
+      ? (t.price ? `${Number(t.price).toLocaleString('fr-FR')} FCFA proposé` : 'Prix à négocier')
+      : `${Number(t.price).toLocaleString('fr-FR')} FCFA`;
+    const seatsText = isPassager ? `${t.seats} personne${t.seats>1?'s':''}` : `${t.seats} places`;
     document.getElementById('modal-content').innerHTML = `
-      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${t.note||'Aucune note du conducteur'}</p>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${t.note||(isPassager?'Aucune note du passager':'Aucune note du conducteur')}</p>
       <div class="trip-meta" style="margin-bottom:12px">
         <div class="trip-badge">${ICON_CALENDAR} ${t.date||''}</div>
         <div class="trip-badge">${ICON_CLOCK} ${t.time||''}</div>
-        <div class="trip-badge">${ICON_SEAT} ${t.seats} places</div>
-        <div class="trip-badge">${ICON_PRICE} ${Number(t.price).toLocaleString('fr-FR')} FCFA</div>
+        <div class="trip-badge">${ICON_SEAT} ${seatsText}</div>
+        <div class="trip-badge">${ICON_PRICE} ${priceText}</div>
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(t.driverName||'?')[0].toUpperCase()}</div>
-        <div><div class="driver-name">${t.driverName||'Conducteur'}</div><div style="font-size:12px;color:var(--text-muted)">${t.driverPhone||''}</div></div>
+        <div><div class="driver-name">${t.driverName||(isPassager?'Passager':'Conducteur')}</div><div style="font-size:12px;color:var(--text-muted)">${t.driverPhone||''}</div></div>
         <div class="rating-chip">${ICON_STAR_FILL} ${t.driverRating||5}</div>
       </div>`;
+    const actionBtn = document.getElementById('modal-action-btn');
+    const actionLabel = document.getElementById('modal-action-label');
+    if (isPassager) {
+      actionLabel.textContent = 'Proposer de l\'emmener';
+      actionBtn.onclick = contactRequester;
+    } else {
+      actionLabel.textContent = 'Réserver ma place';
+      actionBtn.onclick = bookTrip;
+    }
     document.getElementById('trip-modal').classList.add('open');
   }
 
   window.closeModal = function() {
     document.getElementById('trip-modal').classList.remove('open');
+  }
+
+  window.contactRequester = function() {
+    if (!currentTripData) return;
+    if (currentTripData.driverId === currentUser.uid) {
+      showToast('Ceci est votre propre demande','error'); return;
+    }
+    closeModal();
+    openChatWithDriver(currentTripData);
   }
 
   window.bookTrip = async function() {
@@ -1991,8 +2103,10 @@
     const price = document.getElementById('pub-price').value;
     const note = document.getElementById('pub-note').value;
     const today = new Date().toISOString().slice(0,10);
+    const type = currentPublishType;
 
-    if (!from||!to||!date||!time||!price) { showToast('Remplissez tous les champs','error'); return; }
+    if (!from||!to||!date||!time) { showToast('Remplissez tous les champs','error'); return; }
+    if (type === 'conducteur' && !price) { showToast('Indiquez un prix','error'); return; }
     if (from===to) { showToast('Départ et arrivée identiques','error'); return; }
     if (date < today) {
       document.getElementById('pub-date-error').style.display = 'block';
@@ -2007,8 +2121,9 @@
 
     try {
       await addDoc(collection(db, 'trips'), {
+        type,
         from, to, date, time,
-        seats: Number(seats), price: Number(price),
+        seats: Number(seats), price: price ? Number(price) : 0,
         note, options: selectedOptions,
         driverId: currentUser.uid,
         driverName: userData.name,
@@ -2023,7 +2138,7 @@
       // Rafraîchir les stats du profil
       const updatedDoc = await getDoc(doc(db, 'users', currentUser.uid));
       refreshProfileUI(currentUser, updatedDoc.data());
-      showToast('Trajet publié !','success');
+      showToast(type === 'passager' ? 'Demande publiée !' : 'Trajet publié !','success');
       // Reset complet du formulaire
       document.getElementById('pub-from').value = '';
       document.getElementById('pub-to').value = '';
@@ -2034,7 +2149,10 @@
       document.getElementById('pub-date-error').style.display = 'none';
       selectedOptions = [];
       document.querySelectorAll('.option-toggle.on').forEach(b => b.classList.remove('on'));
+      setHomeType(type);
       goTo('home', document.querySelector('.nav-item'));
+      document.getElementById('home-mode-conducteur').classList.toggle('active', type==='conducteur');
+      document.getElementById('home-mode-passager').classList.toggle('active', type==='passager');
       loadTrips();
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
@@ -2316,6 +2434,12 @@
       for (const d of snap.docs) {
         const t = d.data();
         const isUpcoming = (t.date || '') >= today;
+        const pubType = t.type || 'conducteur';
+        const typeBadgeSmall = tab === 'driver'
+          ? (pubType === 'passager'
+              ? '<span class="type-badge tb-passager" style="margin-bottom:0">🙋 Passager</span>'
+              : '<span class="type-badge tb-conducteur" style="margin-bottom:0">🚗 Conducteur</span>')
+          : '';
 
         let statusClass, statusLabel;
         if (tab === 'passenger') {
@@ -2359,12 +2483,13 @@
         window[driverKey] = { tripId: t.tripId||d.id, name: t.driverName||'Conducteur', id: t.driverId||'' };
 
         list.innerHTML += `<div class="my-trip-card">
+          ${typeBadgeSmall ? `<div style="margin-bottom:8px">${typeBadgeSmall}</div>` : ''}
           <div class="my-trip-route">${t.from||''} → ${t.to||''}</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
             <div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg> ${t.date||''}</div>
             ${t.time ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> ${t.time}</div>` : ''}
-            <div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M9 15.5c.6.6 1.5 1 2.5 1 1.9 0 3.2-1 3.2-2.4 0-3-6-1.7-6-4.7 0-1.4 1.3-2.4 3.2-2.4 1 0 1.9.4 2.5 1M12 6v1.3M12 16.7V18"/></svg> ${Number(t.price||0).toLocaleString('fr-FR')} FCFA</div>
-            ${tab === 'driver' ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg> ${t.seats||1} place${(t.seats||1)>1?'s':''}</div>` : ''}
+            <div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M9 15.5c.6.6 1.5 1 2.5 1 1.9 0 3.2-1 3.2-2.4 0-3-6-1.7-6-4.7 0-1.4 1.3-2.4 3.2-2.4 1 0 1.9.4 2.5 1M12 6v1.3M12 16.7V18"/></svg> ${t.price ? Number(t.price).toLocaleString('fr-FR') + ' FCFA' : 'À négocier'}</div>
+            ${tab === 'driver' ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg> ${t.seats||1} ${pubType==='passager'?'personne':'place'}${(t.seats||1)>1?'s':''}</div>` : ''}
           </div>
 
           ${showDriverContact ? `
@@ -2383,7 +2508,7 @@
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
             <span class="my-trip-status ${statusClass}">${statusLabel}</span>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              ${tab === 'driver' && isUpcoming ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openPassengers('${d.id}','${(t.from||'').replace(/'/g,"\\'")}','${(t.to||'').replace(/'/g,"\\'")}','${t.date||''}')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes</button>` : ''}
+              ${tab === 'driver' && isUpcoming && pubType !== 'passager' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openPassengers('${d.id}','${(t.from||'').replace(/'/g,"\\'")}','${(t.to||'').replace(/'/g,"\\'")}','${t.date||''}')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes</button>` : ''}
               ${canRate ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openRateTrip('${d.id}','${t.driverId||''}','${(t.driverName||'Conducteur').replace(/'/g,"\\'")}')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Noter</button>` : ''}
               ${canCancel ? `<button class="btn btn-ghost" style="width:auto;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px" onclick="openEditTrip('${d.id}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Modifier</button>` : ''}
               ${canCancel ? `<button class="btn btn-ghost" style="width:auto;padding:6px 14px;font-size:12px;border-color:var(--red);color:var(--red);display:inline-flex;align-items:center;gap:5px" onclick="cancelTrip('${d.id}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7a1.5 1.5 0 0 0 1.5-1.4L18 7"/></svg> Annuler</button>` : ''}
