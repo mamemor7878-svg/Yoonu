@@ -136,6 +136,14 @@
     border-radius: 14px; padding: 14px 16px; color: var(--text); font-size: 15px;
     font-family: inherit; outline: none; transition: box-shadow .2s var(--ease), border-color .2s var(--ease);
   }
+  /* iOS/Safari applique un rendu natif aux champs date/heure qui ignore le style
+     ci-dessus (fond, bordure, arrondi) sans ce reset explicite */
+  input[type=date], input[type=time] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 48px;
+  }
+  input[type=date]::-webkit-date-and-time-value { text-align: left; }
   input:focus, textarea:focus, select:focus { border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-dim); }
   .otp-row { display: flex; gap: 10px; }
   .otp-row input { text-align: center; font-size: 22px; font-weight: 800; padding: 14px 0; }
