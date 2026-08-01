@@ -274,6 +274,8 @@
   }
   .type-badge.tb-conducteur { background: var(--orange-dim); color: var(--orange); }
   .type-badge.tb-passager { background: rgba(90,140,255,.14); color: #5a8cff; }
+  .type-badge.tb-loc-offre { background: rgba(23,201,120,.14); color: var(--green); }
+  .type-badge.tb-loc-recherche { background: rgba(180,120,255,.14); color: #b478ff; }
 
   /* PUBLISH */
   .form-section { background: var(--dark3); border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow-card); }
@@ -926,6 +928,119 @@
     </div>
   </div>
 
+  <!-- LOCATION -->
+  <div id="page-location" class="page">
+    <div class="section-title" style="margin-bottom:16px">Location de véhicule</div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="option-toggle on" id="loc-subtab-browse" onclick="switchLocationSubTab('browse')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Parcourir</button>
+      <button class="option-toggle" id="loc-subtab-publish" onclick="switchLocationSubTab('publish')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Publier</button>
+    </div>
+
+    <!-- Sous-page : Parcourir -->
+    <div id="loc-browse-section">
+      <div class="mode-toggle" id="loc-browse-mode-toggle">
+        <button class="mode-toggle-btn active" id="loc-browse-offre" onclick="setRentalBrowseType('offre')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg> Véhicules à louer</button>
+        <button class="mode-toggle-btn" id="loc-browse-recherche" onclick="setRentalBrowseType('recherche')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Recherches</button>
+      </div>
+
+      <div class="search-card">
+        <h3>Filtrer</h3>
+        <div class="input-group" style="margin-bottom:10px">
+          <label>Ville</label>
+          <input type="text" id="loc-search-ville" placeholder="Ex: Dakar"/>
+        </div>
+        <div class="input-group" style="margin-bottom:14px">
+          <label>Catégorie</label>
+          <select id="loc-search-category">
+            <option value="">Toutes catégories</option>
+            <option value="citadine">Citadine</option>
+            <option value="berline">Berline</option>
+            <option value="suv">SUV / 4x4</option>
+            <option value="minibus">Minibus / Van</option>
+            <option value="pickup">Pick-up</option>
+            <option value="luxe">Luxe / Cérémonie</option>
+            <option value="utilitaire">Utilitaire</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="loadRentals()" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Filtrer</button>
+      </div>
+
+      <div class="section-title" id="rentals-list-title">Véhicules disponibles</div>
+      <div id="rentals-list">
+        <div class="skeleton-card"><div class="skeleton-line" style="width:60%;margin-bottom:10px"></div><div class="skeleton-line" style="width:40%;margin-bottom:14px"></div><div class="skeleton-line" style="width:90%"></div></div>
+      </div>
+    </div>
+
+    <!-- Sous-page : Publier -->
+    <div id="loc-publish-section" style="display:none">
+      <div class="mode-toggle" id="loc-publish-mode-toggle">
+        <button class="mode-toggle-btn active" id="loc-pub-offre" onclick="setRentalPublishType('offre')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg> Je loue mon véhicule</button>
+        <button class="mode-toggle-btn" id="loc-pub-recherche" onclick="setRentalPublishType('recherche')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Je cherche à louer</button>
+      </div>
+
+      <div class="form-section">
+        <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg>Véhicule</h3>
+        <div class="input-group">
+          <label>Catégorie</label>
+          <select id="loc-category">
+            <option value="citadine">Citadine</option>
+            <option value="berline">Berline</option>
+            <option value="suv">SUV / 4x4</option>
+            <option value="minibus">Minibus / Van</option>
+            <option value="pickup">Pick-up</option>
+            <option value="luxe">Luxe / Cérémonie</option>
+            <option value="utilitaire">Utilitaire</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label id="loc-marque-label">Marque</label>
+            <input type="text" id="loc-marque" placeholder="Ex: Toyota"/>
+          </div>
+          <div class="input-group">
+            <label>Modèle</label>
+            <input type="text" id="loc-modele" placeholder="Ex: Land Cruiser"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Ville et disponibilité</h3>
+        <div class="input-group">
+          <label>Ville</label>
+          <input type="text" id="loc-ville" placeholder="Ex: Dakar"/>
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Disponible du</label>
+            <input type="date" id="loc-date-debut"/>
+          </div>
+          <div class="input-group">
+            <label>Au (optionnel)</label>
+            <input type="date" id="loc-date-fin"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 15.5c.6.6 1.5 1 2.5 1 1.9 0 3.2-1 3.2-2.4 0-3-6-1.7-6-4.7 0-1.4 1.3-2.4 3.2-2.4 1 0 1.9.4 2.5 1M12 6v1.3M12 16.7V18"/></svg><span id="loc-price-title">Prix et chauffeur</span></h3>
+        <div class="input-group">
+          <label id="loc-price-label">Prix / jour (FCFA)</label>
+          <input type="number" id="loc-price" placeholder="15000"/>
+        </div>
+        <button class="option-toggle" id="loc-chauffeur-toggle" onclick="toggleChauffeur(this)" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg> <span id="loc-chauffeur-label">Avec chauffeur</span></button>
+      </div>
+
+      <div class="form-section">
+        <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg>Note (optionnel)</h3>
+        <textarea id="loc-note" placeholder="Ex: Véhicule récent, entretien à jour..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" onclick="publishRental()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> <span id="loc-submit-label">Publier mon offre</span></button>
+    </div>
+  </div>
+
   <!-- NAV -->
   <nav class="nav">
     <button class="nav-item active" onclick="goTo('home',this)">
@@ -933,6 +1048,9 @@
     </button>
     <button class="nav-item" onclick="goTo('publish',this)">
       <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div><span>Publier</span>
+    </button>
+    <button class="nav-item" onclick="goTo('location',this);loadRentals()">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/></svg></div><span>Location</span>
     </button>
     <button class="nav-item" onclick="goTo('messages',this);loadConversations()">
       <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><span>Messages</span>
@@ -1432,6 +1550,10 @@
   let unreadCount = 0;
   let currentPublishType = 'conducteur';
   let currentHomeType = 'conducteur';
+  let currentRentalBrowseType = 'offre';
+  let currentRentalPublishType = 'offre';
+  let rentalAvecChauffeur = false;
+  let currentRentalData = null;
 
   // ===== AUTH STATE =====
   onAuthStateChanged(auth, async (user) => {
@@ -1922,6 +2044,195 @@
     openChatWithDriver(currentTripData);
   }
 
+  // ===== LOCATION DE VÉHICULE =====
+  const RENTAL_CATEGORIES = { citadine:'Citadine', berline:'Berline', suv:'SUV / 4x4', minibus:'Minibus / Van', pickup:'Pick-up', luxe:'Luxe / Cérémonie', utilitaire:'Utilitaire' };
+
+  window.switchLocationSubTab = function(tab) {
+    document.getElementById('loc-subtab-browse').classList.toggle('on', tab === 'browse');
+    document.getElementById('loc-subtab-publish').classList.toggle('on', tab === 'publish');
+    document.getElementById('loc-browse-section').style.display = tab === 'browse' ? 'block' : 'none';
+    document.getElementById('loc-publish-section').style.display = tab === 'publish' ? 'block' : 'none';
+    if (tab === 'browse') loadRentals();
+  }
+
+  window.setRentalBrowseType = function(type) {
+    currentRentalBrowseType = type;
+    document.getElementById('loc-browse-offre').classList.toggle('active', type === 'offre');
+    document.getElementById('loc-browse-recherche').classList.toggle('active', type === 'recherche');
+    document.getElementById('rentals-list-title').textContent = type === 'offre' ? 'Véhicules disponibles' : 'Personnes qui cherchent un véhicule';
+    loadRentals();
+  }
+
+  window.setRentalPublishType = function(type) {
+    currentRentalPublishType = type;
+    document.getElementById('loc-pub-offre').classList.toggle('active', type === 'offre');
+    document.getElementById('loc-pub-recherche').classList.toggle('active', type === 'recherche');
+    const priceLabel = document.getElementById('loc-price-label');
+    const priceTitle = document.getElementById('loc-price-title');
+    const submitLabel = document.getElementById('loc-submit-label');
+    const priceInput = document.getElementById('loc-price');
+    const marqueLabel = document.getElementById('loc-marque-label');
+    if (type === 'offre') {
+      priceLabel.textContent = 'Prix / jour (FCFA)';
+      priceTitle.textContent = 'Prix et chauffeur';
+      submitLabel.textContent = 'Publier mon offre';
+      priceInput.placeholder = '15000';
+      marqueLabel.textContent = 'Marque';
+    } else {
+      priceLabel.textContent = 'Budget / jour (FCFA, optionnel)';
+      priceTitle.textContent = 'Budget et chauffeur';
+      submitLabel.textContent = 'Publier ma recherche';
+      priceInput.placeholder = 'À négocier';
+      marqueLabel.textContent = 'Marque souhaitée (optionnel)';
+    }
+  }
+
+  window.toggleChauffeur = function(btn) {
+    rentalAvecChauffeur = !rentalAvecChauffeur;
+    btn.classList.toggle('on', rentalAvecChauffeur);
+    document.getElementById('loc-chauffeur-label').textContent = rentalAvecChauffeur ? 'Avec chauffeur' : 'Sans chauffeur';
+  }
+
+  async function loadRentals() {
+    const list = document.getElementById('rentals-list');
+    if (!list) return;
+    list.innerHTML = '<div class="skeleton-card"><div class="skeleton-line" style="width:60%;margin-bottom:10px"></div><div class="skeleton-line" style="width:40%;margin-bottom:14px"></div><div class="skeleton-line" style="width:90%"></div></div>';
+    const villeFilter = (document.getElementById('loc-search-ville')?.value || '').toLowerCase();
+    const catFilter = document.getElementById('loc-search-category')?.value || '';
+    try {
+      const snap = await getDocs(query(collection(db, 'rentals'), orderBy('createdAt', 'desc')));
+      const rentals = [];
+      snap.forEach(d => {
+        const data = { id: d.id, ...d.data() };
+        if ((data.type||'offre') !== currentRentalBrowseType) return;
+        if (data.statut && data.statut !== 'actif') return;
+        if (villeFilter && !(data.ville||'').toLowerCase().includes(villeFilter)) return;
+        if (catFilter && data.category !== catFilter) return;
+        rentals.push(data);
+      });
+      if (rentals.length === 0) {
+        const emptyLabel = currentRentalBrowseType === 'offre' ? 'Aucun véhicule disponible pour l\'instant' : 'Aucune recherche pour l\'instant';
+        list.innerHTML = `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg></div><div class="empty-text">${emptyLabel}</div></div>`;
+        return;
+      }
+      list.innerHTML = rentals.map(r => rentalCard(r)).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>';
+      console.error(e);
+    }
+  }
+
+  function rentalCard(r) {
+    const isOffre = (r.type||'offre') === 'offre';
+    const priceText = r.price ? `${Number(r.price).toLocaleString('fr-FR')}<span> FCFA/j</span>` : `<span style="font-size:14px">À négocier</span>`;
+    const typeBadge = isOffre
+      ? `<div class="type-badge tb-loc-offre"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/></svg> À louer</div>`
+      : `<div class="type-badge tb-loc-recherche"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/></svg> Recherche</div>`;
+    const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || RENTAL_CATEGORIES[r.category] || 'Véhicule';
+    return `<div class="trip-card" onclick="openRental(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+      ${typeBadge}
+      <div class="trip-header">
+        <div class="trip-route">${vehicleName}</div>
+        <div class="trip-price">${priceText}</div>
+      </div>
+      <div class="trip-meta">
+        <div class="trip-badge">${ICON_SEAT} ${RENTAL_CATEGORIES[r.category]||r.category||''}</div>
+        <div class="trip-badge">${ICON_CALENDAR} ${r.ville||''}</div>
+        ${r.avecChauffeur ? '<div class="trip-badge">🧑‍✈️ Avec chauffeur</div>' : '<div class="trip-badge">🔑 Sans chauffeur</div>'}
+      </div>
+      <div class="trip-driver">
+        <div class="driver-avatar">${(r.ownerName||'?')[0].toUpperCase()}</div>
+        <div class="driver-info"><div class="driver-name">${r.ownerName||'Propriétaire'}</div></div>
+        <div class="rating-chip">${ICON_STAR_FILL} ${r.ownerRating||5}</div>
+      </div>
+    </div>`;
+  }
+
+  window.openRental = function(r) {
+    currentRentalData = r;
+    const isOffre = (r.type||'offre') === 'offre';
+    const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || RENTAL_CATEGORIES[r.category] || 'Véhicule';
+    document.getElementById('modal-route').textContent = vehicleName;
+    const priceText = r.price ? `${Number(r.price).toLocaleString('fr-FR')} FCFA/jour` : 'Prix à négocier';
+    document.getElementById('modal-content').innerHTML = `
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${r.note||'Aucune note'}</p>
+      <div class="trip-meta" style="margin-bottom:12px">
+        <div class="trip-badge">${RENTAL_CATEGORIES[r.category]||r.category||''}</div>
+        <div class="trip-badge">${ICON_CALENDAR} ${r.ville||''}</div>
+        <div class="trip-badge">${ICON_PRICE} ${priceText}</div>
+        <div class="trip-badge">${r.avecChauffeur ? '🧑‍✈️ Avec chauffeur' : '🔑 Sans chauffeur'}</div>
+        ${r.dateDebut ? `<div class="trip-badge">${ICON_CLOCK} Dispo dès le ${r.dateDebut}</div>` : ''}
+      </div>
+      <div class="trip-driver">
+        <div class="driver-avatar">${(r.ownerName||'?')[0].toUpperCase()}</div>
+        <div><div class="driver-name">${r.ownerName||'Propriétaire'}</div><div style="font-size:12px;color:var(--text-muted)">${r.ownerPhone||''}</div></div>
+        <div class="rating-chip">${ICON_STAR_FILL} ${r.ownerRating||5}</div>
+      </div>`;
+    const actionBtn = document.getElementById('modal-action-btn');
+    const actionLabel = document.getElementById('modal-action-label');
+    actionLabel.textContent = isOffre ? 'Contacter le propriétaire' : 'Proposer mon véhicule';
+    actionBtn.onclick = contactRentalOwner;
+    document.getElementById('trip-modal').classList.add('open');
+  }
+
+  window.contactRentalOwner = function() {
+    if (!currentRentalData) return;
+    if (currentRentalData.ownerId === currentUser.uid) {
+      showToast('Ceci est votre propre annonce','error'); return;
+    }
+    closeModal();
+    openChatGeneric('rentals', currentRentalData.id, currentRentalData.ownerName || 'Propriétaire');
+  }
+
+  window.publishRental = async function() {
+    const type = currentRentalPublishType;
+    const category = document.getElementById('loc-category').value;
+    const marque = document.getElementById('loc-marque').value.trim();
+    const modele = document.getElementById('loc-modele').value.trim();
+    const ville = document.getElementById('loc-ville').value.trim();
+    const dateDebut = document.getElementById('loc-date-debut').value;
+    const dateFin = document.getElementById('loc-date-fin').value;
+    const price = document.getElementById('loc-price').value;
+    const note = document.getElementById('loc-note').value.trim();
+
+    if (!ville) { showToast('Indiquez une ville','error'); return; }
+    if (type === 'offre' && !price) { showToast('Indiquez un prix par jour','error'); return; }
+
+    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+    const userData = userDoc.data();
+
+    try {
+      await addDoc(collection(db, 'rentals'), {
+        type, category, marque, modele, ville,
+        dateDebut, dateFin,
+        price: price ? Number(price) : 0,
+        avecChauffeur: rentalAvecChauffeur,
+        note,
+        statut: 'actif',
+        ownerId: currentUser.uid,
+        ownerName: userData.name,
+        ownerPhone: currentUser.phoneNumber || userData.phone || '',
+        ownerRating: userData.rating||5,
+        createdAt: serverTimestamp()
+      });
+      showToast(type === 'offre' ? 'Offre publiée !' : 'Recherche publiée !','success');
+      document.getElementById('loc-marque').value = '';
+      document.getElementById('loc-modele').value = '';
+      document.getElementById('loc-ville').value = '';
+      document.getElementById('loc-date-debut').value = '';
+      document.getElementById('loc-date-fin').value = '';
+      document.getElementById('loc-price').value = '';
+      document.getElementById('loc-note').value = '';
+      rentalAvecChauffeur = false;
+      document.getElementById('loc-chauffeur-toggle').classList.remove('on');
+      document.getElementById('loc-chauffeur-label').textContent = 'Avec chauffeur';
+      setRentalBrowseType(type);
+      switchLocationSubTab('browse');
+    } catch(e) {
+      showToast('Erreur: ' + e.message,'error');
+    }
+  }
+
   window.bookTrip = async function() {
     if (!currentTripData) return;
     if (currentTripData.driverId === currentUser.uid) {
@@ -2160,19 +2471,32 @@
   }
 
   // ===== CHAT =====
+  // Chat générique : fonctionne sur n'importe quelle collection racine ('trips' ou 'rentals')
+  // via une sous-collection {collection}/{id}/messages
+  let editingMsgCol = 'trips';
+
   function openChatWithDriver(trip) {
     currentChatUser = { name: trip.driverName, id: trip.driverId };
     document.getElementById('chat-name').textContent = trip.driverName;
     document.getElementById('chat-avatar').textContent = (trip.driverName||'?')[0].toUpperCase();
     document.getElementById('chat-screen').classList.add('open');
     document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(trip.id);
+    listenMessages(trip.id, 'trips');
+  }
+
+  function openChatGeneric(col, id, name) {
+    currentChatUser = { name, id };
+    document.getElementById('chat-name').textContent = name;
+    document.getElementById('chat-avatar').textContent = (name||'?')[0].toUpperCase();
+    document.getElementById('chat-screen').classList.add('open');
+    document.getElementById('chat-messages').innerHTML = '';
+    listenMessages(id, col);
   }
 
   let unsubscribeMessages = null;
-  function listenMessages(tripId) {
+  function listenMessages(tripId, col = 'trips') {
     if (unsubscribeMessages) unsubscribeMessages();
-    const q = query(collection(db, 'trips', tripId, 'messages'), orderBy('createdAt'));
+    const q = query(collection(db, col, tripId, 'messages'), orderBy('createdAt'));
     unsubscribeMessages = onSnapshot(q, snap => {
       const container = document.getElementById('chat-messages');
       container.innerHTML = '';
@@ -2190,8 +2514,8 @@
         actions.className = 'msg-actions';
         if (isMine) {
           actions.innerHTML = `
-            <button class="msg-action-btn" onclick="startEditMsg('${d.id}','${tripId}',this)">Modifier</button>
-            <button class="msg-action-btn" style="color:var(--red)" onclick="deleteMsg('${d.id}','${tripId}')">Supprimer</button>
+            <button class="msg-action-btn" onclick="startEditMsg('${d.id}','${tripId}',this,'${col}')">Modifier</button>
+            <button class="msg-action-btn" style="color:var(--red)" onclick="deleteMsg('${d.id}','${tripId}','${col}')">Supprimer</button>
           `;
           // Store text for edit
           actions.querySelector('.msg-action-btn').dataset.text = m.text;
@@ -2204,11 +2528,13 @@
       container.scrollTop = container.scrollHeight;
     });
     document.getElementById('chat-screen').dataset.tripId = tripId;
+    document.getElementById('chat-screen').dataset.collection = col;
   }
 
-  window.startEditMsg = function(msgId, tripId, btn) {
+  window.startEditMsg = function(msgId, tripId, btn, col = 'trips') {
     editingMsgId = msgId;
     editingMsgTripId = tripId;
+    editingMsgCol = col;
     const text = btn.parentElement.querySelector('.msg-action-btn').dataset.text ||
       btn.closest('.msg-wrap').querySelector('.msg').textContent.replace(' ✏️','');
     document.getElementById('chat-input').value = text;
@@ -2223,10 +2549,10 @@
     document.getElementById('edit-msg-bar').style.display = 'none';
   }
 
-  window.deleteMsg = async function(msgId, tripId) {
+  window.deleteMsg = async function(msgId, tripId, col = 'trips') {
     if (!confirm('Supprimer ce message ?')) return;
     try {
-      await deleteDoc(doc(db, 'trips', tripId, 'messages', msgId));
+      await deleteDoc(doc(db, col, tripId, 'messages', msgId));
       showToast('Message supprimé','success');
     } catch(e) { showToast('Erreur suppression','error'); }
   }
@@ -2235,13 +2561,15 @@
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
-    const tripId = document.getElementById('chat-screen').dataset.tripId;
+    const chatScreen = document.getElementById('chat-screen');
+    const tripId = chatScreen.dataset.tripId;
+    const col = chatScreen.dataset.collection || 'trips';
     input.value = '';
 
     // Mode édition
     if (editingMsgId) {
       try {
-        await updateDoc(doc(db, 'trips', editingMsgTripId, 'messages', editingMsgId), {
+        await updateDoc(doc(db, editingMsgCol, editingMsgTripId, 'messages', editingMsgId), {
           text, edited: true
         });
         cancelEditMsg();
@@ -2251,7 +2579,7 @@
     }
 
     try {
-      await addDoc(collection(db, 'trips', tripId, 'messages'), {
+      await addDoc(collection(db, col, tripId, 'messages'), {
         text, senderId: currentUser.uid,
         senderName: currentUser.displayName || currentUser.phoneNumber,
         createdAt: serverTimestamp()
