@@ -1112,10 +1112,11 @@
     <div class="panel-title">Modifier le profil</div>
   </div>
   <div class="panel-body">
-    <div class="avatar-edit">
+    <div class="avatar-edit" onclick="document.getElementById('avatar-file-input').click()" style="cursor:pointer">
       <div class="profile-avatar" id="edit-avatar-letter" style="font-size:32px">M</div>
       <div class="avatar-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
     </div>
+    <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarFileSelected(event)"/>
 
     <div class="form-section">
       <h3 style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg>Informations personnelles</h3>
@@ -1529,6 +1530,8 @@
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
   // ===== VOTRE CONFIGURATION FIREBASE =====
   const firebaseConfig = {
@@ -1543,6 +1546,7 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   // Session persistante : l'utilisateur reste connecté même après fermeture de l'app
   setPersistence(auth, browserLocalPersistence).catch(console.error);
@@ -1605,13 +1609,29 @@
     }
   });
 
+  // Affiche soit la photo (si photoURL existe), soit l'initiale du nom, sur un élément .profile-avatar
+  function setAvatarDisplay(elId, name, photoURL) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const initial = (name || 'U')[0].toUpperCase();
+    if (photoURL) {
+      el.textContent = '';
+      el.style.backgroundImage = `url("${photoURL}")`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+    } else {
+      el.style.backgroundImage = '';
+      el.textContent = initial;
+    }
+  }
+
   function refreshProfileUI(user, data) {
     const name = data.name || 'Voyageur';
     const initial = name[0].toUpperCase();
     document.getElementById('user-greeting').textContent = name.split(' ')[0];
     document.getElementById('profile-display-name').textContent = name;
     document.getElementById('profile-display-phone').textContent = user.phoneNumber || user.email || '';
-    document.getElementById('profile-avatar-letter').textContent = initial;
+    setAvatarDisplay('profile-avatar-letter', name, data.photoURL);
     document.getElementById('stat-trips').textContent = data.tripsCount != null ? data.tripsCount : 0;
     document.getElementById('stat-rating').textContent = data.rating != null ? Number(data.rating).toFixed(1) : '5.0';
     const year = data.createdAt ? new Date(data.createdAt.seconds * 1000).getFullYear() : new Date().getFullYear();
@@ -2705,7 +2725,7 @@
       if (snap.exists()) {
         const d = snap.data();
         document.getElementById('edit-name').value = d.name || '';
-        document.getElementById('edit-avatar-letter').textContent = (d.name || 'U')[0].toUpperCase();
+        setAvatarDisplay('edit-avatar-letter', d.name, d.photoURL);
         document.getElementById('edit-car-model').value = d.carModel || '';
         document.getElementById('edit-car-color').value = d.carColor || '';
         document.getElementById('edit-car-plate').value = d.carPlate || '';
@@ -2737,6 +2757,43 @@
       closePanel('panel-edit-profile');
       showToast('Profil mis à jour !', 'success');
     } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  // ===== UPLOAD PHOTO DE PROFIL =====
+  window.handleAvatarFileSelected = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validation : type et taille
+    if (!file.type.startsWith('image/')) {
+      showToast('Merci de choisir une image', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image trop lourde (max 5 Mo)', 'error');
+      return;
+    }
+
+    showToast('Envoi de la photo...', 'success');
+    try {
+      const fileRef = storageRef(storage, `profiles/${currentUser.uid}/avatar.jpg`);
+      await uploadBytes(fileRef, file);
+      const photoURL = await getDownloadURL(fileRef);
+
+      // Sauvegarde l'URL dans Firestore
+      await setDoc(doc(db, 'users', currentUser.uid), { photoURL }, { merge: true });
+
+      // Met à jour l'affichage immédiatement (panneau d'édition + profil principal)
+      setAvatarDisplay('edit-avatar-letter', document.getElementById('edit-name').value, photoURL);
+      const freshDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      refreshProfileUI(currentUser, freshDoc.data());
+
+      showToast('Photo de profil mise à jour !', 'success');
+    } catch(e) {
+      showToast('Erreur upload: ' + e.message, 'error');
+    }
+    // Réinitialise l'input pour permettre de resélectionner le même fichier plus tard
+    event.target.value = '';
   }
 
   // ===== MY TRIPS =====
