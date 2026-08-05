@@ -828,6 +828,10 @@
           <input type="time" id="pub-time"/>
         </div>
       </div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:10px;font-size:13px;color:var(--text-muted)">
+        <input type="checkbox" id="pub-recurring" style="width:16px;height:16px;flex-shrink:0"/>
+        Répéter ce trajet chaque semaine, le même jour
+      </label>
     </div>
 
     <div class="form-section">
@@ -1092,6 +1096,13 @@
     </div>
   </div>
   <div class="chat-messages" id="chat-messages"></div>
+  <div id="quick-replies" style="display:flex;gap:8px;padding:8px 16px 0 16px;overflow-x:auto;white-space:nowrap">
+    <button class="option-toggle" style="flex-shrink:0;font-size:12px;padding:7px 12px;display:inline-flex;align-items:center;gap:5px" onclick="sendQuickReply('Je suis en route')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> En route</button>
+    <button class="option-toggle" style="flex-shrink:0;font-size:12px;padding:7px 12px;display:inline-flex;align-items:center;gap:5px" onclick="sendQuickReply('J\'arrive dans 5 min')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/></svg> 5 min</button>
+    <button class="option-toggle" style="flex-shrink:0;font-size:12px;padding:7px 12px;display:inline-flex;align-items:center;gap:5px" onclick="sendQuickReply('Je suis arrivé(e)')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.3"/></svg> Arrivé</button>
+    <button class="option-toggle" style="flex-shrink:0;font-size:12px;padding:7px 12px;display:inline-flex;align-items:center;gap:5px" onclick="sendQuickReply('Je suis en retard')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 16h.01"/></svg> Retard</button>
+    <button class="option-toggle" style="flex-shrink:0;font-size:12px;padding:7px 12px;display:inline-flex;align-items:center;gap:5px" onclick="sendQuickReply('D\'accord')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> OK</button>
+  </div>
   <div id="edit-msg-bar" style="display:none;padding:8px 16px;background:rgba(232,82,10,.1);border-top:1px solid var(--orange);font-size:12px;color:var(--orange);display:none;align-items:center;justify-content:space-between">
     <span style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Modification en cours...</span>
     <button onclick="cancelEditMsg()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
@@ -1178,6 +1189,7 @@
       <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Mes publications</button>
       <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Mes réservations</button>
     </div>
+    <div id="recurring-trips-list"></div>
     <div id="my-trips-list">
       <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
     </div>
@@ -1617,6 +1629,7 @@
         loadConversations();
         checkPendingRatings();
         refreshNotifBadge();
+        checkAndPublishRecurringTrips();
         if (!sessionStorage.getItem('yoonu-welcomed')) {
           sessionStorage.setItem('yoonu-welcomed', '1');
           const firstName = (data.name || 'voyageur').split(' ')[0];
@@ -2506,6 +2519,23 @@
         driverRating: userData.rating||5,
         createdAt: serverTimestamp()
       });
+
+      // Trajet récurrent : sauvegarde un modèle pour republication automatique chaque semaine
+      const isRecurring = document.getElementById('pub-recurring').checked;
+      if (isRecurring) {
+        await addDoc(collection(db, 'recurringTrips'), {
+          type, from, to, time,
+          seats: Number(seats), price: price ? Number(price) : 0,
+          note, options: selectedOptions,
+          dayOfWeek: new Date(date + 'T12:00:00').getDay(),
+          ownerId: currentUser.uid,
+          ownerName: userData.name,
+          ownerPhone: currentUser.phoneNumber || userData.phone || '',
+          active: true,
+          lastPublishedDate: date,
+          createdAt: serverTimestamp()
+        });
+      }
       // Incrémenter le compteur de trajets du conducteur
       await setDoc(doc(db, 'users', currentUser.uid), {
         tripsCount: (userData.tripsCount || 0) + 1
@@ -2522,6 +2552,7 @@
       document.getElementById('pub-price').value = '';
       document.getElementById('pub-note').value = '';
       document.getElementById('pub-date-error').style.display = 'none';
+      document.getElementById('pub-recurring').checked = false;
       selectedOptions = [];
       document.querySelectorAll('.option-toggle.on').forEach(b => b.classList.remove('on'));
       setHomeType(type);
@@ -2532,6 +2563,76 @@
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
     }
+  }
+
+  // ===== TRAJETS RÉCURRENTS =====
+  // Vérifie les modèles récurrents de l'utilisateur et republie automatiquement
+  // l'occurrence à venir si elle n'a pas encore été publiée (appelé à chaque connexion)
+  function nextOccurrenceDate(lastDateStr, dayOfWeek) {
+    const d = new Date(lastDateStr + 'T12:00:00');
+    d.setDate(d.getDate() + 1);
+    while (d.getDay() !== dayOfWeek) d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  }
+
+  async function checkAndPublishRecurringTrips() {
+    try {
+      const q = query(collection(db, 'recurringTrips'), where('ownerId', '==', currentUser.uid), where('active', '==', true));
+      const snap = await getDocs(q);
+      const today = new Date().toISOString().slice(0, 10);
+      for (const docSnap of snap.docs) {
+        const r = docSnap.data();
+        const nextDate = nextOccurrenceDate(r.lastPublishedDate, r.dayOfWeek);
+        const daysUntil = (new Date(nextDate) - new Date(today)) / (1000 * 60 * 60 * 24);
+        // On republie seulement si la prochaine occurrence tombe dans les 3 prochains jours
+        if (daysUntil >= 0 && daysUntil <= 3) {
+          await addDoc(collection(db, 'trips'), {
+            type: r.type, from: r.from, to: r.to, date: nextDate, time: r.time,
+            seats: r.seats, price: r.price, note: r.note, options: r.options || [],
+            driverId: currentUser.uid,
+            driverName: r.ownerName,
+            driverPhone: r.ownerPhone,
+            driverRating: 5,
+            recurringId: docSnap.id,
+            createdAt: serverTimestamp()
+          });
+          await updateDoc(doc(db, 'recurringTrips', docSnap.id), { lastPublishedDate: nextDate });
+        }
+      }
+    } catch(e) { console.error('Erreur trajets récurrents:', e); }
+  }
+
+  window.stopRecurringTrip = async function(id) {
+    try {
+      await updateDoc(doc(db, 'recurringTrips', id), { active: false });
+      showToast('Trajet récurrent arrêté', 'success');
+      loadRecurringTripsList();
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  async function loadRecurringTripsList() {
+    const container = document.getElementById('recurring-trips-list');
+    if (!container) return;
+    try {
+      const q = query(collection(db, 'recurringTrips'), where('ownerId', '==', currentUser.uid), where('active', '==', true));
+      const snap = await getDocs(q);
+      if (snap.empty) { container.innerHTML = ''; return; }
+      const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+      container.innerHTML = '<div class="section-title" style="margin-bottom:10px">🔁 Trajets récurrents actifs</div>' +
+        snap.docs.map(d => {
+          const r = d.data();
+          return `<div class="trip-card" style="margin-bottom:10px">
+            <div class="trip-header">
+              <div class="trip-route">${r.from} → ${r.to}</div>
+              <div class="trip-price">${r.price} FCFA</div>
+            </div>
+            <div class="trip-meta">
+              <div class="trip-badge">Chaque ${days[r.dayOfWeek]} à ${r.time}</div>
+            </div>
+            <button class="btn btn-ghost" style="margin-top:8px;padding:8px;font-size:12px" onclick="stopRecurringTrip('${d.id}')">Arrêter la répétition</button>
+          </div>`;
+        }).join('');
+    } catch(e) { console.error(e); }
   }
 
   // ===== CHAT =====
@@ -2619,6 +2720,19 @@
       await deleteDoc(doc(db, col, tripId, 'messages', msgId));
       showToast('Message supprimé','success');
     } catch(e) { showToast('Erreur suppression','error'); }
+  }
+
+  window.sendQuickReply = async function(text) {
+    const chatScreen = document.getElementById('chat-screen');
+    const tripId = chatScreen.dataset.tripId;
+    const col = chatScreen.dataset.collection || 'trips';
+    try {
+      await addDoc(collection(db, col, tripId, 'messages'), {
+        text, senderId: currentUser.uid,
+        senderName: currentUser.displayName || currentUser.phoneNumber,
+        createdAt: serverTimestamp()
+      });
+    } catch(e) { showToast('Erreur envoi','error'); }
   }
 
   window.sendMsg = async function() {
@@ -2835,12 +2949,14 @@
   window.openMyTrips = function() {
     document.getElementById('panel-my-trips').classList.add('open');
     loadMyTrips('driver');
+    loadRecurringTripsList();
   }
 
   window.switchTripsTab = function(tab) {
     currentTripsTab = tab;
     document.getElementById('tab-driver').classList.toggle('on', tab === 'driver');
     document.getElementById('tab-passenger').classList.toggle('on', tab === 'passenger');
+    document.getElementById('recurring-trips-list').style.display = tab === 'driver' ? 'block' : 'none';
     loadMyTrips(tab);
   }
 
