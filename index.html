@@ -1014,6 +1014,14 @@
             <input type="text" id="loc-modele" placeholder="Ex: Land Cruiser"/>
           </div>
         </div>
+        <div class="input-group">
+          <label>Photo du véhicule (optionnel)</label>
+          <div id="loc-photo-picker" onclick="document.getElementById('loc-photo-input').click()" style="cursor:pointer;border:1.5px dashed var(--border,#ddd);border-radius:12px;height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafafa">
+            <span id="loc-photo-placeholder" style="color:var(--text-muted);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-6 6"/></svg>Ajouter une photo</span>
+            <img id="loc-photo-preview" style="display:none;width:100%;height:100%;object-fit:cover"/>
+          </div>
+          <input type="file" id="loc-photo-input" accept="image/*" style="display:none" onchange="handleRentalPhotoSelected(event)"/>
+        </div>
       </div>
 
       <div class="form-section">
@@ -1568,6 +1576,19 @@
   let currentRentalBrowseType = 'offre';
   let currentRentalPublishType = 'offre';
   let rentalAvecChauffeur = false;
+  let rentalSelectedPhotoFile = null;
+
+  window.handleRentalPhotoSelected = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('Merci de choisir une image', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('Image trop lourde (max 5 Mo)', 'error'); return; }
+    rentalSelectedPhotoFile = file;
+    const preview = document.getElementById('loc-photo-preview');
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = 'block';
+    document.getElementById('loc-photo-placeholder').style.display = 'none';
+  }
   let currentRentalData = null;
 
   // ===== AUTH STATE =====
@@ -2162,6 +2183,7 @@
     const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || RENTAL_CATEGORIES[r.category] || 'Véhicule';
     return `<div class="trip-card" onclick="openRental(${JSON.stringify(r).replace(/"/g,'&quot;')})">
       ${typeBadge}
+      ${r.photoURL ? `<img src="${r.photoURL}" style="width:100%;height:130px;object-fit:cover;border-radius:12px;margin-bottom:10px"/>` : ''}
       <div class="trip-header">
         <div class="trip-route">${vehicleName}</div>
         <div class="trip-price">${priceText}</div>
@@ -2186,6 +2208,7 @@
     document.getElementById('modal-route').textContent = vehicleName;
     const priceText = r.price ? `${Number(r.price).toLocaleString('fr-FR')} FCFA/jour` : 'Prix à négocier';
     document.getElementById('modal-content').innerHTML = `
+      ${r.photoURL ? `<img src="${r.photoURL}" style="width:100%;height:160px;object-fit:cover;border-radius:12px;margin-bottom:12px"/>` : ''}
       <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${r.note||'Aucune note'}</p>
       <div class="trip-meta" style="margin-bottom:12px">
         <div class="trip-badge">${RENTAL_CATEGORIES[r.category]||r.category||''}</div>
@@ -2233,12 +2256,18 @@
     const userData = userDoc.data();
 
     try {
+      let photoURL = '';
+      if (rentalSelectedPhotoFile) {
+        const fileRef = storageRef(storage, `vehicles/${currentUser.uid}/${Date.now()}.jpg`);
+        await uploadBytes(fileRef, rentalSelectedPhotoFile);
+        photoURL = await getDownloadURL(fileRef);
+      }
       await addDoc(collection(db, 'rentals'), {
         type, category, marque, modele, ville,
         dateDebut, dateFin,
         price: price ? Number(price) : 0,
         avecChauffeur: rentalAvecChauffeur,
-        note,
+        note, photoURL,
         statut: 'actif',
         ownerId: currentUser.uid,
         ownerName: userData.name,
@@ -2255,6 +2284,10 @@
       document.getElementById('loc-price').value = '';
       document.getElementById('loc-note').value = '';
       rentalAvecChauffeur = false;
+      rentalSelectedPhotoFile = null;
+      document.getElementById('loc-photo-preview').style.display = 'none';
+      document.getElementById('loc-photo-preview').src = '';
+      document.getElementById('loc-photo-placeholder').style.display = 'flex';
       document.getElementById('loc-chauffeur-toggle').classList.remove('on');
       document.getElementById('loc-chauffeur-label').textContent = 'Avec chauffeur';
       setRentalBrowseType(type);
