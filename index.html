@@ -693,6 +693,11 @@
       <button class="btn btn-primary" onclick="searchTrips()" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Rechercher</button>
     </div>
 
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="option-toggle" style="flex:1;justify-content:center;padding:10px" onclick="quickAirportSearch('to')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.5 1.5 0 0 0-2.1-2.1L13.9 8.9 5.7 7.1a1 1 0 0 0-.9 1.7L8.5 12 6 14.5H4l-1.5 1.5L6 17.5 7.5 21 9 19.5v-2L11.5 15l3.6 3.7a1 1 0 0 0 1.7-.9Z"/></svg> Vers l'aéroport</button>
+      <button class="option-toggle" style="flex:1;justify-content:center;padding:10px" onclick="quickAirportSearch('from')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.5 1.5 0 0 0-2.1-2.1L13.9 8.9 5.7 7.1a1 1 0 0 0-.9 1.7L8.5 12 6 14.5H4l-1.5 1.5L6 17.5 7.5 21 9 19.5v-2L11.5 15l3.6 3.7a1 1 0 0 0 1.7-.9Z"/></svg> Depuis l'aéroport</button>
+    </div>
+
     <div class="map-deco" aria-hidden="true">
       <div class="map-pin start"></div>
       <div class="map-pin end"></div>
@@ -721,6 +726,9 @@
         <select id="pub-from" onchange="updatePriceHint()">
           <option value="">Choisir...</option>
           <option value="">Choisir une ville...</option>
+          <optgroup label="✈️ Aéroport">
+            <option>Aéroport Blaise Diagne (AIBD)</option>
+          </optgroup>
           <optgroup label="🏙️ Dakar">
             <option>Dakar</option><option>Pikine</option><option>Guédiawaye</option><option>Rufisque</option><option>Bargny</option>
           </optgroup>
@@ -770,6 +778,9 @@
         <select id="pub-to" onchange="updatePriceHint()">
           <option value="">Choisir...</option>
           <option value="">Choisir une ville...</option>
+          <optgroup label="✈️ Aéroport">
+            <option>Aéroport Blaise Diagne (AIBD)</option>
+          </optgroup>
           <optgroup label="🏙️ Dakar">
             <option>Dakar</option><option>Pikine</option><option>Guédiawaye</option><option>Rufisque</option><option>Bargny</option>
           </optgroup>
@@ -2062,6 +2073,20 @@
     const f = document.getElementById('search-from').value;
     const t = document.getElementById('search-to').value;
     loadTrips(f, t);
+  }
+
+  // Raccourci Aéroport : pré-remplit le champ concerné et lance la recherche
+  window.quickAirportSearch = function(direction) {
+    const fromInput = document.getElementById('search-from');
+    const toInput = document.getElementById('search-to');
+    if (direction === 'to') {
+      fromInput.value = '';
+      toInput.value = 'Aéroport';
+    } else {
+      fromInput.value = 'Aéroport';
+      toInput.value = '';
+    }
+    searchTrips();
   }
 
   window.openTrip = function(t) {
