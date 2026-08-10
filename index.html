@@ -232,6 +232,7 @@
 
   /* BADGE CONFIANCE */
   .trust-badge { display:inline-flex; align-items:center; gap:3px; background:rgba(23,201,120,.14); color:var(--green); font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:100px; margin-left:6px; }
+  .verified-badge { display:inline-flex; align-items:center; gap:3px; background:rgba(30,144,255,.14); color:#1e90ff; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:100px; margin-left:6px; }
 
   /* HOME */
   .greeting { font-size: 25px; font-weight: 800; margin-bottom: 4px; letter-spacing: -.6px; }
@@ -560,8 +561,22 @@
     * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/[email protected]/dist/leaflet.css"/>
 </head>
 <body class="theme-light">
+
+<!-- SUIVI EN DIRECT (vue publique, accessible via lien partagé, sans connexion) -->
+<div id="live-track-view" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--dark, #faf9f7);flex-direction:column">
+  <div style="background:linear-gradient(135deg,#e8520a,#ff7a3d);color:white;padding:16px 20px;display:flex;align-items:center;gap:10px">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>
+    <div>
+      <div style="font-weight:800;font-size:15px">Yoonu — Suivi en direct</div>
+      <div id="live-track-route" style="font-size:12.5px;opacity:.9">Chargement...</div>
+    </div>
+  </div>
+  <div id="live-track-map" style="flex:1;width:100%"></div>
+  <div id="live-track-status" style="padding:14px 20px;font-size:13px;color:var(--text-muted);text-align:center;background:var(--dark3,#fff)">Connexion au suivi...</div>
+</div>
 
 <!-- SPLASH -->
 <div id="splash">
@@ -663,7 +678,7 @@
     <div class="header-logo" style="display:flex;align-items:center;gap:8px"><img src="logo-car.png" alt="" style="height:32px;width:auto;border-radius:9px;display:block"/>Yoonu</div>
     <div class="header-actions">
       <div class="icon-btn" onclick="openNotifications()" style="position:relative">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.5 21a1.5 1.5 0 0 0 3 0"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/><path d="M8.2 12.2a5.4 5.4 0 0 1 7.6 0"/><path d="M5 9a9.5 9.5 0 0 1 14 0"/></svg>
         <div id="notif-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e53935;color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;border:2px solid var(--dark2)">0</div>
       </div>
     </div>
@@ -695,7 +710,10 @@
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v13M7 4 3.5 7.5M7 4l3.5 3.5"/><path d="M17 20V7M17 20l3.5-3.5M17 20l-3.5-3.5"/></svg>
         </button>
       </div>
-      <button class="btn btn-primary" onclick="searchTrips()" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Rechercher</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="searchTrips()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Rechercher</button>
+        <button class="btn btn-ghost" onclick="saveCurrentSearch()" title="M'alerter" style="width:48px;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/><path d="M8.2 12.2a5.4 5.4 0 0 1 7.6 0"/><path d="M5 9a9.5 9.5 0 0 1 14 0"/></svg></button>
+      </div>
     </div>
 
     <div style="display:flex;gap:10px;margin-top:14px">
@@ -923,6 +941,11 @@
       <div><div class="menu-label">Mes trajets</div><div class="menu-sub">Historique et en cours</div></div>
       <div class="menu-arrow">›</div>
     </div>
+    <div class="menu-item" onclick="openMyAlerts()">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/><path d="M8.2 12.2a5.4 5.4 0 0 1 7.6 0"/><path d="M5 9a9.5 9.5 0 0 1 14 0"/></svg></div>
+      <div><div class="menu-label">Mes alertes</div><div class="menu-sub">Recherches sauvegardées</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
     <div class="menu-item" onclick="showToast('Fonctionnalité à venir')">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg></div>
       <div><div class="menu-label">Paiements</div><div class="menu-sub">Wave, Orange Money</div></div>
@@ -1137,6 +1160,7 @@
     <div class="modal-title" id="modal-route">Dakar → Thiès</div>
     <div id="modal-content"></div>
     <button class="btn btn-primary" id="modal-action-btn" onclick="bookTrip()" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span id="modal-action-label">Réserver ma place</span></button>
+    <button class="btn btn-ghost" id="modal-share-btn" onclick="shareTripWhatsapp()" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;color:#25D366;border-color:#25D366"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.03c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.13-4.9-4.32-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.28.58-.35.78-.35.19 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.09.18-.14.3-.28.46-.14.16-.29.36-.42.48-.14.13-.28.28-.12.55.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.11.6-.07.16-.19.68-.79.87-1.06.18-.28.36-.23.6-.14.24.09 1.53.72 1.79.85.27.14.44.2.51.31.07.11.07.65-.17 1.32Z"/></svg> Partager sur WhatsApp</button>
     <button class="btn btn-ghost" onclick="closeModal()">Fermer</button>
   </div>
 </div>
@@ -1213,6 +1237,20 @@
   </div>
 </div>
 
+<!-- ===== MES ALERTES PANEL ===== -->
+<div class="panel" id="panel-my-alerts">
+  <div class="panel-header">
+    <button class="panel-back" onclick="closePanel('panel-my-alerts')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="panel-title">Mes alertes</div>
+  </div>
+  <div class="panel-body">
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Vous serez notifié dès qu'un trajet correspondant est publié, tant que l'app est ouverte.</p>
+    <div id="my-alerts-list">
+      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== PANEL THÈME ===== -->
 <div class="panel" id="panel-theme">
   <div class="panel-header">
@@ -1266,7 +1304,7 @@
     <button onclick="markAllRead()" style="background:none;border:none;color:var(--orange);font-size:13px;cursor:pointer;margin-left:auto">Tout lire</button>
   </div>
   <div class="panel-body" id="notif-list">
-    <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.5 21a1.5 1.5 0 0 0 3 0"/></svg></div><div class="empty-text">Aucune notification</div></div>
+    <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/><path d="M8.2 12.2a5.4 5.4 0 0 1 7.6 0"/><path d="M5 9a9.5 9.5 0 0 1 14 0"/></svg></div><div class="empty-text">Aucune notification</div></div>
   </div>
 </div>
 
@@ -1561,6 +1599,7 @@
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE -->
+<script src="https://unpkg.com/[email protected]/dist/leaflet.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, setPersistence, browserLocalPersistence, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePhoneNumber, PhoneAuthProvider, sendPasswordResetEmail, deleteUser, reauthenticateWithCredential, EmailAuthProvider }
@@ -1647,6 +1686,7 @@
         checkPendingRatings();
         refreshNotifBadge();
         checkAndPublishRecurringTrips();
+        refreshSavedSearchesCache().then(startAlertsListener);
         if (!sessionStorage.getItem('yoonu-welcomed')) {
           sessionStorage.setItem('yoonu-welcomed', '1');
           const firstName = (data.name || 'voyageur').split(' ')[0];
@@ -1680,7 +1720,7 @@
     const name = data.name || 'Voyageur';
     const initial = name[0].toUpperCase();
     document.getElementById('user-greeting').textContent = name.split(' ')[0];
-    document.getElementById('profile-display-name').textContent = name;
+    document.getElementById('profile-display-name').innerHTML = name + verifiedBadge(user.phoneNumber) + tierBadge(data.tripsCount);
     document.getElementById('profile-display-phone').textContent = user.phoneNumber || user.email || '';
     setAvatarDisplay('profile-avatar-letter', name, data.photoURL);
     document.getElementById('stat-trips').textContent = data.tripsCount != null ? data.tripsCount : 0;
@@ -2019,13 +2059,28 @@
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(t.driverName||'?')[0].toUpperCase()}</div>
-        <div class="driver-info"><div class="driver-name">${t.driverName||(isPassager?'Passager':'Conducteur')}${(t.driverRating||5) >= 4.5 ? `<span class="trust-badge">${ICON_SHIELD_CHECK} Fiable</span>` : ''}</div></div>
+        <div class="driver-info"><div class="driver-name">${t.driverName||(isPassager?'Passager':'Conducteur')}${verifiedBadge(t.driverPhone)}${(t.driverRating||5) >= 4.5 ? `<span class="trust-badge">${ICON_SHIELD_CHECK} Fiable</span>` : ''}</div></div>
         <div class="rating-chip">${ICON_STAR_FILL} ${t.driverRating||5}</div>
       </div>
     </div>`;
   }
 
   const ICON_SHIELD_CHECK = '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/></svg>';
+  const ICON_VERIFIED = '<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 2 14.5 4.2 17.7 3.6 18.6 6.7 21.6 8.2 20.5 11.3 21.6 14.4 18.6 15.9 17.7 19 14.5 18.4 12 20.6 9.5 18.4 6.3 19 5.4 15.9 2.4 14.4 3.5 11.3 2.4 8.2 5.4 6.7 6.3 3.6 9.5 4.2Z"/><path d="M9 12l2 2 4-4" stroke="var(--dark)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+  function verifiedBadge(phone) {
+    return phone ? `<span class="verified-badge">${ICON_VERIFIED} Vérifié</span>` : '';
+  }
+
+  // Badge de niveau selon le nombre de trajets effectués
+  function tierBadge(tripsCount) {
+    const n = tripsCount || 0;
+    let tier;
+    if (n >= 50) tier = { label: 'Or', color: '#d4a017', bg: 'rgba(212,160,23,.16)' };
+    else if (n >= 20) tier = { label: 'Argent', color: '#8a8f98', bg: 'rgba(138,143,152,.16)' };
+    else if (n >= 5) tier = { label: 'Bronze', color: '#b5651d', bg: 'rgba(181,101,29,.16)' };
+    else return '';
+    return `<span class="verified-badge" style="background:${tier.bg};color:${tier.color}"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5 7 21l5-2.5 5 2.5-1.5-7.5"/></svg> ${tier.label}</span>`;
+  }
 
   const ICON_CALENDAR = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>';
   const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>';
@@ -2104,6 +2159,7 @@
 
   window.openTrip = function(t) {
     currentTripData = t;
+    currentRentalData = null;
     const isPassager = (t.type||'conducteur') === 'passager';
     document.getElementById('modal-route').textContent = `${t.from} → ${t.to}`;
     const priceText = isPassager
@@ -2120,9 +2176,17 @@
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(t.driverName||'?')[0].toUpperCase()}</div>
-        <div><div class="driver-name">${t.driverName||(isPassager?'Passager':'Conducteur')}</div><div style="font-size:12px;color:var(--text-muted)">${t.driverPhone||''}</div></div>
+        <div><div class="driver-name" id="modal-driver-name">${t.driverName||(isPassager?'Passager':'Conducteur')}${verifiedBadge(t.driverPhone)}</div><div style="font-size:12px;color:var(--text-muted)">${t.driverPhone||''}</div></div>
         <div class="rating-chip">${ICON_STAR_FILL} ${t.driverRating||5}</div>
       </div>`;
+    if (t.driverId) {
+      getDoc(doc(db, 'users', t.driverId)).then(dSnap => {
+        if (dSnap.exists()) {
+          const badge = tierBadge(dSnap.data().tripsCount);
+          if (badge) document.getElementById('modal-driver-name').insertAdjacentHTML('beforeend', badge);
+        }
+      }).catch(()=>{});
+    }
     const actionBtn = document.getElementById('modal-action-btn');
     const actionLabel = document.getElementById('modal-action-label');
     if (isPassager) {
@@ -2146,6 +2210,29 @@
     }
     closeModal();
     openChatWithDriver(currentTripData);
+  }
+
+  // Partage un trajet (ou une annonce de location) sur WhatsApp avec un texte prérempli
+  window.shareTripWhatsapp = function() {
+    const appUrl = 'https://mamemor7878-svg.github.io/Yoonu/';
+    let text;
+    if (currentRentalData) {
+      const r = currentRentalData;
+      text = `🚗 ${r.marque||''} ${r.modele||''} disponible en location sur Yoonu !\n`
+           + `📍 ${r.ville||''}\n`
+           + (r.price ? `💰 ${Number(r.price).toLocaleString('fr-FR')} FCFA/jour\n` : '')
+           + `\nVoir l'annonce : ${appUrl}`;
+    } else if (currentTripData) {
+      const t = currentTripData;
+      const isPassager = (t.type||'conducteur') === 'passager';
+      text = isPassager
+        ? `🙋 Recherche de covoiturage sur Yoonu !\n📍 ${t.from} → ${t.to}\n📅 ${t.date||''} à ${t.time||''}\n\nRejoins-le/la sur Yoonu : ${appUrl}`
+        : `🚗 Trajet en covoiturage disponible sur Yoonu !\n📍 ${t.from} → ${t.to}\n📅 ${t.date||''} à ${t.time||''}\n💰 ${t.price ? Number(t.price).toLocaleString('fr-FR')+' FCFA' : 'Prix à négocier'}\n\nRéserve ta place : ${appUrl}`;
+    } else {
+      return;
+    }
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, '_blank');
   }
 
   // ===== LOCATION DE VÉHICULE =====
@@ -2255,6 +2342,7 @@
 
   window.openRental = function(r) {
     currentRentalData = r;
+    currentTripData = null;
     const isOffre = (r.type||'offre') === 'offre';
     const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || RENTAL_CATEGORIES[r.category] || 'Véhicule';
     document.getElementById('modal-route').textContent = vehicleName;
@@ -2271,7 +2359,7 @@
       </div>
       <div class="trip-driver">
         <div class="driver-avatar">${(r.ownerName||'?')[0].toUpperCase()}</div>
-        <div><div class="driver-name">${r.ownerName||'Propriétaire'}</div><div style="font-size:12px;color:var(--text-muted)">${r.ownerPhone||''}</div></div>
+        <div><div class="driver-name">${r.ownerName||'Propriétaire'}${verifiedBadge(r.ownerPhone)}</div><div style="font-size:12px;color:var(--text-muted)">${r.ownerPhone||''}</div></div>
         <div class="rating-chip">${ICON_STAR_FILL} ${r.ownerRating||5}</div>
       </div>`;
     const actionBtn = document.getElementById('modal-action-btn');
@@ -2673,6 +2761,195 @@
         }).join('');
     } catch(e) { console.error(e); }
   }
+
+  // ===== PARTAGE DE TRAJET EN DIRECT =====
+  let liveShareId = null;
+  let liveShareWatchId = null;
+  let liveShareUnsub = null;
+  let liveTrackMap = null;
+  let liveTrackMarker = null;
+
+  // ===== ALERTES / RECHERCHES SAUVEGARDÉES =====
+  let savedSearchesCache = [];
+  let alertsListenerUnsub = null;
+  const appLoginTimestamp = new Date();
+
+  window.saveCurrentSearch = async function() {
+    const from = document.getElementById('search-from').value.trim();
+    const to = document.getElementById('search-to').value.trim();
+    if (!from && !to) { showToast('Renseignez au moins un départ ou une destination', 'error'); return; }
+    try {
+      await addDoc(collection(db, 'savedSearches'), {
+        userId: currentUser.uid, from, to, createdAt: serverTimestamp()
+      });
+      showToast('Alerte créée ! Vous serez notifié.', 'success');
+      await refreshSavedSearchesCache();
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  async function refreshSavedSearchesCache() {
+    const q = query(collection(db, 'savedSearches'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+    savedSearchesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
+
+  window.deleteAlert = async function(id) {
+    try {
+      await deleteDoc(doc(db, 'savedSearches', id));
+      showToast('Alerte supprimée', 'success');
+      await refreshSavedSearchesCache();
+      openMyAlerts();
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  window.openMyAlerts = async function() {
+    document.getElementById('panel-my-alerts').classList.add('open');
+    await refreshSavedSearchesCache();
+    const list = document.getElementById('my-alerts-list');
+    if (savedSearchesCache.length === 0) {
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/><path d="M8.2 12.2a5.4 5.4 0 0 1 7.6 0"/><path d="M5 9a9.5 9.5 0 0 1 14 0"/></svg></div><div class="empty-text">Aucune alerte pour l\'instant</div></div>';
+      return;
+    }
+    list.innerHTML = savedSearchesCache.map(s => `<div class="trip-card" style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div class="trip-route" style="margin:0">${s.from || 'N\'importe où'} → ${s.to || 'N\'importe où'}</div>
+      <button class="btn btn-ghost" style="width:auto;padding:7px 12px;font-size:12px;border-color:var(--red);color:var(--red)" onclick="deleteAlert('${s.id}')">Supprimer</button>
+    </div>`).join('');
+  }
+
+  // Écoute les nouveaux trajets publiés et alerte si une recherche sauvegardée correspond
+  function startAlertsListener() {
+    const q = query(collection(db, 'trips'), orderBy('createdAt', 'desc'));
+    alertsListenerUnsub = onSnapshot(q, (snap) => {
+      snap.docChanges().forEach((change) => {
+        if (change.type !== 'added') return;
+        const t = change.doc.data();
+        if (!t.createdAt || t.createdAt.toDate() <= appLoginTimestamp) return; // ignore l'historique déjà présent au login
+        if (t.driverId === currentUser.uid) return; // pas d'alerte sur ses propres publications
+
+        const match = savedSearchesCache.find(s => {
+          const fromOk = !s.from || (t.from || '').toLowerCase().includes(s.from.toLowerCase());
+          const toOk = !s.to || (t.to || '').toLowerCase().includes(s.to.toLowerCase());
+          return fromOk && toOk;
+        });
+        if (!match) return;
+
+        const msg = `Nouveau trajet ${t.from} → ${t.to} disponible !`;
+        showToast('🔔 ' + msg, 'success');
+        if (window.Notification && Notification.permission === 'granted') {
+          new Notification('Yoonu', { body: msg, icon: 'icon-192.png' });
+        }
+      });
+    });
+  }
+
+  if (window.Notification && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+
+  window.startLiveShare = async function(fromLabel, toLabel) {
+    if (!navigator.geolocation) { showToast('Géolocalisation non supportée', 'error'); return; }
+    if (liveShareId) { showToast('Un partage est déjà actif', 'error'); return; }
+
+    showToast('Activation du partage en direct...', 'success');
+    try {
+      const shareDoc = await addDoc(collection(db, 'liveShares'), {
+        userId: currentUser.uid,
+        userName: currentUser.displayName || 'Un utilisateur',
+        from: fromLabel, to: toLabel,
+        lat: null, lng: null,
+        active: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        expiresAt: new Date(Date.now() + 6 * 60 * 60 * 1000) // expire dans 6h
+      });
+      liveShareId = shareDoc.id;
+
+      // Met à jour la position à chaque changement, avec un minimum de 10s entre deux écritures
+      let lastWrite = 0;
+      liveShareWatchId = navigator.geolocation.watchPosition(async (pos) => {
+        const now = Date.now();
+        if (now - lastWrite < 10000) return;
+        lastWrite = now;
+        try {
+          await updateDoc(doc(db, 'liveShares', liveShareId), {
+            lat: pos.coords.latitude, lng: pos.coords.longitude,
+            updatedAt: serverTimestamp()
+          });
+        } catch(e) {}
+      }, (err) => {
+        showToast('Position indisponible : ' + err.message, 'error');
+      }, { enableHighAccuracy: true, maximumAge: 5000 });
+
+      // Ouvre le partage WhatsApp avec le lien de suivi
+      const trackUrl = `https://mamemor7878-svg.github.io/Yoonu/?track=${liveShareId}`;
+      const text = `📍 Je partage ma position en direct pour mon trajet ${fromLabel} → ${toLabel} sur Yoonu.\nSuis-moi ici : ${trackUrl}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+
+      showLiveShareBanner();
+    } catch(e) {
+      showToast('Erreur: ' + e.message, 'error');
+    }
+  }
+
+  window.stopLiveShare = async function() {
+    if (liveShareWatchId != null) navigator.geolocation.clearWatch(liveShareWatchId);
+    if (liveShareId) {
+      try { await updateDoc(doc(db, 'liveShares', liveShareId), { active: false }); } catch(e) {}
+    }
+    liveShareId = null;
+    liveShareWatchId = null;
+    const banner = document.getElementById('live-share-banner');
+    if (banner) banner.remove();
+    showToast('Partage en direct arrêté', 'success');
+  }
+
+  function showLiveShareBanner() {
+    if (document.getElementById('live-share-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'live-share-banner';
+    banner.style.cssText = 'position:fixed;bottom:78px;left:16px;right:16px;max-width:448px;margin:0 auto;background:#1e90ff;color:white;border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:500;box-shadow:0 8px 20px -6px rgba(30,144,255,.5)';
+    banner.innerHTML = `<span style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.3"/></svg> Partage en direct actif</span><button onclick="stopLiveShare()" style="background:rgba(255,255,255,.25);border:none;color:white;font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer">Arrêter</button>`;
+    document.body.appendChild(banner);
+  }
+
+  // Vue publique de suivi (accessible via ?track=ID dans l'URL, sans connexion requise)
+  function initLiveTrackView(shareId) {
+    document.getElementById('live-track-view').style.display = 'flex';
+    liveTrackMap = L.map('live-track-map').setView([14.7, -17.4], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(liveTrackMap);
+
+    liveShareUnsub = onSnapshot(doc(db, 'liveShares', shareId), (snap) => {
+      if (!snap.exists() || !snap.data().active) {
+        document.getElementById('live-track-status').textContent = 'Ce partage de trajet n\'est plus actif.';
+        return;
+      }
+      const d = snap.data();
+      document.getElementById('live-track-route').textContent = `${d.from||''} → ${d.to||''}`;
+      if (d.lat != null && d.lng != null) {
+        const pos = [d.lat, d.lng];
+        if (!liveTrackMarker) {
+          liveTrackMarker = L.marker(pos).addTo(liveTrackMap);
+          liveTrackMap.setView(pos, 14);
+        } else {
+          liveTrackMarker.setLatLng(pos);
+          liveTrackMap.setView(pos, liveTrackMap.getZoom());
+        }
+        const updatedDate = d.updatedAt && d.updatedAt.toDate ? d.updatedAt.toDate() : new Date();
+        document.getElementById('live-track-status').textContent = `Dernière position : ${updatedDate.toLocaleTimeString('fr-FR')}`;
+      } else {
+        document.getElementById('live-track-status').textContent = 'En attente de la position...';
+      }
+    });
+  }
+
+  // Vérifie au chargement si l'URL contient ?track=ID
+  (function checkTrackParam() {
+    const params = new URLSearchParams(window.location.search);
+    const trackId = params.get('track');
+    if (trackId) initLiveTrackView(trackId);
+  })();
 
   // ===== CHAT =====
   // Chat générique : fonctionne sur n'importe quelle collection racine ('trips' ou 'rentals')
@@ -3086,6 +3363,7 @@
               ${driverPhone ? `<a href="https://wa.me/${driverPhone.replace('+','')}" target="_blank" class="btn btn-primary" style="width:auto;padding:7px 14px;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:#25D366;border-color:#25D366"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp</a>` : ''}
               <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px" onclick="openChatFromKey('${driverKey}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 7 9-7"/></svg> Message</button>
               <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px" onclick="openTripLocation('${t.from||''}','${t.to||''}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.3"/></svg> Itinéraire</button>
+              <button class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px;color:#1e90ff;border-color:#1e90ff" onclick="startLiveShare('${(t.from||'').replace(/'/g,"\\'")}','${(t.to||'').replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg> Partager ma position</button>
             </div>
           </div>` : ''}
 
@@ -3501,7 +3779,7 @@
     const notifs = await loadNotifications();
     lastLoadedNotifs = notifs;
     if (notifs.length === 0) {
-      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.5 21a1.5 1.5 0 0 0 3 0"/></svg></div><div class="empty-text">Aucune notification</div></div>';
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1.6" fill="currentColor" stroke="none"/><path d="M8.2 12.2a5.4 5.4 0 0 1 7.6 0"/><path d="M5 9a9.5 9.5 0 0 1 14 0"/></svg></div><div class="empty-text">Aucune notification</div></div>';
       return;
     }
     list.innerHTML = notifs.map(n => {
