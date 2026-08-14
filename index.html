@@ -2320,7 +2320,7 @@
       return;
     }
     const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, '_blank');
+    window.location.href = waUrl;
   }
 
   // ===== LOCATION DE VÉHICULE =====
@@ -2971,7 +2971,7 @@
       // Ouvre le partage WhatsApp avec le lien de suivi
       const trackUrl = `https://mamemor7878-svg.github.io/Yoonu/?track=${liveShareId}`;
       const text = `📍 Je partage ma position en direct pour mon trajet ${fromLabel} → ${toLabel} sur Yoonu.\nSuis-moi ici : ${trackUrl}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+      window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
 
       showLiveShareBanner();
     } catch(e) {
@@ -3566,7 +3566,7 @@
   // ===== LOCALISATION / ITINÉRAIRE =====
   window.openTripLocation = function(from, to) {
     const url = `https://www.google.com/maps/dir/${encodeURIComponent(from+', Sénégal')}/${encodeURIComponent(to+', Sénégal')}`;
-    window.open(url, '_blank');
+    window.location.href = url;
   }
 
   // ===== MY REVIEWS =====
