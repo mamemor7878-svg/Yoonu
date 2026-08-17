@@ -2166,7 +2166,7 @@
         <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
       </div>
       <div class="trip-meta">
-        ${p.poids ? `<div class="trip-badge">${p.poids} kg</div>` : ''}
+        ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
       </div>
       <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
       <div class="trip-driver" style="margin-top:10px">
@@ -2185,8 +2185,8 @@
     document.getElementById('modal-content').innerHTML = `
       <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${p.description||''}</p>
       <div class="trip-meta">
-        ${p.poids ? `<div class="trip-badge">⚖️ ${p.poids} kg</div>` : ''}
-        <div class="trip-badge">💰 ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+        ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
+        <div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><circle cx="12" cy="12" r="9"/><path d="M12 7.3v9.4"/><path d="M9.2 9.2c.4-.9 1.4-1.5 2.9-1.5 1.9 0 3 .8 3 1.9 0 1.2-1.1 1.6-3 2-2.1.4-3 .9-3 2.1 0 1.1 1.1 1.9 3 1.9 1.5 0 2.5-.5 2.9-1.4" stroke-width="1.5"/></svg> ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
       </div>
       <div class="trip-driver" style="margin-top:16px">
         <div class="driver-avatar">${(p.ownerName||'?')[0].toUpperCase()}</div>
@@ -3597,13 +3597,18 @@
     const list = document.getElementById('my-parcels-list');
     list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
     try {
-      const q = query(collection(db, 'parcels'), where('ownerId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+      const q = query(collection(db, 'parcels'), where('ownerId', '==', currentUser.uid));
       const snap = await getDocs(q);
-      if (snap.empty) {
+      const docs = snap.docs.slice().sort((a, b) => {
+        const ta = a.data().createdAt?.toMillis ? a.data().createdAt.toMillis() : 0;
+        const tb = b.data().createdAt?.toMillis ? b.data().createdAt.toMillis() : 0;
+        return tb - ta;
+      });
+      if (docs.length === 0) {
         list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><div class="empty-text">Aucun colis publié pour l\'instant</div></div>';
         return;
       }
-      list.innerHTML = snap.docs.map(d => {
+      list.innerHTML = docs.map(d => {
         const p = { id: d.id, ...d.data() };
         const inactive = p.statut !== 'actif';
         return `<div class="trip-card" style="margin-bottom:10px;${inactive?'opacity:.55':''}">
@@ -3612,7 +3617,7 @@
             <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
           </div>
           <div class="trip-meta">
-            ${p.poids ? `<div class="trip-badge">${p.poids} kg</div>` : ''}
+            ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
             ${inactive ? `<div class="trip-badge">Inactif</div>` : ''}
           </div>
           <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
