@@ -329,9 +329,9 @@
   /* Toggle Conducteur / Passager (publish + home) */
   .mode-toggle { display: flex; background: var(--dark3); border-radius: 15px; padding: 4px; margin-bottom: 18px; border: 1px solid var(--border); }
   .mode-toggle-btn {
-    flex: 1; padding: 11px; border: none; background: none; border-radius: 11px;
-    font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text-muted);
-    cursor: pointer; transition: all .2s var(--ease); display:flex; align-items:center; justify-content:center; gap:6px;
+    flex: 1; min-width: 0; padding: 10px 6px; border: none; background: none; border-radius: 11px;
+    font-family: inherit; font-size: 12px; font-weight: 700; color: var(--text-muted); white-space: nowrap;
+    cursor: pointer; transition: all .2s var(--ease); display:flex; align-items:center; justify-content:center; gap:5px;
   }
   .mode-toggle-btn.active { background: linear-gradient(135deg,var(--orange-light),var(--orange)); color: white; box-shadow: 0 6px 16px -6px rgba(232,82,10,.5); }
   .count-badge {
@@ -731,11 +731,12 @@
     <div class="greeting-sub">Où allez-vous aujourd'hui ?</div>
 
     <div class="mode-toggle" id="home-mode-toggle">
-      <button class="mode-toggle-btn active" id="home-mode-conducteur" onclick="setHomeType('conducteur')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets conducteurs <span id="count-badge-conducteur" class="count-badge">0</span></button>
-      <button class="mode-toggle-btn" id="home-mode-passager" onclick="setHomeType('passager')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes passagers <span id="count-badge-passager" class="count-badge">0</span></button>
+      <button class="mode-toggle-btn active" id="home-mode-conducteur" onclick="setHomeType('conducteur')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets <span id="count-badge-conducteur" class="count-badge">0</span></button>
+      <button class="mode-toggle-btn" id="home-mode-passager" onclick="setHomeType('passager')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Passagers <span id="count-badge-passager" class="count-badge">0</span></button>
+      <button class="mode-toggle-btn" id="home-mode-colis" onclick="setHomeType('colis')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg> Colis <span id="count-badge-colis" class="count-badge">0</span></button>
     </div>
 
-    <div class="search-card">
+    <div class="search-card" id="home-search-fields">
       <h3 id="search-card-title" style="margin-bottom:2px">Rechercher un trajet</h3>
       <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:16px">Trouve ton trajet en toute simplicité</p>
       <div style="position:relative">
@@ -802,9 +803,11 @@
 
     <div class="mode-toggle" id="publish-mode-toggle">
       <button class="mode-toggle-btn active" id="pub-mode-conducteur" onclick="setPublishType('conducteur')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Je conduis</button>
-      <button class="mode-toggle-btn" id="pub-mode-passager" onclick="setPublishType('passager')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Je cherche un trajet</button>
+      <button class="mode-toggle-btn" id="pub-mode-passager" onclick="setPublishType('passager')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Je cherche</button>
+      <button class="mode-toggle-btn" id="pub-mode-colis" onclick="setPublishType('colis')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg> Colis</button>
     </div>
 
+    <div id="pub-trip-form">
     <div class="form-section">
       <div class="step-header">
         <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="18.5" r="1.6" fill="currentColor" stroke="none"/><path d="M6.5 17.5C10 12 12 20 18 10" stroke-dasharray="2.6 2.6"/><path d="M18 4v10"/><path d="M18 4.3h3.6l-1.8 2.4 1.8 2.3H18"/></svg></div>
@@ -983,8 +986,49 @@
       </div>
       <textarea id="pub-note" placeholder="Ex: Je pars de la gare routière de Dakar..."></textarea>
     </div>
+    </div>
 
-    <button class="btn btn-primary" onclick="publishTrip()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> <span id="pub-submit-label">Publier le trajet</span></button>
+    <div id="pub-colis-form" style="display:none">
+      <div class="form-section">
+        <div class="step-header">
+          <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg></div>
+          <div style="flex:1"><div class="step-title">1. Itinéraire du colis</div><div class="step-sub">D'où part le colis, où va-t-il ?</div></div>
+        </div>
+        <div class="input-group">
+          <label>Ville de départ</label>
+          <select id="colis-from"></select>
+        </div>
+        <div class="input-group" style="margin-top:12px">
+          <label>Ville de destination</label>
+          <select id="colis-to"></select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="step-header">
+          <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg></div>
+          <div><div class="step-title">2. Détails du colis</div><div class="step-sub">Poids, description et budget</div></div>
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Poids approximatif (kg)</label>
+            <input type="number" id="colis-poids" placeholder="Ex: 5"/>
+          </div>
+          <div class="input-group">
+            <label>Budget proposé (FCFA)</label>
+            <input type="number" id="colis-price" placeholder="Ex: 2000"/>
+          </div>
+        </div>
+        <div class="input-group" style="margin-top:12px">
+          <label>Description du colis</label>
+          <textarea id="colis-description" placeholder="Ex: Un carton de documents, fragile..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="publishColis()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> Publier mon colis</button>
+    </div>
+
+    <button class="btn btn-primary" id="pub-trip-submit" onclick="publishTrip()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> <span id="pub-submit-label">Publier le trajet</span></button>
   </div>
 
   <!-- MESSAGES -->
@@ -1737,6 +1781,7 @@
     document.getElementById('loc-photo-placeholder').style.display = 'none';
   }
   let currentRentalData = null;
+  let currentParcelData = null;
 
   // ===== AUTH STATE =====
   onAuthStateChanged(auth, async (user) => {
@@ -2032,16 +2077,97 @@
     currentHomeType = type;
     document.getElementById('home-mode-conducteur').classList.toggle('active', type === 'conducteur');
     document.getElementById('home-mode-passager').classList.toggle('active', type === 'passager');
+    document.getElementById('home-mode-colis').classList.toggle('active', type === 'colis');
     const titleEl = document.getElementById('search-card-title');
     const listTitleEl = document.getElementById('trips-list-title');
+    const searchFields = document.getElementById('home-search-fields');
     if (type === 'conducteur') {
       titleEl.textContent = 'Rechercher un trajet';
       listTitleEl.textContent = 'Trajets disponibles';
-    } else {
+      if (searchFields) searchFields.style.display = '';
+      loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
+    } else if (type === 'passager') {
       titleEl.textContent = 'Rechercher une demande de passager';
       listTitleEl.textContent = 'Passagers en recherche de conducteur';
+      if (searchFields) searchFields.style.display = '';
+      loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
+    } else {
+      titleEl.textContent = 'Colis à transporter';
+      listTitleEl.textContent = 'Colis disponibles';
+      if (searchFields) searchFields.style.display = 'none';
+      loadParcels();
     }
-    loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
+  }
+
+  // ===== COLIS (affichage) =====
+  async function loadParcels() {
+    const list = document.getElementById('trips-list');
+    list.innerHTML = '<div class="skeleton-card"><div class="skeleton-line" style="width:60%;margin-bottom:10px"></div><div class="skeleton-line" style="width:40%;margin-bottom:14px"></div><div class="skeleton-line" style="width:90%"></div></div>';
+    try {
+      const q = query(collection(db, 'parcels'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      const parcels = [];
+      let countColis = 0;
+      snap.forEach(d => {
+        const data = { id: d.id, ...d.data() };
+        if (data.statut !== 'actif') return;
+        countColis++;
+        parcels.push(data);
+      });
+      document.getElementById('count-badge-colis').textContent = countColis;
+      if (parcels.length === 0) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><div class="empty-text">Aucun colis pour l\'instant</div></div>';
+        return;
+      }
+      list.innerHTML = parcels.map(parcelCard).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty"><div class="empty-text">Erreur de chargement</div></div>';
+    }
+  }
+
+  function parcelCard(p) {
+    return `<div class="trip-card" onclick="openParcel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="trip-header">
+        <div class="trip-route">${p.from} → ${p.to}</div>
+        <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+      </div>
+      <div class="trip-meta">
+        ${p.poids ? `<div class="trip-badge">${p.poids} kg</div>` : ''}
+      </div>
+      <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
+      <div class="trip-driver" style="margin-top:10px">
+        <div class="driver-avatar">${(p.ownerName||'?')[0].toUpperCase()}</div>
+        <div class="driver-info"><div class="driver-name">${p.ownerName||'Utilisateur'}${verifiedBadge(p.ownerPhone)}</div></div>
+        <div class="rating-chip">${ICON_STAR_FILL} ${p.ownerRating||5}</div>
+      </div>
+    </div>`;
+  }
+
+  window.openParcel = function(p) {
+    currentTripData = null;
+    currentRentalData = null;
+    currentParcelData = p;
+    document.getElementById('modal-route').textContent = `${p.from} → ${p.to}`;
+    document.getElementById('modal-content').innerHTML = `
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${p.description||''}</p>
+      <div class="trip-meta">
+        ${p.poids ? `<div class="trip-badge">⚖️ ${p.poids} kg</div>` : ''}
+        <div class="trip-badge">💰 ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+      </div>
+      <div class="trip-driver" style="margin-top:16px">
+        <div class="driver-avatar">${(p.ownerName||'?')[0].toUpperCase()}</div>
+        <div><div class="driver-name">${p.ownerName||'Utilisateur'}${verifiedBadge(p.ownerPhone)}</div><div style="font-size:12px;color:var(--text-muted)">${p.ownerPhone||''}</div></div>
+        <div class="rating-chip">${ICON_STAR_FILL} ${p.ownerRating||5}</div>
+      </div>`;
+    const actionBtn = document.getElementById('modal-action-btn');
+    const isOwner = p.ownerId === currentUser.uid;
+    actionBtn.style.display = isOwner ? 'none' : 'flex';
+    document.getElementById('modal-action-label').textContent = 'Contacter pour ce colis';
+    actionBtn.onclick = function() {
+      closeModal();
+      openChatGeneric('parcels', p.id, p.ownerName || 'Utilisateur');
+    };
+    document.getElementById('trip-modal').classList.add('open');
   }
 
   // ===== TOGGLE MODE PUBLISH (conducteur / passager) =====
@@ -2058,6 +2184,17 @@
     currentPublishType = type;
     document.getElementById('pub-mode-conducteur').classList.toggle('active', type === 'conducteur');
     document.getElementById('pub-mode-passager').classList.toggle('active', type === 'passager');
+    document.getElementById('pub-mode-colis').classList.toggle('active', type === 'colis');
+    document.getElementById('pub-trip-form').style.display = (type === 'colis') ? 'none' : '';
+    document.getElementById('pub-trip-submit').style.display = (type === 'colis') ? 'none' : '';
+    document.getElementById('pub-colis-form').style.display = (type === 'colis') ? '' : 'none';
+    if (type === 'colis') {
+      if (!document.getElementById('colis-from').options.length) {
+        document.getElementById('colis-from').innerHTML = document.getElementById('pub-from').innerHTML;
+        document.getElementById('colis-to').innerHTML = document.getElementById('pub-to').innerHTML;
+      }
+      return;
+    }
     const seatsLabel = document.getElementById('pub-seats-label');
     const priceLabel = document.getElementById('pub-price-label');
     const titleEl = document.getElementById('pub-seats-price-title');
@@ -2248,6 +2385,7 @@
   window.openTrip = function(t) {
     currentTripData = t;
     currentRentalData = null;
+    currentParcelData = null;
     const isPassager = (t.type||'conducteur') === 'passager';
     document.getElementById('modal-route').textContent = `${t.from} → ${t.to}`;
     const priceText = isPassager
@@ -2304,7 +2442,13 @@
   window.shareTripWhatsapp = function() {
     const appUrl = 'https://mamemor7878-svg.github.io/Yoonu/';
     let text;
-    if (currentRentalData) {
+    if (currentParcelData) {
+      const p = currentParcelData;
+      text = `📦 Colis à transporter sur Yoonu !\n📍 ${p.from} → ${p.to}\n`
+           + (p.poids ? `⚖️ ${p.poids} kg\n` : '')
+           + `💰 ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}\n`
+           + `\nVoir l'annonce : ${appUrl}`;
+    } else if (currentRentalData) {
       const r = currentRentalData;
       text = `🚗 ${r.marque||''} ${r.modele||''} disponible en location sur Yoonu !\n`
            + `📍 ${r.ville||''}\n`
@@ -2431,6 +2575,7 @@
   window.openRental = function(r) {
     currentRentalData = r;
     currentTripData = null;
+    currentParcelData = null;
     const isOffre = (r.type||'offre') === 'offre';
     const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || RENTAL_CATEGORIES[r.category] || 'Véhicule';
     document.getElementById('modal-route').textContent = vehicleName;
@@ -2777,6 +2922,47 @@
       loadTrips();
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
+    }
+  }
+
+  // ===== PUBLIER UN COLIS =====
+  window.publishColis = async function() {
+    const from = document.getElementById('colis-from').value;
+    const to = document.getElementById('colis-to').value;
+    const poids = document.getElementById('colis-poids').value;
+    const price = document.getElementById('colis-price').value;
+    const description = document.getElementById('colis-description').value.trim();
+
+    if (!from || !to) { showToast('Choisissez un départ et une destination', 'error'); return; }
+    if (from === to) { showToast('Départ et arrivée identiques', 'error'); return; }
+    if (!description) { showToast('Décrivez votre colis', 'error'); return; }
+
+    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+    const userData = userDoc.data();
+
+    try {
+      await addDoc(collection(db, 'parcels'), {
+        from, to,
+        poids: poids ? Number(poids) : null,
+        price: price ? Number(price) : 0,
+        description,
+        statut: 'actif',
+        ownerId: currentUser.uid,
+        ownerName: userData.name,
+        ownerPhone: currentUser.phoneNumber || userData.phone || '',
+        ownerRating: userData.rating || 5,
+        createdAt: serverTimestamp()
+      });
+      showToast('Colis publié !', 'success');
+      document.getElementById('colis-from').value = '';
+      document.getElementById('colis-to').value = '';
+      document.getElementById('colis-poids').value = '';
+      document.getElementById('colis-price').value = '';
+      document.getElementById('colis-description').value = '';
+      goTo('home', document.querySelector('.nav-item'));
+      setHomeType('colis');
+    } catch(e) {
+      showToast('Erreur: ' + e.message, 'error');
     }
   }
 
