@@ -1350,13 +1350,15 @@
   </div>
   <div class="panel-body">
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Mes publications</button>
-      <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Mes réservations</button>
+      <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;justify-content:center;font-size:12px;white-space:nowrap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets</button>
+      <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;justify-content:center;font-size:12px;white-space:nowrap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Réservations</button>
+      <button class="option-toggle" id="tab-parcels" onclick="switchTripsTab('parcels')" style="flex:1;justify-content:center;font-size:12px;white-space:nowrap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Colis</button>
     </div>
     <div id="recurring-trips-list"></div>
     <div id="my-trips-list">
       <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
     </div>
+    <div id="my-parcels-list" style="display:none"></div>
   </div>
 </div>
 
@@ -1646,6 +1648,38 @@
     <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente de confirmation du conducteur</div>
     <button class="btn btn-primary" onclick="document.getElementById('booking-confirm-modal').classList.remove('open');openMyTrips()">Voir mes réservations</button>
     <button class="btn btn-ghost" onclick="document.getElementById('booking-confirm-modal').classList.remove('open')">Retour à l'accueil</button>
+  </div>
+</div>
+
+<!-- MODAL MODIFIER COLIS -->
+<div class="modal-overlay" id="edit-colis-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Modifier mon annonce</div>
+    <div class="input-group">
+      <label>Ville de départ</label>
+      <select id="edit-colis-from"></select>
+    </div>
+    <div class="input-group" style="margin-top:12px">
+      <label>Ville de destination</label>
+      <select id="edit-colis-to"></select>
+    </div>
+    <div class="form-row" style="margin-top:12px">
+      <div class="input-group">
+        <label>Poids (kg)</label>
+        <input type="number" id="edit-colis-poids" placeholder="Ex: 5"/>
+      </div>
+      <div class="input-group">
+        <label>Budget (FCFA)</label>
+        <input type="number" id="edit-colis-price" placeholder="Ex: 2000"/>
+      </div>
+    </div>
+    <div class="input-group" style="margin-top:12px">
+      <label>Description</label>
+      <textarea id="edit-colis-description" placeholder="Décrivez votre colis..."></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="saveEditParcel()" style="margin-top:18px">Enregistrer les modifications</button>
+    <button class="btn btn-ghost" onclick="closeEditParcel()">Annuler</button>
   </div>
 </div>
 
@@ -3546,8 +3580,106 @@
     currentTripsTab = tab;
     document.getElementById('tab-driver').classList.toggle('on', tab === 'driver');
     document.getElementById('tab-passenger').classList.toggle('on', tab === 'passenger');
+    document.getElementById('tab-parcels').classList.toggle('on', tab === 'parcels');
     document.getElementById('recurring-trips-list').style.display = tab === 'driver' ? 'block' : 'none';
-    loadMyTrips(tab);
+    if (tab === 'parcels') {
+      document.getElementById('my-trips-list').style.display = 'none';
+      document.getElementById('my-parcels-list').style.display = 'block';
+      loadMyParcels();
+    } else {
+      document.getElementById('my-trips-list').style.display = 'block';
+      document.getElementById('my-parcels-list').style.display = 'none';
+      loadMyTrips(tab);
+    }
+  }
+
+  async function loadMyParcels() {
+    const list = document.getElementById('my-parcels-list');
+    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    try {
+      const q = query(collection(db, 'parcels'), where('ownerId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><div class="empty-text">Aucun colis publié pour l\'instant</div></div>';
+        return;
+      }
+      list.innerHTML = snap.docs.map(d => {
+        const p = { id: d.id, ...d.data() };
+        const inactive = p.statut !== 'actif';
+        return `<div class="trip-card" style="margin-bottom:10px;${inactive?'opacity:.55':''}">
+          <div class="trip-header">
+            <div class="trip-route">${p.from} → ${p.to}</div>
+            <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+          </div>
+          <div class="trip-meta">
+            ${p.poids ? `<div class="trip-badge">${p.poids} kg</div>` : ''}
+            ${inactive ? `<div class="trip-badge">Inactif</div>` : ''}
+          </div>
+          <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openEditParcel('${p.id}')">Modifier</button>
+            <button class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteParcel('${p.id}')">Supprimer</button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty"><div class="empty-text">Erreur de chargement</div></div>';
+    }
+  }
+
+  window.deleteParcel = async function(id) {
+    if (!confirm('Supprimer cette annonce de colis ?')) return;
+    try {
+      await deleteDoc(doc(db, 'parcels', id));
+      showToast('Annonce supprimée', 'success');
+      loadMyParcels();
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  let editingParcelId = null;
+  window.openEditParcel = async function(id) {
+    try {
+      const snap = await getDoc(doc(db, 'parcels', id));
+      if (!snap.exists()) { showToast('Annonce introuvable', 'error'); return; }
+      const p = snap.data();
+      editingParcelId = id;
+      if (!document.getElementById('edit-colis-from').options.length) {
+        document.getElementById('edit-colis-from').innerHTML = document.getElementById('pub-from').innerHTML;
+        document.getElementById('edit-colis-to').innerHTML = document.getElementById('pub-to').innerHTML;
+      }
+      document.getElementById('edit-colis-from').value = p.from || '';
+      document.getElementById('edit-colis-to').value = p.to || '';
+      document.getElementById('edit-colis-poids').value = p.poids || '';
+      document.getElementById('edit-colis-price').value = p.price || '';
+      document.getElementById('edit-colis-description').value = p.description || '';
+      document.getElementById('edit-colis-modal').classList.add('open');
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  window.closeEditParcel = function() {
+    document.getElementById('edit-colis-modal').classList.remove('open');
+    editingParcelId = null;
+  }
+
+  window.saveEditParcel = async function() {
+    if (!editingParcelId) return;
+    const from = document.getElementById('edit-colis-from').value;
+    const to = document.getElementById('edit-colis-to').value;
+    const poids = document.getElementById('edit-colis-poids').value;
+    const price = document.getElementById('edit-colis-price').value;
+    const description = document.getElementById('edit-colis-description').value.trim();
+    if (!from || !to || !description) { showToast('Champs requis manquants', 'error'); return; }
+    try {
+      await updateDoc(doc(db, 'parcels', editingParcelId), {
+        from, to,
+        poids: poids ? Number(poids) : null,
+        price: price ? Number(price) : 0,
+        description
+      });
+      showToast('Annonce mise à jour', 'success');
+      closeEditParcel();
+      loadMyParcels();
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
   }
 
   async function loadMyTrips(tab) {
