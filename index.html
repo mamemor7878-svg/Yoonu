@@ -2167,7 +2167,9 @@
   }
 
   function parcelCard(p) {
-    return `<div class="trip-card" onclick="openParcel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+    const isPourvu = p.statut === 'pourvu';
+    return `<div class="trip-card" onclick="openParcel(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="${isPourvu?'opacity:.6':''}">
+      ${isPourvu ? `<div class="type-badge" style="background:rgba(140,140,140,.16);color:#6b6b6b">Transporteur trouvé</div>` : ''}
       <div class="trip-header">
         <div class="trip-route">${p.from} → ${p.to}</div>
         <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
@@ -2202,13 +2204,49 @@
       </div>`;
     const actionBtn = document.getElementById('modal-action-btn');
     const isOwner = p.ownerId === currentUser.uid;
+    const isPourvu = p.statut === 'pourvu';
     actionBtn.style.display = isOwner ? 'none' : 'flex';
-    document.getElementById('modal-action-label').textContent = 'Contacter pour ce colis';
-    actionBtn.onclick = function() {
-      closeModal();
-      openChatGeneric('parcels', p.id, p.ownerName || 'Utilisateur');
-    };
+    if (isPourvu) {
+      document.getElementById('modal-action-label').textContent = 'Transporteur déjà trouvé';
+      actionBtn.disabled = true;
+      actionBtn.style.opacity = '.5';
+      actionBtn.onclick = null;
+    } else {
+      document.getElementById('modal-action-label').textContent = 'Contacter pour ce colis';
+      actionBtn.disabled = false;
+      actionBtn.style.opacity = '';
+      actionBtn.onclick = function() { proposeForParcel(p); };
+    }
     document.getElementById('trip-modal').classList.add('open');
+  }
+
+  window.proposeForParcel = async function(p) {
+    try {
+      const existingSnap = await getDocs(query(
+        collection(db, 'parcelProposals'),
+        where('parcelId', '==', p.id),
+        where('driverId', '==', currentUser.uid)
+      ));
+      if (existingSnap.empty) {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
+        await addDoc(collection(db, 'parcelProposals'), {
+          parcelId: p.id,
+          driverId: currentUser.uid,
+          driverName: userData.name || currentUser.displayName || '',
+          driverPhone: currentUser.phoneNumber || userData.phone || '',
+          driverRating: userData.rating || 5,
+          requesterId: p.ownerId,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+        showToast('Proposition envoyée !','success');
+      }
+    } catch(e) {
+      showToast('Erreur: ' + e.message,'error');
+    }
+    closeModal();
+    openChatGeneric('parcels', p.id, p.ownerName || 'Utilisateur');
   }
 
   // ===== TOGGLE MODE PUBLISH (conducteur / passager) =====
@@ -2281,8 +2319,6 @@
         if (type !== currentHomeType) return;
         // Masquer trajets passés
         if (data.date && data.date < today) return;
-        // Masquer trajets complets (0 places) — uniquement pertinent côté conducteur
-        if (type === 'conducteur' && data.seats != null && data.seats <= 0) return;
         if (fromFilter && !data.from.toLowerCase().includes(fromFilter.toLowerCase())) return;
         if (toFilter && !data.to.toLowerCase().includes(toFilter.toLowerCase())) return;
         trips.push(data);
@@ -2311,8 +2347,13 @@
       ? `<div class="type-badge tb-passager"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/></svg> Cherche un conducteur</div>`
       : `<div class="type-badge tb-conducteur"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/></svg> Propose un trajet</div>`;
     const seatsLabel = isPassager ? `${t.seats} personne${t.seats>1?'s':''}` : `${t.seats} place${t.seats>1?'s':''}`;
-    return `<div class="trip-card" onclick="openTrip(${JSON.stringify(t).replace(/"/g,'&quot;')})">
+    const isComplet = !isPassager && t.seats != null && t.seats <= 0;
+    const isPourvu = isPassager && t.statut === 'pourvu';
+    const completBadge = isComplet ? `<div class="type-badge" style="background:rgba(140,140,140,.16);color:#6b6b6b">Complet</div>` : '';
+    const pourvuBadge = isPourvu ? `<div class="type-badge" style="background:rgba(140,140,140,.16);color:#6b6b6b">Conducteur trouvé</div>` : '';
+    return `<div class="trip-card" onclick="openTrip(${JSON.stringify(t).replace(/"/g,'&quot;')})" style="${(isComplet||isPourvu)?'opacity:.6':''}">
       ${typeBadge}
+      ${completBadge}${pourvuBadge}
       <div class="trip-header">
         <div class="trip-route">${t.from} <span class="arrow">→</span> ${t.to}</div>
         <div class="trip-price">${priceLabel}</div>
@@ -2457,12 +2498,28 @@
     }
     const actionBtn = document.getElementById('modal-action-btn');
     const actionLabel = document.getElementById('modal-action-label');
-    if (isPassager) {
+    const isComplet = !isPassager && t.seats != null && t.seats <= 0;
+    const isPourvu = isPassager && t.statut === 'pourvu';
+    if (isPassager && isPourvu) {
+      actionLabel.textContent = 'Conducteur déjà trouvé';
+      actionBtn.onclick = null;
+      actionBtn.disabled = true;
+      actionBtn.style.opacity = '.5';
+    } else if (isPassager) {
       actionLabel.textContent = 'Proposer de l\'emmener';
       actionBtn.onclick = contactRequester;
+      actionBtn.disabled = false;
+      actionBtn.style.opacity = '';
+    } else if (isComplet) {
+      actionLabel.textContent = 'Trajet complet';
+      actionBtn.onclick = null;
+      actionBtn.disabled = true;
+      actionBtn.style.opacity = '.5';
     } else {
       actionLabel.textContent = 'Réserver ma place';
       actionBtn.onclick = bookTrip;
+      actionBtn.disabled = false;
+      actionBtn.style.opacity = '';
     }
     document.getElementById('trip-modal').classList.add('open');
   }
@@ -2471,10 +2528,38 @@
     document.getElementById('trip-modal').classList.remove('open');
   }
 
-  window.contactRequester = function() {
+  window.contactRequester = async function() {
     if (!currentTripData) return;
     if (currentTripData.driverId === currentUser.uid) {
       showToast('Ceci est votre propre demande','error'); return;
+    }
+    if (currentTripData.statut === 'pourvu') {
+      showToast('Cette demande a déjà trouvé un conducteur','error'); return;
+    }
+    try {
+      // Vérifier si on a déjà proposé
+      const existingSnap = await getDocs(query(
+        collection(db, 'proposals'),
+        where('tripId', '==', currentTripData.id),
+        where('driverId', '==', currentUser.uid)
+      ));
+      if (existingSnap.empty) {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
+        await addDoc(collection(db, 'proposals'), {
+          tripId: currentTripData.id,
+          driverId: currentUser.uid,
+          driverName: userData.name || currentUser.displayName || '',
+          driverPhone: currentUser.phoneNumber || userData.phone || '',
+          driverRating: userData.rating || 5,
+          requesterId: currentTripData.driverId,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+        showToast('Proposition envoyée !','success');
+      }
+    } catch(e) {
+      showToast('Erreur: ' + e.message,'error');
     }
     closeModal();
     openChatWithDriver(currentTripData);
@@ -2753,13 +2838,6 @@
         price: currentTripData.price,
         status: 'pending', createdAt: serverTimestamp()
       });
-      // Décrémenter les places disponibles
-      const tripRef = doc(db, 'trips', currentTripData.id);
-      const tripSnap = await getDoc(tripRef);
-      if (tripSnap.exists()) {
-        const seats = (tripSnap.data().seats || 1) - 1;
-        await setDoc(tripRef, { seats: Math.max(0, seats) }, { merge: true });
-      }
       closeModal();
       showBookingConfirmation(currentTripData.from, currentTripData.to, currentTripData.date, currentTripData.price);
       showToast('Réservation envoyée ! 🎉','success');
@@ -3620,18 +3698,21 @@
       }
       list.innerHTML = docs.map(d => {
         const p = { id: d.id, ...d.data() };
-        const inactive = p.statut !== 'actif';
-        return `<div class="trip-card" style="margin-bottom:10px;${inactive?'opacity:.55':''}">
+        const isPourvu = p.statut === 'pourvu';
+        const inactive = p.statut !== 'actif' && !isPourvu;
+        return `<div class="trip-card" style="margin-bottom:10px;${(inactive||isPourvu)?'opacity:.6':''}">
           <div class="trip-header">
             <div class="trip-route">${p.from} → ${p.to}</div>
             <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
           </div>
           <div class="trip-meta">
             ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
+            ${isPourvu ? `<div class="trip-badge">Transporteur trouvé</div>` : ''}
             ${inactive ? `<div class="trip-badge">Inactif</div>` : ''}
           </div>
           <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
-          <div style="display:flex;gap:8px;margin-top:10px">
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openPassengers('${p.id}','${(p.from||'').replace(/'/g,"\\'")}','${(p.to||'').replace(/'/g,"\\'")}','','colis')">Propositions</button>
             <button class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openEditParcel('${p.id}')">Modifier</button>
             <button class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteParcel('${p.id}')">Supprimer</button>
           </div>
@@ -3791,11 +3872,12 @@
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
             <span class="my-trip-status ${statusClass}">${statusLabel}</span>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              ${tab === 'driver' && isUpcoming && pubType !== 'passager' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openPassengers('${d.id}','${(t.from||'').replace(/'/g,"\\'")}','${(t.to||'').replace(/'/g,"\\'")}','${t.date||''}')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes</button>` : ''}
+              ${tab === 'driver' && isUpcoming && pubType !== 'passager' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openPassengers('${d.id}','${(t.from||'').replace(/'/g,"\\'")}','${(t.to||'').replace(/'/g,"\\'")}','${t.date||''}','conducteur')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes</button>` : ''}
+              ${tab === 'driver' && isUpcoming && pubType === 'passager' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openPassengers('${d.id}','${(t.from||'').replace(/'/g,"\\'")}','${(t.to||'').replace(/'/g,"\\'")}','${t.date||''}','passager')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/></svg> Propositions</button>` : ''}
               ${canRate ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px" onclick="openRateTrip('${d.id}','${t.driverId||''}','${(t.driverName||'Conducteur').replace(/'/g,"\\'")}')" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Noter</button>` : ''}
               ${canCancel ? `<button class="btn btn-ghost" style="width:auto;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px" onclick="openEditTrip('${d.id}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Modifier</button>` : ''}
               ${canCancel ? `<button class="btn btn-ghost" style="width:auto;padding:6px 14px;font-size:12px;border-color:var(--red);color:var(--red);display:inline-flex;align-items:center;gap:5px" onclick="cancelTrip('${d.id}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7a1.5 1.5 0 0 0 1.5-1.4L18 7"/></svg> Annuler</button>` : ''}
-              ${canCancelBooking ? `<button class="btn btn-ghost" style="width:auto;padding:6px 14px;font-size:12px;border-color:var(--red);color:var(--red);display:inline-flex;align-items:center;gap:5px" onclick="cancelBooking('${d.id}','${t.tripId||''}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7a1.5 1.5 0 0 0 1.5-1.4L18 7"/></svg> Annuler</button>` : ''}
+              ${canCancelBooking ? `<button class="btn btn-ghost" style="width:auto;padding:6px 14px;font-size:12px;border-color:var(--red);color:var(--red);display:inline-flex;align-items:center;gap:5px" onclick="cancelBooking('${d.id}','${t.tripId||''}','${t.status||'pending'}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7a1.5 1.5 0 0 0 1.5-1.4L18 7"/></svg> Annuler</button>` : ''}
             </div>
           </div>
           ${t.note && tab === 'driver' ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg> ${t.note}</div>` : ''}
@@ -3811,9 +3893,11 @@
 
   // ===== GESTION PASSAGERS (accepter / refuser) =====
   let currentPassengersTripId = null;
+  let currentPassengersKind = 'conducteur';
 
-  window.openPassengers = async function(tripId, from, to, date) {
+  window.openPassengers = async function(tripId, from, to, date, kind) {
     currentPassengersTripId = tripId;
+    currentPassengersKind = kind || 'conducteur';
     document.getElementById('panel-passengers').classList.add('open');
     document.getElementById('passengers-trip-info').innerHTML = `
       <div style="font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> ${from} → ${to}</div>
@@ -3824,12 +3908,17 @@
   async function refreshPassengersList(tripId) {
     const list = document.getElementById('passengers-list');
     list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    const kind = currentPassengersKind;
+    const isProposal = kind === 'passager' || kind === 'colis';
+    const collName = kind === 'colis' ? 'parcelProposals' : (kind === 'passager' ? 'proposals' : 'bookings');
+    const idField = kind === 'colis' ? 'parcelId' : 'tripId';
     try {
       const snap = await getDocs(query(
-        collection(db, 'bookings'), where('tripId','==', tripId)
+        collection(db, collName), where(idField,'==', tripId)
       ));
       if (snap.empty) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg></div><div class="empty-text">Aucune demande pour l\'instant</div></div>';
+        const emptyText = isProposal ? 'Aucune proposition pour l\'instant' : 'Aucune demande pour l\'instant';
+        list.innerHTML = `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg></div><div class="empty-text">${emptyText}</div></div>`;
         return;
       }
       list.innerHTML = '';
@@ -3838,14 +3927,15 @@
         const isPending = !b.status || b.status === 'pending';
         const isAccepted = b.status === 'accepted';
         const isRefused = b.status === 'refused';
-        const phone = b.passengerPhone || b.passengerId || 'Passager';
-        const initial = phone[0].toUpperCase();
+        const phone = isProposal ? (b.driverPhone || b.driverId || 'Conducteur') : (b.passengerPhone || b.passengerId || 'Passager');
+        const displayName = isProposal ? (b.driverName || phone) : phone;
+        const initial = displayName[0].toUpperCase();
         const dateStr = b.createdAt ? new Date(b.createdAt.seconds*1000).toLocaleDateString('fr-FR') : '—';
         list.innerHTML += `<div class="passenger-item" id="pax-${d.id}">
           <div class="passenger-avatar">${initial}</div>
           <div class="passenger-info">
-            <div class="passenger-name">${phone}</div>
-            <div class="passenger-phone">Réservé le ${dateStr}</div>
+            <div class="passenger-name">${displayName}</div>
+            <div class="passenger-phone">${isProposal ? 'Proposé le' : 'Réservé le'} ${dateStr}</div>
             <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
               ${phone.startsWith('+') || phone.startsWith('2') ? `
                 <a href="tel:${phone}" style="font-size:11px;color:var(--orange);text-decoration:none;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 4.5c0-1 .8-1.5 1.7-1.3l2.6.6c.7.2 1.2.8 1.3 1.5l.4 2.5c.1.6-.1 1.3-.6 1.7l-1.4 1.3c1 2.4 2.9 4.3 5.3 5.3l1.3-1.4c.4-.5 1.1-.7 1.7-.6l2.5.4c.7.1 1.3.6 1.5 1.3l.6 2.6c.2.9-.3 1.7-1.3 1.7C10.5 20.6 3.4 13.5 4 4.5Z"/></svg> Appeler</a>
@@ -3872,7 +3962,44 @@
   }
 
   window.acceptBooking = async function(bookingId) {
+    const kind = currentPassengersKind;
     try {
+      if (kind === 'passager' || kind === 'colis') {
+        const collName = kind === 'colis' ? 'parcelProposals' : 'proposals';
+        const idField = kind === 'colis' ? 'parcelId' : 'tripId';
+        const targetColl = kind === 'colis' ? 'parcels' : 'trips';
+        // Marquer la demande/colis comme pourvu(e), refuser automatiquement les autres propositions
+        await updateDoc(doc(db, collName, bookingId), { status: 'accepted' });
+        if (currentPassengersTripId) {
+          await setDoc(doc(db, targetColl, currentPassengersTripId), { statut: 'pourvu' }, { merge: true });
+          const othersSnap = await getDocs(query(
+            collection(db, collName),
+            where(idField, '==', currentPassengersTripId)
+          ));
+          const updates = [];
+          othersSnap.forEach(d => {
+            if (d.id !== bookingId && (!d.data().status || d.data().status === 'pending')) {
+              updates.push(updateDoc(doc(db, collName, d.id), { status: 'refused' }));
+            }
+          });
+          await Promise.all(updates);
+        }
+        await refreshPassengersList(currentPassengersTripId);
+        showToast(kind === 'colis' ? 'Transporteur accepté ✅' : 'Conducteur accepté ✅','success');
+        return;
+      }
+      // Vérifier qu'il reste bien une place avant de confirmer (anti sur-booking)
+      if (currentPassengersTripId) {
+        const tripSnap = await getDoc(doc(db, 'trips', currentPassengersTripId));
+        if (tripSnap.exists()) {
+          const seats = tripSnap.data().seats;
+          if (seats != null && seats <= 0) {
+            showToast('Plus de places disponibles — refusez une autre demande d\'abord', 'error');
+            return;
+          }
+          await setDoc(doc(db, 'trips', currentPassengersTripId), { seats: Math.max(0, (seats || 1) - 1) }, { merge: true });
+        }
+      }
       await updateDoc(doc(db, 'bookings', bookingId), { status: 'accepted' });
       await refreshPassengersList(currentPassengersTripId);
       showToast('Réservation acceptée ✅','success');
@@ -3881,16 +4008,21 @@
 
   window.refuseBooking = async function(bookingId) {
     if (!confirm('Refuser cette réservation ?')) return;
+    const kind = currentPassengersKind;
     try {
-      await updateDoc(doc(db, 'bookings', bookingId), { status: 'refused' });
-      // Remettre la place disponible
-      if (currentPassengersTripId) {
-        const tripSnap = await getDoc(doc(db, 'trips', currentPassengersTripId));
-        if (tripSnap.exists()) {
-          const seats = (tripSnap.data().seats || 0) + 1;
-          await setDoc(doc(db, 'trips', currentPassengersTripId), { seats }, { merge: true });
+      if (kind === 'passager' || kind === 'colis') {
+        const collName = kind === 'colis' ? 'parcelProposals' : 'proposals';
+        const targetColl = kind === 'colis' ? 'parcels' : 'trips';
+        const resetStatut = kind === 'colis' ? 'actif' : 'ouvert';
+        await updateDoc(doc(db, collName, bookingId), { status: 'refused' });
+        if (currentPassengersTripId) {
+          await setDoc(doc(db, targetColl, currentPassengersTripId), { statut: resetStatut }, { merge: true });
         }
+        await refreshPassengersList(currentPassengersTripId);
+        showToast('Proposition refusée','success');
+        return;
       }
+      await updateDoc(doc(db, 'bookings', bookingId), { status: 'refused' });
       await refreshPassengersList(currentPassengersTripId);
       showToast('Réservation refusée','success');
     } catch(e) { showToast('Erreur: ' + e.message,'error'); }
@@ -3948,11 +4080,11 @@
   }
 
   // ===== CANCEL BOOKING (passager annule sa réservation) =====
-  window.cancelBooking = async function(bookingId, tripId) {
+  window.cancelBooking = async function(bookingId, tripId, status) {
     if (!confirm('Annuler votre réservation ?')) return;
     try {
-      // Remettre la place disponible dans le trajet
-      if (tripId) {
+      // Remettre la place disponible seulement si elle avait été acceptée (donc décomptée)
+      if (tripId && status === 'accepted') {
         const tripSnap = await getDoc(doc(db, 'trips', tripId));
         if (tripSnap.exists()) {
           const seats = (tripSnap.data().seats || 0) + 1;
