@@ -787,7 +787,7 @@
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="section-title" id="trips-list-title" style="margin:0">Trajets disponibles</div>
+      <div class="section-title" id="trips-list-title" style="margin:0;display:flex;align-items:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" id="trips-list-icon"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg><span id="trips-list-title-text">Trajets disponibles</span></div>
       <span onclick="loadTrips()" style="font-size:12.5px;font-weight:700;color:var(--orange);cursor:pointer;display:flex;align-items:center;gap:2px">Voir tout <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span>
     </div>
     <div id="trips-list">
@@ -2116,23 +2116,30 @@
     document.getElementById('home-mode-colis').classList.toggle('active', type === 'colis');
     const titleEl = document.getElementById('search-card-title');
     const subtitleEl = document.getElementById('search-card-subtitle');
-    const listTitleEl = document.getElementById('trips-list-title');
+    const listTitleTextEl = document.getElementById('trips-list-title-text');
+    const listIconEl = document.getElementById('trips-list-icon');
+    const ICONS_BY_TYPE = {
+      conducteur: '<path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/>',
+      passager: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/>',
+      colis: '<path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/>'
+    };
+    listIconEl.innerHTML = ICONS_BY_TYPE[type];
     document.getElementById('search-from').placeholder = type === 'colis' ? 'Départ (ex: Dakar)' : 'Départ (ex: Dakar)';
     document.getElementById('search-to').placeholder = type === 'colis' ? 'Destination (ex: Thiès)' : 'Destination (ex: Thiès)';
     if (type === 'conducteur') {
       titleEl.textContent = 'Rechercher un trajet';
       if (subtitleEl) subtitleEl.textContent = 'Trouve ton trajet en toute simplicité';
-      listTitleEl.textContent = 'Trajets disponibles';
+      listTitleTextEl.textContent = 'Trajets disponibles';
       loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
     } else if (type === 'passager') {
       titleEl.textContent = 'Rechercher une demande de passager';
       if (subtitleEl) subtitleEl.textContent = 'Trouve un passager à embarquer';
-      listTitleEl.textContent = 'Passagers en recherche de conducteur';
+      listTitleTextEl.textContent = 'Passagers en recherche de conducteur';
       loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
     } else {
       titleEl.textContent = 'Rechercher un colis';
       if (subtitleEl) subtitleEl.textContent = 'Trouve un colis à transporter';
-      listTitleEl.textContent = 'Colis disponibles';
+      listTitleTextEl.textContent = 'Colis disponibles';
       loadParcels(document.getElementById('search-from').value, document.getElementById('search-to').value);
     }
   }
