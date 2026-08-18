@@ -1089,6 +1089,11 @@
       <div><div class="menu-label">Apparence</div><div class="menu-sub">Changer la couleur de l'application</div></div>
       <div class="menu-arrow">›</div>
     </div>
+    <div class="menu-item" id="menu-stats" onclick="openStats()" style="display:none">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M11 20V4M18 20v-7"/></svg></div>
+      <div><div class="menu-label">Statistiques</div><div class="menu-sub">Vue d'ensemble de l'activité Yoonu</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
     <div class="menu-item" id="menu-install" onclick="openInstallApp()" style="display:none">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M9 18h6"/><path d="M12 6v6M9 9.5l3 3 3-3"/></svg></div>
       <div><div class="menu-label">Installer l'application</div><div class="menu-sub">Ajouter Yoonu à votre écran d'accueil</div></div>
@@ -1374,6 +1379,19 @@
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Vous serez notifié dès qu'un trajet correspondant est publié, tant que l'app est ouverte.</p>
     <div id="my-alerts-list">
       <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PANEL STATISTIQUES (admin) ===== -->
+<div class="panel" id="panel-stats">
+  <div class="panel-header">
+    <button class="panel-back" onclick="closePanel('panel-stats')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="panel-title">Statistiques</div>
+  </div>
+  <div class="panel-body">
+    <div id="stats-content">
+      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Calcul en cours...</div></div>
     </div>
   </div>
 </div>
@@ -1889,6 +1907,7 @@
     document.getElementById('stat-year').textContent = year;
     // Calcul en direct depuis les avis réels (plus fiable que le champ mis en cache)
     refreshProfileRatingLive(user.uid);
+    document.getElementById('menu-stats').style.display = data.isAdmin ? 'flex' : 'none';
   }
 
   async function refreshProfileRatingLive(uid) {
@@ -2950,6 +2969,103 @@
   // ===== THÈME =====
   const THEMES = ['theme-dark','theme-midnight','theme-forest','theme-ocean','theme-desert','theme-light'];
   const THEME_IDS = { 'theme-dark':'th-dark','theme-midnight':'th-midnight','theme-forest':'th-forest','theme-ocean':'th-ocean','theme-desert':'th-desert','theme-light':'th-light' };
+
+  // ===== STATISTIQUES (admin) =====
+  window.openStats = async function() {
+    document.getElementById('panel-stats').classList.add('open');
+    const content = document.getElementById('stats-content');
+    content.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Calcul en cours...</div></div>';
+
+    function statCard(label, value, sub) {
+      return `<div class="form-section" style="text-align:center;padding:16px">
+        <div style="font-size:26px;font-weight:900;color:var(--orange)">${value}</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--text);margin-top:2px">${label}</div>
+        ${sub ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${sub}</div>` : ''}
+      </div>`;
+    }
+
+    function statusCounts(docs) {
+      let pending=0, accepted=0, refused=0;
+      docs.forEach(d => {
+        const s = d.data().status || 'pending';
+        if (s === 'accepted') accepted++;
+        else if (s === 'refused') refused++;
+        else pending++;
+      });
+      const total = pending + accepted + refused;
+      const rate = total > 0 ? Math.round((accepted / total) * 100) : 0;
+      return { pending, accepted, refused, total, rate };
+    }
+
+    function acceptRow(label, c) {
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:13px;font-weight:700">${label}</div>
+          <div style="font-size:11.5px;color:var(--text-muted)">${c.accepted} acceptées · ${c.pending} en attente · ${c.refused} refusées</div>
+        </div>
+        <div style="font-size:18px;font-weight:900;color:${c.rate>=50?'var(--green)':'var(--orange)'}">${c.rate}%</div>
+      </div>`;
+    }
+
+    try {
+      const [tripsSnap, bookingsSnap, proposalsSnap, parcelsSnap, parcelPropSnap, rentalsSnap, rentalPropSnap] = await Promise.all([
+        getDocs(collection(db, 'trips')),
+        getDocs(collection(db, 'bookings')),
+        getDocs(collection(db, 'proposals')),
+        getDocs(collection(db, 'parcels')),
+        getDocs(collection(db, 'parcelProposals')),
+        getDocs(collection(db, 'rentals')),
+        getDocs(collection(db, 'rentalProposals'))
+      ]);
+
+      const tripsConducteur = tripsSnap.docs.filter(d => (d.data().type||'conducteur') === 'conducteur');
+      const tripsPassager = tripsSnap.docs.filter(d => d.data().type === 'passager');
+
+      const bookingsByTrip = new Set(bookingsSnap.docs.map(d => d.data().tripId));
+      const proposalsByTrip = new Set(proposalsSnap.docs.map(d => d.data().tripId));
+      const parcelPropByParcel = new Set(parcelPropSnap.docs.map(d => d.data().parcelId));
+      const rentalPropByRental = new Set(rentalPropSnap.docs.map(d => d.data().rentalId));
+
+      const orphanTrips = tripsConducteur.filter(d => !bookingsByTrip.has(d.id)).length;
+      const orphanPassager = tripsPassager.filter(d => !proposalsByTrip.has(d.id)).length;
+      const orphanParcels = parcelsSnap.docs.filter(d => !parcelPropByParcel.has(d.id)).length;
+      const orphanRentals = rentalsSnap.docs.filter(d => !rentalPropByRental.has(d.id)).length;
+
+      const bookingsStats = statusCounts(bookingsSnap.docs);
+      const proposalsStats = statusCounts(proposalsSnap.docs);
+      const parcelPropStats = statusCounts(parcelPropSnap.docs);
+      const rentalPropStats = statusCounts(rentalPropSnap.docs);
+
+      content.innerHTML = `
+        <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:10px">Annonces publiées</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+          ${statCard('Trajets conducteur', tripsConducteur.length)}
+          ${statCard('Demandes passager', tripsPassager.length)}
+          ${statCard('Colis', parcelsSnap.size)}
+          ${statCard('Locations', rentalsSnap.size)}
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:10px">Taux de match (accepté / total)</div>
+        <div class="form-section" style="margin-bottom:20px">
+          ${acceptRow('Réservations trajets', bookingsStats)}
+          ${acceptRow('Propositions passager', proposalsStats)}
+          ${acceptRow('Propositions colis', parcelPropStats)}
+          ${acceptRow('Propositions location', rentalPropStats)}
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:10px">Annonces sans aucune réponse</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${statCard('Trajets', orphanTrips, 'jamais réservés')}
+          ${statCard('Demandes', orphanPassager, 'jamais proposées')}
+          ${statCard('Colis', orphanParcels, 'jamais proposés')}
+          ${statCard('Locations', orphanRentals, 'jamais proposées')}
+        </div>
+        <p style="font-size:11.5px;color:var(--text-muted);margin-top:16px;text-align:center">Calculé sur l'ensemble des données actuelles de l'app.</p>
+      `;
+    } catch(e) {
+      content.innerHTML = `<div class="empty"><div class="empty-text">Erreur: ${e.message}</div></div>`;
+    }
+  }
 
   window.openThemePanel = function() {
     document.getElementById('panel-theme').classList.add('open');
