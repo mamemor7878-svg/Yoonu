@@ -1414,7 +1414,7 @@
       <button class="btn" style="background:white;color:var(--orange);width:auto;padding:10px 20px;font-size:13px;display:inline-flex;align-items:center;gap:7px" onclick="shareReferralCode()"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg> Partager sur WhatsApp</button>
     </div>
 
-    <p style="font-size:12.5px;color:var(--text-muted);text-align:center;margin:14px 0 20px">Invitez un ami à rejoindre Yoonu. Dès son premier trajet réservé, vous recevez chacun <strong>500 FCFA</strong> par Wave.</p>
+    <p style="font-size:12.5px;color:var(--text-muted);text-align:center;margin:14px 0 20px">Invitez un ami à rejoindre Yoonu. Dès son premier trajet réservé, vous recevez chacun <strong>1000 FCFA</strong> par Wave.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
       <div class="form-section" style="text-align:center;padding:16px">
@@ -2180,7 +2180,7 @@
   window.shareReferralCode = function() {
     const code = document.getElementById('referral-code-display').textContent;
     const appUrl = `https://mamemor7878-svg.github.io/Yoonu/?ref=${code}`;
-    const text = `🚗 Rejoins-moi sur Yoonu, l'appli sénégalaise de covoiturage, colis et location de véhicules !\n\nUtilise mon code ${code} en t'inscrivant, et on gagne chacun 500 FCFA dès ton premier trajet 🎉\n\n${appUrl}`;
+    const text = `🚗 Rejoins-moi sur Yoonu, l'appli sénégalaise de covoiturage, colis et location de véhicules !\n\nUtilise mon code ${code} en t'inscrivant, et on gagne chacun 1000 FCFA dès ton premier trajet 🎉\n\n${appUrl}`;
     window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
   }
 
@@ -4356,7 +4356,7 @@
   }
 
   // Vérifie si le passager de cette réservation a un parrain et n'a jamais été récompensé.
-  // Si oui, crédite 500 FCFA au parrain ET au filleul (à payer manuellement via Wave).
+  // Si oui, crédite 1000 FCFA au parrain ET au filleul (à payer manuellement via Wave).
   async function triggerReferralRewardIfEligible(bookingId) {
     try {
       const bookingSnap = await getDoc(doc(db, 'bookings', bookingId));
@@ -4376,10 +4376,10 @@
 
       await setDoc(doc(db, 'users', passengerId), {
         referralRewarded: true,
-        referralCreditsPending: (passengerData.referralCreditsPending || 0) + 500
+        referralCreditsPending: (passengerData.referralCreditsPending || 0) + 1000
       }, { merge: true });
       await setDoc(doc(db, 'users', referrerDoc.id), {
-        referralCreditsPending: (referrerDoc.data().referralCreditsPending || 0) + 500
+        referralCreditsPending: (referrerDoc.data().referralCreditsPending || 0) + 1000
       }, { merge: true });
     } catch(e) { console.error('Erreur récompense parrainage:', e); }
   }
