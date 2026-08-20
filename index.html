@@ -1232,8 +1232,8 @@
       </div>
 
       <div id="colis-browse-gp-mode-toggle" class="mode-toggle" style="display:none;background:var(--blue-dim,rgba(30,144,255,.1))">
-        <button class="mode-toggle-btn active" id="colis-browse-gp-offre" onclick="setColisGpBrowseMode('offre')" style="color:#1e90ff">✈️ GP disponibles</button>
-        <button class="mode-toggle-btn" id="colis-browse-gp-recherche" onclick="setColisGpBrowseMode('recherche')" style="color:#1e90ff">📦 Demandes d'envoi</button>
+        <button class="mode-toggle-btn active" id="colis-browse-gp-offre" onclick="setColisGpBrowseMode('offre')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP disponibles</button>
+        <button class="mode-toggle-btn" id="colis-browse-gp-recherche" onclick="setColisGpBrowseMode('recherche')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Demandes d'envoi</button>
       </div>
 
       <div class="search-card">
@@ -1263,8 +1263,8 @@
       </div>
 
       <div id="colis-pub-gp-type-toggle" class="mode-toggle" style="display:none;background:var(--blue-dim,rgba(30,144,255,.1))">
-        <button class="mode-toggle-btn active" id="colis-pub-gp-offre" onclick="setColisGpPublishType('offre')" style="color:#1e90ff">✈️ Je suis GP</button>
-        <button class="mode-toggle-btn" id="colis-pub-gp-recherche" onclick="setColisGpPublishType('recherche')" style="color:#1e90ff">📦 Je cherche un GP</button>
+        <button class="mode-toggle-btn active" id="colis-pub-gp-offre" onclick="setColisGpPublishType('offre')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> Je suis GP</button>
+        <button class="mode-toggle-btn" id="colis-pub-gp-recherche" onclick="setColisGpPublishType('recherche')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Je cherche un GP</button>
       </div>
 
       <div id="colis-pub-disclaimer" class="form-section" style="display:none;background:#fff8ec;border-color:#f0dca8">
@@ -1459,7 +1459,7 @@
 <div class="panel" id="panel-my-trips">
   <div class="panel-header">
     <button class="panel-back" onclick="closePanel('panel-my-trips')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-    <div class="panel-title">Mes trajets</div>
+    <div class="panel-title" id="my-trips-panel-title">Mes trajets</div>
   </div>
   <div class="panel-body">
     <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">
@@ -4305,6 +4305,8 @@
     document.getElementById('my-trips-list').style.display = (tab === 'driver' || tab === 'passenger') ? 'block' : 'none';
     document.getElementById('my-parcels-list').style.display = tab === 'parcels' ? 'block' : 'none';
     document.getElementById('my-rentals-list').style.display = tab === 'rentals' ? 'block' : 'none';
+    const titles = { driver: 'Mes trajets', passenger: 'Mes réservations', parcels: 'Mes annonces colis', rentals: 'Mes annonces location' };
+    document.getElementById('my-trips-panel-title').textContent = titles[tab] || 'Mes trajets';
     if (tab === 'parcels') loadMyParcels();
     else if (tab === 'rentals') loadMyRentals();
     else loadMyTrips(tab);
