@@ -4099,67 +4099,135 @@
   async function loadConversations() {
     const list = document.getElementById('convs-list');
     list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
-    const q = query(collection(db, 'bookings'), where('passengerId','==',currentUser.uid));
+    const uid = currentUser.uid;
     try {
-      const snap = await getDocs(q);
-      if (snap.empty) {
+      const convs = []; // { key, col, id, name, subtitle, deleteRef }
+      const seen = new Set();
+      function addConv(col, id, name, subtitle, deleteRef) {
+        const key = `${col}_${id}`;
+        if (seen.has(key)) return; // évite les doublons (ex: 2 propositions sur le même colis)
+        seen.add(key);
+        convs.push({ key, col, id, name: name || 'Utilisateur', subtitle: subtitle || '', deleteRef });
+      }
+
+      // 1. Réservations de trajets — en tant que PASSAGER
+      const bookAsPax = await getDocs(query(collection(db, 'bookings'), where('passengerId','==',uid)));
+      bookAsPax.forEach(d => {
+        const b = d.data();
+        addConv('trips', b.tripId || d.id, b.driverName, `${b.from||''} → ${b.to||''} · ${b.date||''}`, { coll:'bookings', id:d.id });
+      });
+
+      // 2. Réservations de trajets — en tant que CONDUCTEUR (recevant des messages de passagers)
+      const bookAsDriver = await getDocs(query(collection(db, 'bookings'), where('driverId','==',uid)));
+      bookAsDriver.forEach(d => {
+        const b = d.data();
+        addConv('trips', b.tripId || d.id, b.passengerPhone || 'Passager', `${b.from||''} → ${b.to||''} · ${b.date||''}`, null);
+      });
+
+      // 3. Demandes passager — propositions envoyées par moi (conducteur)
+      const propAsDriver = await getDocs(query(collection(db, 'proposals'), where('driverId','==',uid)));
+      for (const d of propAsDriver.docs) {
+        const p = d.data();
+        try {
+          const tripSnap = await getDoc(doc(db, 'trips', p.tripId));
+          if (tripSnap.exists()) {
+            const t = tripSnap.data();
+            addConv('trips', p.tripId, t.driverName, `${t.from||''} → ${t.to||''} · ${t.date||''}`, null);
+          }
+        } catch(e) {}
+      }
+
+      // 4. Demandes passager — propositions reçues (moi = auteur de la demande)
+      const propAsOwner = await getDocs(query(collection(db, 'proposals'), where('requesterId','==',uid)));
+      propAsOwner.forEach(d => {
+        const p = d.data();
+        addConv('trips', p.tripId, p.driverName, 'Proposition sur votre demande', null);
+      });
+
+      // 5. Colis/GP — propositions envoyées par moi (transporteur)
+      const parcelPropAsDriver = await getDocs(query(collection(db, 'parcelProposals'), where('driverId','==',uid)));
+      for (const d of parcelPropAsDriver.docs) {
+        const p = d.data();
+        try {
+          const parcelSnap = await getDoc(doc(db, 'parcels', p.parcelId));
+          if (parcelSnap.exists()) {
+            const pc = parcelSnap.data();
+            addConv('parcels', p.parcelId, pc.ownerName, `Colis ${pc.from||''} → ${pc.to||''}`, null);
+          }
+        } catch(e) {}
+      }
+
+      // 6. Colis/GP — propositions reçues (moi = propriétaire du colis)
+      const parcelPropAsOwner = await getDocs(query(collection(db, 'parcelProposals'), where('requesterId','==',uid)));
+      parcelPropAsOwner.forEach(d => {
+        const p = d.data();
+        addConv('parcels', p.parcelId, p.driverName, 'Proposition sur votre colis', null);
+      });
+
+      // 7. Location — propositions envoyées par moi
+      const rentalPropAsDriver = await getDocs(query(collection(db, 'rentalProposals'), where('driverId','==',uid)));
+      for (const d of rentalPropAsDriver.docs) {
+        const p = d.data();
+        try {
+          const rentalSnap = await getDoc(doc(db, 'rentals', p.rentalId));
+          if (rentalSnap.exists()) {
+            const r = rentalSnap.data();
+            const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || 'Véhicule';
+            addConv('rentals', p.rentalId, r.ownerName, vehicleName, null);
+          }
+        } catch(e) {}
+      }
+
+      // 8. Location — propositions reçues (moi = propriétaire de l'annonce)
+      const rentalPropAsOwner = await getDocs(query(collection(db, 'rentalProposals'), where('requesterId','==',uid)));
+      rentalPropAsOwner.forEach(d => {
+        const p = d.data();
+        addConv('rentals', p.rentalId, p.driverName, 'Proposition sur votre annonce', null);
+      });
+
+      if (convs.length === 0) {
         list.innerHTML = '<div class="empty"><div class="empty-icon">💬</div><div class="empty-text">Aucune conversation pour l\'instant</div></div>';
+        updateMsgBadges(0);
         return;
       }
+
       list.innerHTML = '';
-      let newMsgs = 0;
-      snap.forEach(d => {
-        const b = d.data();
-        // Stocker les données dans une variable globale pour éviter les problèmes d'échappement
-        const convKey = `conv_${d.id}`;
-        window[convKey] = { tripId: b.tripId||'', name: b.driverName||'Conducteur', driverId: b.driverId||'' };
+      convs.forEach(c => {
+        window[c.key] = { col: c.col, id: c.id, name: c.name };
         const item = document.createElement('div');
         item.className = 'conv-item';
         item.innerHTML = `
-          <div class="conv-avatar">${(b.driverName||'C')[0]}</div>
-          <div class="conv-info" onclick="openChatFromConvKey('${convKey}')" style="flex:1;cursor:pointer">
-            <div class="conv-name">${b.driverName||'Conducteur'}</div>
-            <div class="conv-preview">${b.from||''} → ${b.to||''} · ${b.date||''}</div>
-          </div>
-          <div class="conv-item-actions">
-            ${b.unread ? '<div class="unread-badge">1</div>' : ''}
-            <button class="conv-del-btn" onclick="deleteConversation('${d.id}','${b.tripId||''}')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"/><path d="M9.5 7V4.8a1.3 1.3 0 0 1 1.3-1.3h2.4a1.3 1.3 0 0 1 1.3 1.3V7"/><path d="M6.5 7l1 13.2a1.8 1.8 0 0 0 1.8 1.7h5.4a1.8 1.8 0 0 0 1.8-1.7L17.5 7"/><path d="M10.3 11v6M13.7 11v6"/></svg></button>
+          <div class="conv-avatar">${(c.name||'U')[0].toUpperCase()}</div>
+          <div class="conv-info" onclick="openChatFromConvKey('${c.key}')" style="flex:1;cursor:pointer">
+            <div class="conv-name">${c.name}</div>
+            <div class="conv-preview">${c.subtitle}</div>
           </div>`;
         list.appendChild(item);
-        if (b.unread) newMsgs++;
       });
-      const hamBadge = document.getElementById('hamburger-msg-badge');
-      const hamCount = document.getElementById('hamburger-msg-count');
-      if (newMsgs > 0) {
-        hamBadge.style.display = 'flex';
-        hamCount.textContent = newMsgs;
-        hamCount.style.display = 'flex';
-      } else {
-        hamBadge.style.display = 'none';
-        hamCount.style.display = 'none';
-      }
-    } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>'; }
+      updateMsgBadges(0);
+    } catch(e) {
+      console.error(e);
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>';
+    }
+  }
+
+  function updateMsgBadges(count) {
+    const hamBadge = document.getElementById('hamburger-msg-badge');
+    const hamCount = document.getElementById('hamburger-msg-count');
+    if (count > 0) {
+      hamBadge.style.display = 'flex';
+      hamCount.textContent = count;
+      hamCount.style.display = 'flex';
+    } else {
+      hamBadge.style.display = 'none';
+      hamCount.style.display = 'none';
+    }
   }
 
   window.openChatFromConvKey = function(key) {
     const d = window[key];
     if (!d) return;
-    openChatFromBooking(d.tripId, d.name, d.driverId);
-  }
-
-  window.deleteConversation = async function(bookingId, tripId) {
-    if (!confirm('Supprimer cette conversation ?')) return;
-    try {
-      // Supprimer les messages du chat
-      const msgsSnap = await getDocs(collection(db, 'trips', tripId, 'messages'));
-      const dels = [];
-      msgsSnap.forEach(m => dels.push(deleteDoc(doc(db, 'trips', tripId, 'messages', m.id))));
-      await Promise.all(dels);
-      // Supprimer la réservation (conversation)
-      await deleteDoc(doc(db, 'bookings', bookingId));
-      showToast('Conversation supprimée','success');
-      loadConversations();
-    } catch(e) { showToast('Erreur: ' + e.message,'error'); }
+    openChatGeneric(d.col, d.id, d.name);
   }
 
   window.openChatFromKey = async function(key) {
@@ -5218,6 +5286,94 @@
       }
     } catch(e) {}
 
+    // 6. Mes propositions passager (statut accepté/refusé) — vues par moi, le conducteur qui a proposé
+    try {
+      const myPropSnap = await getDocs(query(collection(db, 'proposals'), where('driverId','==',currentUser.uid)));
+      const tripIds = [...new Set(myPropSnap.docs.map(d => d.data().tripId).filter(Boolean))];
+      const tripsMap = {};
+      await Promise.all(tripIds.map(async id => {
+        try { const s = await getDoc(doc(db, 'trips', id)); if (s.exists()) tripsMap[id] = s.data(); } catch(e) {}
+      }));
+      myPropSnap.forEach(d => {
+        const p = d.data();
+        const t = tripsMap[p.tripId] || {};
+        if (p.status === 'accepted') {
+          notifs.push({
+            id: d.id + '_accepted', type: 'proposal_passager_accepted', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(23,201,120,.14)" stroke="var(--green)"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="var(--green)"/></svg>`,
+            title: 'Proposition acceptée !',
+            desc: `${t.driverName || 'Le passager'} a accepté votre proposition pour ${t.from||''} → ${t.to||''}`,
+            time: p.createdAt, read: p.readAccepted || false
+          });
+        } else if (p.status === 'refused') {
+          notifs.push({
+            id: d.id + '_refused', type: 'proposal_passager_refused', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="m9 9 6 6M15 9l-6 6" stroke="#e53935"/></svg>`,
+            title: 'Proposition refusée',
+            desc: `Votre proposition pour ${t.from||''} → ${t.to||''} n'a pas été retenue.`,
+            time: p.createdAt, read: p.readRefused || false
+          });
+        }
+      });
+    } catch(e) {}
+
+    // 7. Mes propositions colis (statut accepté/refusé) — vues par moi, le transporteur qui a proposé
+    try {
+      const myParcelPropSnap = await getDocs(query(collection(db, 'parcelProposals'), where('driverId','==',currentUser.uid)));
+      const parcelIds = [...new Set(myParcelPropSnap.docs.map(d => d.data().parcelId).filter(Boolean))];
+      const parcelsMap = {};
+      await Promise.all(parcelIds.map(async id => {
+        try { const s = await getDoc(doc(db, 'parcels', id)); if (s.exists()) parcelsMap[id] = s.data(); } catch(e) {}
+      }));
+      myParcelPropSnap.forEach(d => {
+        const p = d.data();
+        const pc = parcelsMap[p.parcelId] || {};
+        if (p.status === 'accepted') {
+          notifs.push({
+            id: d.id + '_accepted', type: 'proposal_colis_accepted', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(23,201,120,.14)" stroke="var(--green)"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="var(--green)"/></svg>`,
+            title: 'Proposition colis acceptée !',
+            desc: `${pc.ownerName || 'Le propriétaire'} a accepté votre proposition pour le colis ${pc.from||''} → ${pc.to||''}`,
+            time: p.createdAt, read: p.readAccepted || false
+          });
+        } else if (p.status === 'refused') {
+          notifs.push({
+            id: d.id + '_refused', type: 'proposal_colis_refused', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="m9 9 6 6M15 9l-6 6" stroke="#e53935"/></svg>`,
+            title: 'Proposition colis refusée',
+            desc: `Votre proposition pour le colis ${pc.from||''} → ${pc.to||''} n'a pas été retenue.`,
+            time: p.createdAt, read: p.readRefused || false
+          });
+        }
+      });
+    } catch(e) {}
+
+    // 8. Mes propositions location (statut accepté/refusé) — vues par moi, celui qui a proposé
+    try {
+      const myRentalPropSnap = await getDocs(query(collection(db, 'rentalProposals'), where('driverId','==',currentUser.uid)));
+      const rentalIds = [...new Set(myRentalPropSnap.docs.map(d => d.data().rentalId).filter(Boolean))];
+      const rentalsMap = {};
+      await Promise.all(rentalIds.map(async id => {
+        try { const s = await getDoc(doc(db, 'rentals', id)); if (s.exists()) rentalsMap[id] = s.data(); } catch(e) {}
+      }));
+      myRentalPropSnap.forEach(d => {
+        const p = d.data();
+        const r = rentalsMap[p.rentalId] || {};
+        const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || 'le véhicule';
+        if (p.status === 'accepted') {
+          notifs.push({
+            id: d.id + '_accepted', type: 'proposal_location_accepted', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(23,201,120,.14)" stroke="var(--green)"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="var(--green)"/></svg>`,
+            title: 'Proposition location acceptée !',
+            desc: `${r.ownerName || 'Le propriétaire'} a accepté votre proposition pour ${vehicleName}`,
+            time: p.createdAt, read: p.readAccepted || false
+          });
+        } else if (p.status === 'refused') {
+          notifs.push({
+            id: d.id + '_refused', type: 'proposal_location_refused', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="m9 9 6 6M15 9l-6 6" stroke="#e53935"/></svg>`,
+            title: 'Proposition location refusée',
+            desc: `Votre proposition pour ${vehicleName} n'a pas été retenue.`,
+            time: p.createdAt, read: p.readRefused || false
+          });
+        }
+      });
+    } catch(e) {}
+
     // Trier par date décroissante
     notifs.sort((a,b) => {
       const ta = a.time?.seconds || 0;
@@ -5316,6 +5472,18 @@
           return updateDoc(doc(db, 'parcelProposals', n.id), { readByOwner: true });
         } else if (n.type === 'proposal_location') {
           return updateDoc(doc(db, 'rentalProposals', n.id), { readByOwner: true });
+        } else if (n.type === 'proposal_passager_accepted') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'proposal_passager_refused') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'proposal_colis_accepted') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'proposal_colis_refused') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'proposal_location_accepted') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'proposal_location_refused') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_refused$/, '')), { readRefused: true });
         }
       } catch(e) {}
       return Promise.resolve();
