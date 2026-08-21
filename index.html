@@ -4052,15 +4052,13 @@
 
   // Crée le document de conversation s'il n'existe pas (porte la liste des 2 participants)
   async function ensureChatDoc(chatId, col, listingId, otherUid, otherName) {
-    try {
-      await setDoc(doc(db, 'chats', chatId), {
-        listingCollection: col,
-        listingId,
-        participants: [currentUser.uid, otherUid].sort(),
-        names: { [currentUser.uid]: currentUser.displayName || '', [otherUid]: otherName || '' },
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    } catch(e) { console.error('ensureChatDoc', e); }
+    await setDoc(doc(db, 'chats', chatId), {
+      listingCollection: col,
+      listingId,
+      participants: [currentUser.uid, otherUid].sort(),
+      names: { [currentUser.uid]: currentUser.displayName || '', [otherUid]: otherName || '' },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
   }
 
   async function openChat(col, listingId, otherUid, otherName) {
@@ -4073,7 +4071,14 @@
     document.getElementById('chat-avatar').textContent = (otherName||'?')[0].toUpperCase();
     document.getElementById('chat-screen').classList.add('open');
     document.getElementById('chat-messages').innerHTML = '';
-    await ensureChatDoc(chatId, col, listingId, otherUid, otherName);
+    try {
+      await ensureChatDoc(chatId, col, listingId, otherUid, otherName);
+    } catch(e) {
+      console.error('ensureChatDoc', e);
+      document.getElementById('chat-messages').innerHTML =
+        '<div class="empty"><div class="empty-text">Conversation indisponible.<br>Vérifiez que les règles Firestore ont bien été publiées.</div></div>';
+      return;
+    }
     listenMessages(chatId);
     markChatRead(chatId);
   }
@@ -4292,8 +4297,15 @@
     const d = window[key];
     if (!d) { showToast('Erreur: données manquantes', 'error'); return; }
     let tripId = d.tripId;
-    // Si tripId vide, chercher dans bookings
-    if (!tripId) {
+    // Si le tripId manque sur la réservation, on le relit depuis le document booking lui-même
+    if (!tripId && d.bookingId) {
+      try {
+        const bSnap = await getDoc(doc(db, 'bookings', d.bookingId));
+        if (bSnap.exists()) tripId = bSnap.data().tripId || '';
+      } catch(e) {}
+    }
+    // Dernier recours : retrouver la réservation via le conducteur
+    if (!tripId && d.id) {
       try {
         const bSnap = await getDocs(query(
           collection(db, 'bookings'),
@@ -4303,7 +4315,8 @@
         if (!bSnap.empty) tripId = bSnap.docs[0].data().tripId || '';
       } catch(e) {}
     }
-    if (!tripId) { showToast('Impossible d\'ouvrir le chat','error'); return; }
+    if (!tripId) { showToast('Trajet introuvable, impossible d\'ouvrir la conversation','error'); return; }
+    if (!d.id) { showToast('Conducteur introuvable, impossible d\'ouvrir la conversation','error'); return; }
     openChat('trips', tripId, d.id, d.name);
   }
 
@@ -4918,7 +4931,10 @@
 
         // Stocker les infos conducteur pour le chat
         const driverKey = `driver_${d.id}`;
-        window[driverKey] = { tripId: t.tripId||d.id, name: t.driverName||'Conducteur', id: t.driverId||'' };
+        // IMPORTANT : ne jamais retomber sur l'id de la réservation. Le fil de discussion est
+        // identifié par l'id du TRAJET ; utiliser l'id du booking créerait un fil parallèle
+        // que le conducteur ne verrait jamais.
+        window[driverKey] = { tripId: t.tripId || '', bookingId: d.id, name: t.driverName||'Conducteur', id: t.driverId||'' };
 
         list.innerHTML += `<div class="my-trip-card">
           ${typeBadgeSmall ? `<div style="margin-bottom:8px">${typeBadgeSmall}</div>` : ''}
@@ -5208,9 +5224,14 @@
       if (d.col === 'trips') loadMyTrips('passenger');
       else switchMySubTab('confirmed');
       refreshNotifBadge();
-    } catch(e) { showToast('Erreur: ' + e.message,'error'); }
+    } catch(e) {
+      console.error('cancelMyCommitment', e);
+      const msg = (e && e.code === 'permission-denied')
+        ? 'Annulation refusée. Vérifiez que les règles Firestore sont bien publiées.'
+        : 'Erreur: ' + e.message;
+      showToast(msg, 'error');
+    }
   }
-
   // ===== LOCALISATION / ITINÉRAIRE =====
   window.openTripLocation = function(from, to) {
     const url = `https://www.google.com/maps/dir/${encodeURIComponent(from+', Sénégal')}/${encodeURIComponent(to+', Sénégal')}`;
