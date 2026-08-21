@@ -1106,8 +1106,8 @@
     <!-- Sous-page : Parcourir -->
     <div id="loc-browse-section">
       <div class="mode-toggle" id="loc-browse-mode-toggle">
-        <button class="mode-toggle-btn active" id="loc-browse-offre" onclick="setRentalBrowseType('offre')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg> Véhicules à louer</button>
-        <button class="mode-toggle-btn" id="loc-browse-recherche" onclick="setRentalBrowseType('recherche')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Recherches</button>
+        <button class="mode-toggle-btn active" id="loc-browse-offre" onclick="setRentalBrowseType('offre')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg> Véhicules à louer <span id="count-badge-loc-offre" class="count-badge">0</span></button>
+        <button class="mode-toggle-btn" id="loc-browse-recherche" onclick="setRentalBrowseType('recherche')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Recherches <span id="count-badge-loc-recherche" class="count-badge">0</span></button>
       </div>
 
       <div class="search-card">
@@ -1227,13 +1227,13 @@
     <!-- Sous-page : Parcourir -->
     <div id="colis-browse-section">
       <div class="mode-toggle" id="colis-browse-scope-toggle">
-        <button class="mode-toggle-btn active" id="colis-browse-local" onclick="setColisScope('browse','local')"><svg viewBox="0 0 24 24" width="15" height="15">🇸🇳</svg> Local</button>
-        <button class="mode-toggle-btn" id="colis-browse-gp" onclick="setColisScope('browse','gp')"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International</button>
+        <button class="mode-toggle-btn active" id="colis-browse-local" onclick="setColisScope('browse','local')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local <span id="count-badge-colis-local" class="count-badge">0</span></button>
+        <button class="mode-toggle-btn" id="colis-browse-gp" onclick="setColisScope('browse','gp')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International <span id="count-badge-colis-gp" class="count-badge">0</span></button>
       </div>
 
       <div id="colis-browse-gp-mode-toggle" class="mode-toggle" style="display:none;background:var(--blue-dim,rgba(30,144,255,.1))">
-        <button class="mode-toggle-btn active" id="colis-browse-gp-offre" onclick="setColisGpBrowseMode('offre')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP disponibles</button>
-        <button class="mode-toggle-btn" id="colis-browse-gp-recherche" onclick="setColisGpBrowseMode('recherche')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Demandes d'envoi</button>
+        <button class="mode-toggle-btn active" id="colis-browse-gp-offre" onclick="setColisGpBrowseMode('offre')" style="position:relative" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP disponibles <span id="count-badge-gp-offre" class="count-badge">0</span></button>
+        <button class="mode-toggle-btn" id="colis-browse-gp-recherche" onclick="setColisGpBrowseMode('recherche')" style="position:relative" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Demandes d'envoi <span id="count-badge-gp-recherche" class="count-badge">0</span></button>
       </div>
 
       <div class="search-card">
@@ -1258,7 +1258,7 @@
     <!-- Sous-page : Publier -->
     <div id="colis-publish-section" style="display:none">
       <div class="mode-toggle" id="colis-publish-scope-toggle">
-        <button class="mode-toggle-btn active" id="colis-pub-local" onclick="setColisScope('publish','local')"><svg viewBox="0 0 24 24" width="15" height="15">🇸🇳</svg> Local</button>
+        <button class="mode-toggle-btn active" id="colis-pub-local" onclick="setColisScope('publish','local')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local</button>
         <button class="mode-toggle-btn" id="colis-pub-gp" onclick="setColisScope('publish','gp')"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International</button>
       </div>
 
@@ -1317,6 +1317,14 @@
           </div>
         </div>
 
+        <div class="input-group" id="colis-currency-group" style="display:none;margin-top:12px">
+          <label>Devise</label>
+          <select id="colis-currency" onchange="updateColisCurrencyLabels()">
+            <option value="EUR">Euro (€)</option>
+            <option value="XOF">Franc CFA (FCFA)</option>
+          </select>
+        </div>
+
         <div id="colis-pub-kg-group" style="display:none">
           <label style="font-size:11px;color:var(--text-muted);margin-bottom:7px;display:block;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Kg disponibles</label>
           <div class="qty-stepper" style="margin-bottom:12px">
@@ -1326,8 +1334,8 @@
           </div>
           <input type="hidden" id="colis-kg-total" value="10"/>
           <div class="input-group">
-            <label>Prix par kg</label>
-            <input type="number" id="colis-price-per-kg" placeholder="Ex: 15 (€) ou 10000 (FCFA)"/>
+            <label id="colis-price-kg-label">Prix par kg (€)</label>
+            <input type="number" id="colis-price-per-kg" placeholder="Ex: 15"/>
           </div>
         </div>
 
@@ -1462,7 +1470,7 @@
     <div class="panel-title" id="my-trips-panel-title">Mes trajets</div>
   </div>
   <div class="panel-body">
-    <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">
+    <div id="my-trips-tabs" style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">
       <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets</button>
       <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Résa</button>
       <button class="option-toggle" id="tab-parcels" onclick="switchTripsTab('parcels')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Colis</button>
@@ -1874,7 +1882,7 @@
       <input type="hidden" id="edit-gp-kg-total" value="10"/>
       <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px">Les kg déjà pris par des propositions acceptées seront automatiquement déduits de ce total.</div>
       <div class="input-group">
-        <label>Prix par kg</label>
+        <label id="edit-gp-price-kg-label">Prix par kg (€)</label>
         <input type="number" id="edit-gp-price-per-kg" placeholder="Ex: 15"/>
       </div>
     </div>
@@ -1885,9 +1893,17 @@
         <input type="number" id="edit-gp-poids" placeholder="Ex: 5"/>
       </div>
       <div class="input-group">
-        <label>Budget</label>
+        <label id="edit-gp-price-label">Budget (€)</label>
         <input type="number" id="edit-gp-price" placeholder="Ex: 50"/>
       </div>
+    </div>
+
+    <div class="input-group" style="margin-top:12px">
+      <label>Devise</label>
+      <select id="edit-gp-currency" onchange="updateEditGpCurrencyLabels()">
+        <option value="EUR">Euro (€)</option>
+        <option value="XOF">Franc CFA (FCFA)</option>
+      </select>
     </div>
 
     <div class="input-group" id="edit-gp-desc-group" style="margin-top:12px">
@@ -1978,7 +1994,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, setPersistence, browserLocalPersistence, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePhoneNumber, PhoneAuthProvider, sendPasswordResetEmail, deleteUser, reauthenticateWithCredential, EmailAuthProvider }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc }
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, arrayUnion, limit }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
   import { getStorage, ref as storageRef, uploadBytes, getDownloadURL }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
@@ -2060,6 +2076,7 @@
         loadConversations();
         checkPendingRatings();
         refreshNotifBadge();
+        startNotifPolling();
         checkAndPublishRecurringTrips();
         refreshSavedSearchesCache().then(startAlertsListener);
         if (!sessionStorage.getItem('yoonu-welcomed')) {
@@ -2069,6 +2086,8 @@
         }
       }
     } else {
+      currentUser = null;
+      if (notifPollInterval) { clearInterval(notifPollInterval); notifPollInterval = null; }
       document.getElementById('auth-screen').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
       setupRecaptcha();
@@ -2484,7 +2503,29 @@
     document.getElementById('colis-pub-step1-sub').textContent = isGpOffre ? 'D\'où à où, et quand' : 'D\'où part le colis, où va-t-il ?';
     document.getElementById('colis-pub-step2-title').textContent = isGpOffre ? '2. Capacité disponible' : '2. Détails du colis';
     document.getElementById('colis-price-label').textContent = isGp ? 'Budget proposé' : 'Budget proposé (FCFA)';
+    // La devise est au choix uniquement pour les GP internationaux (local = toujours FCFA)
+    document.getElementById('colis-currency-group').style.display = isGp ? 'block' : 'none';
+    updateColisCurrencyLabels();
     document.getElementById('colis-pub-submit-label').textContent = isGpOffre ? 'Publier mon GP' : (isGp ? 'Publier ma demande' : 'Publier mon colis');
+  }
+
+  // Symbole de devise d'une annonce colis. Les anciennes annonces GP sans champ
+  // 'currency' sont considérées en euros (comportement d'origine du GP international).
+  function parcelCur(p) {
+    if ((p.scope || 'local') !== 'gp') return 'FCFA';
+    return p.currency === 'XOF' ? 'FCFA' : '€';
+  }
+
+  // Met à jour les libellés de prix selon la devise choisie
+  window.updateColisCurrencyLabels = function() {
+    const sel = document.getElementById('colis-currency');
+    const sym = sel && sel.value === 'XOF' ? 'FCFA' : '€';
+    const kgLabel = document.getElementById('colis-price-kg-label');
+    if (kgLabel) kgLabel.textContent = `Prix par kg (${sym})`;
+    const priceLabel = document.getElementById('colis-price-label');
+    if (priceLabel && document.getElementById('colis-currency-group').style.display !== 'none') {
+      priceLabel.textContent = `Budget proposé (${sym})`;
+    }
   }
 
   window.toggleColisReturnDate = function(checkbox) {
@@ -2517,19 +2558,33 @@
       const q = query(collection(db, 'parcels'), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
       const parcels = [];
+      // Compteurs globaux (non filtrés par la recherche), comme sur l'onglet Accueil
+      let countLocal = 0, countGpOffre = 0, countGpRecherche = 0;
       snap.forEach(d => {
         const data = { id: d.id, ...d.data() };
         if (data.statut !== 'actif' && data.statut !== 'pourvu') return;
         const dataScope = data.scope || 'local';
-        if (dataScope !== scope) return;
-        if (scope === 'gp') {
-          const dataType = data.type || 'recherche';
-          if (dataType !== gpMode) return;
+        const dataType = data.type || 'recherche';
+        // On ne compte que ce qui est réellement disponible
+        const isGpOffreDoc = dataScope === 'gp' && dataType === 'offre';
+        const indisponible = isGpOffreDoc
+          ? (data.kgRestants != null && data.kgRestants <= 0)
+          : data.statut === 'pourvu';
+        if (!indisponible) {
+          if (dataScope === 'local') countLocal++;
+          else if (isGpOffreDoc) countGpOffre++;
+          else countGpRecherche++;
         }
+        if (dataScope !== scope) return;
+        if (scope === 'gp' && dataType !== gpMode) return;
         if (fromFilter && !(data.from || '').toLowerCase().includes(fromFilter)) return;
         if (toFilter && !(data.to || '').toLowerCase().includes(toFilter)) return;
         parcels.push(data);
       });
+      document.getElementById('count-badge-colis-local').textContent = countLocal;
+      document.getElementById('count-badge-colis-gp').textContent = countGpOffre + countGpRecherche;
+      document.getElementById('count-badge-gp-offre').textContent = countGpOffre;
+      document.getElementById('count-badge-gp-recherche').textContent = countGpRecherche;
       if (parcels.length === 0) {
         list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><div class="empty-text">Rien pour l\'instant</div></div>';
         return;
@@ -2545,20 +2600,20 @@
     const isGpOffre = scope === 'gp' && p.type === 'offre';
     const isFullyPourvu = isGpOffre ? (p.kgRestants != null && p.kgRestants <= 0) : p.statut === 'pourvu';
     const scopeBadge = scope === 'gp'
-      ? `<div class="type-badge" style="background:rgba(30,144,255,.12);color:#1e90ff">✈️ GP International</div>`
-      : `<div class="type-badge" style="background:var(--orange-dim);color:var(--orange)">🇸🇳 Local</div>`;
+      ? `<div class="type-badge" style="background:rgba(30,144,255,.12);color:#1e90ff"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International</div>`
+      : `<div class="type-badge" style="background:var(--orange-dim);color:var(--orange)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local</div>`;
     const pourvuBadge = isFullyPourvu ? `<div class="type-badge" style="background:rgba(140,140,140,.16);color:#6b6b6b">${isGpOffre ? 'Complet' : 'Transporteur trouvé'}</div>` : '';
 
     let priceLine, extraLine = '';
     if (isGpOffre) {
       const pct = p.kgTotal ? Math.round(((p.kgRestants ?? p.kgTotal) / p.kgTotal) * 100) : 0;
-      priceLine = `${p.price ? Number(p.price).toLocaleString('fr-FR') : '?'}<span> / kg</span>`;
+      priceLine = `${p.price ? Number(p.price).toLocaleString('fr-FR') : '?'}<span> ${parcelCur(p)}/kg</span>`;
       extraLine = `
         <div style="font-size:11px;color:var(--text-muted);margin:6px 0 2px">${p.flightDate ? 'Vol du '+p.flightDate : ''}</div>
         <div style="background:var(--dark2);border-radius:100px;height:6px;overflow:hidden;margin:6px 0"><div style="background:#1e90ff;height:100%;border-radius:100px;width:${pct}%"></div></div>
         <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:8px">${p.kgRestants ?? p.kgTotal} kg / ${p.kgTotal} kg disponibles</div>`;
     } else {
-      priceLine = p.price ? `${Number(p.price).toLocaleString('fr-FR')}<span> FCFA</span>` : `<span style="font-size:14px">À négocier</span>`;
+      priceLine = p.price ? `${Number(p.price).toLocaleString('fr-FR')}<span> ${parcelCur(p)}</span>` : `<span style="font-size:14px">À négocier</span>`;
     }
 
     return `<div class="trip-card" onclick="openParcel(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="${isFullyPourvu?'opacity:.6':''}">
@@ -2593,15 +2648,15 @@
       const pct = p.kgTotal ? Math.round(((p.kgRestants ?? p.kgTotal) / p.kgTotal) * 100) : 0;
       metaHtml = `
         <div class="trip-meta">
-          <div class="trip-badge">✈️ Vol du ${p.flightDate||''}</div>
-          <div class="trip-badge">${p.price ? Number(p.price).toLocaleString('fr-FR')+' / kg' : 'Prix à voir'}</div>
+          <div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> Vol du ${p.flightDate||''}</div>
+          <div class="trip-badge">${p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p)+'/kg' : 'Prix à voir'}</div>
         </div>
         <div style="background:var(--dark2);border-radius:100px;height:6px;overflow:hidden;margin:10px 0 4px"><div style="background:#1e90ff;height:100%;border-radius:100px;width:${pct}%"></div></div>
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">${p.kgRestants ?? p.kgTotal} kg / ${p.kgTotal} kg disponibles</div>`;
     } else {
       metaHtml = `<div class="trip-meta">
         ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
-        <div class="trip-badge">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+        <div class="trip-badge">${p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p) : 'À négocier'}</div>
       </div>`;
     }
 
@@ -2651,6 +2706,7 @@
           status: 'pending',
           createdAt: serverTimestamp()
         });
+        await setDoc(doc(db, 'parcels', p.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
         showToast('Proposition envoyée !','success');
       }
     } catch(e) {
@@ -2658,7 +2714,7 @@
 
     }
     closeModal();
-    openChatGeneric('parcels', p.id, p.ownerName || 'Utilisateur');
+    openChat('parcels', p.id, p.ownerId, p.ownerName || 'Utilisateur');
   }
 
   // ===== TOGGLE MODE PUBLISH (conducteur / passager) =====
@@ -2956,13 +3012,14 @@
           status: 'pending',
           createdAt: serverTimestamp()
         });
+        await setDoc(doc(db, 'trips', currentTripData.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
         showToast('Proposition envoyée !','success');
       }
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
     }
     closeModal();
-    openChatWithDriver(currentTripData);
+    openChat('trips', currentTripData.id, currentTripData.driverId, currentTripData.driverName || 'Conducteur');
   }
 
   // Partage un trajet (ou une annonce de location) sur WhatsApp avec un texte prérempli
@@ -2973,7 +3030,7 @@
       const p = currentParcelData;
       text = `📦 Colis à transporter sur Yoonu !\n📍 ${p.from} → ${p.to}\n`
            + (p.poids ? `⚖️ ${p.poids} kg\n` : '')
-           + `💰 ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}\n`
+           + `💰 ${p.price ? Number(p.price).toLocaleString('fr-FR') + ' ' + parcelCur(p) + (p.scope === 'gp' && p.type === 'offre' ? '/kg' : '') : 'À négocier'}\n`
            + `\nVoir l'annonce : ${appUrl}`;
     } else if (currentRentalData) {
       const r = currentRentalData;
@@ -3052,14 +3109,22 @@
     try {
       const snap = await getDocs(query(collection(db, 'rentals'), orderBy('createdAt', 'desc')));
       const rentals = [];
+      // Compteurs globaux (non filtrés), comme sur l'onglet Accueil
+      let countOffre = 0, countRecherche = 0;
       snap.forEach(d => {
         const data = { id: d.id, ...d.data() };
-        if ((data.type||'offre') !== currentRentalBrowseType) return;
+        const dataType = data.type || 'offre';
+        if (!data.statut || data.statut === 'actif') {
+          if (dataType === 'offre') countOffre++; else countRecherche++;
+        }
+        if (dataType !== currentRentalBrowseType) return;
         if (data.statut && data.statut !== 'actif') return;
         if (villeFilter && !(data.ville||'').toLowerCase().includes(villeFilter)) return;
         if (catFilter && data.category !== catFilter) return;
         rentals.push(data);
       });
+      document.getElementById('count-badge-loc-offre').textContent = countOffre;
+      document.getElementById('count-badge-loc-recherche').textContent = countRecherche;
       if (rentals.length === 0) {
         const emptyLabel = currentRentalBrowseType === 'offre' ? 'Aucun véhicule disponible pour l\'instant' : 'Aucune recherche pour l\'instant';
         list.innerHTML = `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg></div><div class="empty-text">${emptyLabel}</div></div>`;
@@ -3167,13 +3232,14 @@
           status: 'pending',
           createdAt: serverTimestamp()
         });
+        await setDoc(doc(db, 'rentals', r.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
         showToast('Proposition envoyée !','success');
       }
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
     }
     closeModal();
-    openChatGeneric('rentals', r.id, r.ownerName || 'Propriétaire');
+    openChat('rentals', r.id, r.ownerId, r.ownerName || 'Propriétaire');
   }
 
   window.publishRental = async function() {
@@ -3211,6 +3277,7 @@
         ownerName: userData.name,
         ownerPhone: currentUser.phoneNumber || userData.phone || '',
         ownerRating: userData.rating||5,
+        participants: [currentUser.uid],
         createdAt: serverTimestamp()
       });
       showToast(type === 'offre' ? 'Offre publiée !' : 'Recherche publiée !','success');
@@ -3274,6 +3341,7 @@
         price: currentTripData.price,
         status: 'pending', createdAt: serverTimestamp()
       });
+      await setDoc(doc(db, 'trips', currentTripData.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
       closeModal();
       showBookingConfirmation(currentTripData.from, currentTripData.to, currentTripData.date, currentTripData.price);
       showToast('Réservation envoyée ! 🎉','success');
@@ -3572,6 +3640,7 @@
         driverName: userData.name,
         driverPhone: currentUser.phoneNumber || userData.phone || '',
         driverRating: userData.rating||5,
+        participants: [currentUser.uid],
         createdAt: serverTimestamp()
       });
 
@@ -3643,10 +3712,13 @@
     const payload = {
       scope, from, to,
       statut: 'actif',
+      // Devise : au choix pour les GP internationaux, toujours FCFA en local
+      currency: scope === 'gp' ? (document.getElementById('colis-currency').value || 'EUR') : 'XOF',
       ownerId: currentUser.uid,
       ownerName: userData.name,
       ownerPhone: currentUser.phoneNumber || userData.phone || '',
       ownerRating: userData.rating || 5,
+      participants: [currentUser.uid],
       createdAt: serverTimestamp()
     };
 
@@ -3731,6 +3803,7 @@
             driverPhone: r.ownerPhone,
             driverRating: 5,
             recurringId: docSnap.id,
+            participants: [currentUser.uid],
             createdAt: serverTimestamp()
           });
           await updateDoc(doc(db, 'recurringTrips', docSnap.id), { lastPublishedDate: nextDate });
@@ -3962,32 +4035,48 @@
   })();
 
   // ===== CHAT =====
-  // Chat générique : fonctionne sur n'importe quelle collection racine ('trips' ou 'rentals')
-  // via une sous-collection {collection}/{id}/messages
-  let editingMsgCol = 'trips';
+  // Une conversation = un fil entre EXACTEMENT 2 personnes, pour une annonce donnée.
+  // Stockage : chats/{chatId}/messages, avec chatId = {collection}_{annonceId}_{uidA}_{uidB}
+  // (les 2 uid triés alphabétiquement pour que les deux côtés calculent le même identifiant).
+  let currentChatId = null;
 
-  function openChatWithDriver(trip) {
-    currentChatUser = { name: trip.driverName, id: trip.driverId };
-    document.getElementById('chat-name').textContent = trip.driverName;
-    document.getElementById('chat-avatar').textContent = (trip.driverName||'?')[0].toUpperCase();
-    document.getElementById('chat-screen').classList.add('open');
-    document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(trip.id, 'trips');
+  function buildChatId(col, listingId, otherUid) {
+    const pair = [currentUser.uid, otherUid].sort();
+    return `${col}_${listingId}_${pair[0]}_${pair[1]}`;
   }
 
-  function openChatGeneric(col, id, name) {
-    currentChatUser = { name, id };
-    document.getElementById('chat-name').textContent = name;
-    document.getElementById('chat-avatar').textContent = (name||'?')[0].toUpperCase();
+  // Crée le document de conversation s'il n'existe pas (porte la liste des 2 participants)
+  async function ensureChatDoc(chatId, col, listingId, otherUid, otherName) {
+    try {
+      await setDoc(doc(db, 'chats', chatId), {
+        listingCollection: col,
+        listingId,
+        participants: [currentUser.uid, otherUid].sort(),
+        names: { [currentUser.uid]: currentUser.displayName || '', [otherUid]: otherName || '' },
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch(e) { console.error('ensureChatDoc', e); }
+  }
+
+  async function openChat(col, listingId, otherUid, otherName) {
+    if (!otherUid) { showToast('Impossible d\'ouvrir la conversation', 'error'); return; }
+    if (otherUid === currentUser.uid) { showToast('Ceci est votre propre annonce', 'error'); return; }
+    const chatId = buildChatId(col, listingId, otherUid);
+    currentChatId = chatId;
+    currentChatUser = { name: otherName, id: otherUid };
+    document.getElementById('chat-name').textContent = otherName || 'Utilisateur';
+    document.getElementById('chat-avatar').textContent = (otherName||'?')[0].toUpperCase();
     document.getElementById('chat-screen').classList.add('open');
     document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(id, col);
+    await ensureChatDoc(chatId, col, listingId, otherUid, otherName);
+    listenMessages(chatId);
+    markChatRead(chatId);
   }
 
   let unsubscribeMessages = null;
-  function listenMessages(tripId, col = 'trips') {
+  function listenMessages(chatId) {
     if (unsubscribeMessages) unsubscribeMessages();
-    const q = query(collection(db, col, tripId, 'messages'), orderBy('createdAt'));
+    const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt'));
     unsubscribeMessages = onSnapshot(q, snap => {
       const container = document.getElementById('chat-messages');
       container.innerHTML = '';
@@ -4005,10 +4094,9 @@
         actions.className = 'msg-actions';
         if (isMine) {
           actions.innerHTML = `
-            <button class="msg-action-btn" onclick="startEditMsg('${d.id}','${tripId}',this,'${col}')">Modifier</button>
-            <button class="msg-action-btn" style="color:var(--red)" onclick="deleteMsg('${d.id}','${tripId}','${col}')">Supprimer</button>
+            <button class="msg-action-btn" onclick="startEditMsg('${d.id}','${chatId}',this)">Modifier</button>
+            <button class="msg-action-btn" style="color:var(--red)" onclick="deleteMsg('${d.id}','${chatId}')">Supprimer</button>
           `;
-          // Store text for edit
           actions.querySelector('.msg-action-btn').dataset.text = m.text;
         }
 
@@ -4018,14 +4106,12 @@
       });
       container.scrollTop = container.scrollHeight;
     });
-    document.getElementById('chat-screen').dataset.tripId = tripId;
-    document.getElementById('chat-screen').dataset.collection = col;
+    document.getElementById('chat-screen').dataset.chatId = chatId;
   }
 
-  window.startEditMsg = function(msgId, tripId, btn, col = 'trips') {
+  window.startEditMsg = function(msgId, chatId, btn) {
     editingMsgId = msgId;
-    editingMsgTripId = tripId;
-    editingMsgCol = col;
+    editingMsgTripId = chatId;
     const text = btn.parentElement.querySelector('.msg-action-btn').dataset.text ||
       btn.closest('.msg-wrap').querySelector('.msg').textContent.replace(' ✏️','');
     document.getElementById('chat-input').value = text;
@@ -4040,40 +4126,43 @@
     document.getElementById('edit-msg-bar').style.display = 'none';
   }
 
-  window.deleteMsg = async function(msgId, tripId, col = 'trips') {
+  window.deleteMsg = async function(msgId, chatId) {
     if (!confirm('Supprimer ce message ?')) return;
     try {
-      await deleteDoc(doc(db, col, tripId, 'messages', msgId));
+      await deleteDoc(doc(db, 'chats', chatId, 'messages', msgId));
       showToast('Message supprimé','success');
     } catch(e) { showToast('Erreur suppression','error'); }
   }
 
+  async function pushMessage(text) {
+    const chatId = document.getElementById('chat-screen').dataset.chatId;
+    if (!chatId) { showToast('Conversation introuvable','error'); return; }
+    await addDoc(collection(db, 'chats', chatId, 'messages'), {
+      text, senderId: currentUser.uid,
+      senderName: currentUser.displayName || currentUser.phoneNumber || '',
+      createdAt: serverTimestamp()
+    });
+    // Horodatage sur le fil : sert au tri et à l'aperçu dans la liste des conversations
+    await setDoc(doc(db, 'chats', chatId), {
+      updatedAt: serverTimestamp(), lastMsg: text.slice(0, 80), lastSenderId: currentUser.uid
+    }, { merge: true });
+  }
+
   window.sendQuickReply = async function(text) {
-    const chatScreen = document.getElementById('chat-screen');
-    const tripId = chatScreen.dataset.tripId;
-    const col = chatScreen.dataset.collection || 'trips';
-    try {
-      await addDoc(collection(db, col, tripId, 'messages'), {
-        text, senderId: currentUser.uid,
-        senderName: currentUser.displayName || currentUser.phoneNumber,
-        createdAt: serverTimestamp()
-      });
-    } catch(e) { showToast('Erreur envoi','error'); }
+    try { await pushMessage(text); }
+    catch(e) { showToast('Erreur envoi','error'); }
   }
 
   window.sendMsg = async function() {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
-    const chatScreen = document.getElementById('chat-screen');
-    const tripId = chatScreen.dataset.tripId;
-    const col = chatScreen.dataset.collection || 'trips';
     input.value = '';
 
     // Mode édition
     if (editingMsgId) {
       try {
-        await updateDoc(doc(db, editingMsgCol, editingMsgTripId, 'messages', editingMsgId), {
+        await updateDoc(doc(db, 'chats', editingMsgTripId, 'messages', editingMsgId), {
           text, edited: true
         });
         cancelEditMsg();
@@ -4082,13 +4171,8 @@
       return;
     }
 
-    try {
-      await addDoc(collection(db, col, tripId, 'messages'), {
-        text, senderId: currentUser.uid,
-        senderName: currentUser.displayName || currentUser.phoneNumber,
-        createdAt: serverTimestamp()
-      });
-    } catch(e) { showToast('Erreur envoi','error'); }
+    try { await pushMessage(text); }
+    catch(e) { showToast('Erreur envoi','error'); }
   }
 
   window.closeChat = function() {
@@ -4098,117 +4182,69 @@
 
   async function loadConversations() {
     const list = document.getElementById('convs-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    list.innerHTML = '<div class="empty"><div class="empty-icon">\u23f3</div><div class="empty-text">Chargement...</div></div>';
     const uid = currentUser.uid;
     try {
-      const convs = []; // { key, col, id, name, subtitle, deleteRef }
-      const seen = new Set();
-      function addConv(col, id, name, subtitle, deleteRef) {
-        const key = `${col}_${id}`;
-        if (seen.has(key)) return; // évite les doublons (ex: 2 propositions sur le même colis)
-        seen.add(key);
-        convs.push({ key, col, id, name: name || 'Utilisateur', subtitle: subtitle || '', deleteRef });
-      }
-
-      // 1. Réservations de trajets — en tant que PASSAGER
-      const bookAsPax = await getDocs(query(collection(db, 'bookings'), where('passengerId','==',uid)));
-      bookAsPax.forEach(d => {
-        const b = d.data();
-        addConv('trips', b.tripId || d.id, b.driverName, `${b.from||''} → ${b.to||''} · ${b.date||''}`, { coll:'bookings', id:d.id });
-      });
-
-      // 2. Réservations de trajets — en tant que CONDUCTEUR (recevant des messages de passagers)
-      const bookAsDriver = await getDocs(query(collection(db, 'bookings'), where('driverId','==',uid)));
-      bookAsDriver.forEach(d => {
-        const b = d.data();
-        addConv('trips', b.tripId || d.id, b.passengerPhone || 'Passager', `${b.from||''} → ${b.to||''} · ${b.date||''}`, null);
-      });
-
-      // 3. Demandes passager — propositions envoyées par moi (conducteur)
-      const propAsDriver = await getDocs(query(collection(db, 'proposals'), where('driverId','==',uid)));
-      for (const d of propAsDriver.docs) {
-        const p = d.data();
-        try {
-          const tripSnap = await getDoc(doc(db, 'trips', p.tripId));
-          if (tripSnap.exists()) {
-            const t = tripSnap.data();
-            addConv('trips', p.tripId, t.driverName, `${t.from||''} → ${t.to||''} · ${t.date||''}`, null);
-          }
-        } catch(e) {}
-      }
-
-      // 4. Demandes passager — propositions reçues (moi = auteur de la demande)
-      const propAsOwner = await getDocs(query(collection(db, 'proposals'), where('requesterId','==',uid)));
-      propAsOwner.forEach(d => {
-        const p = d.data();
-        addConv('trips', p.tripId, p.driverName, 'Proposition sur votre demande', null);
-      });
-
-      // 5. Colis/GP — propositions envoyées par moi (transporteur)
-      const parcelPropAsDriver = await getDocs(query(collection(db, 'parcelProposals'), where('driverId','==',uid)));
-      for (const d of parcelPropAsDriver.docs) {
-        const p = d.data();
-        try {
-          const parcelSnap = await getDoc(doc(db, 'parcels', p.parcelId));
-          if (parcelSnap.exists()) {
-            const pc = parcelSnap.data();
-            addConv('parcels', p.parcelId, pc.ownerName, `Colis ${pc.from||''} → ${pc.to||''}`, null);
-          }
-        } catch(e) {}
-      }
-
-      // 6. Colis/GP — propositions reçues (moi = propriétaire du colis)
-      const parcelPropAsOwner = await getDocs(query(collection(db, 'parcelProposals'), where('requesterId','==',uid)));
-      parcelPropAsOwner.forEach(d => {
-        const p = d.data();
-        addConv('parcels', p.parcelId, p.driverName, 'Proposition sur votre colis', null);
-      });
-
-      // 7. Location — propositions envoyées par moi
-      const rentalPropAsDriver = await getDocs(query(collection(db, 'rentalProposals'), where('driverId','==',uid)));
-      for (const d of rentalPropAsDriver.docs) {
-        const p = d.data();
-        try {
-          const rentalSnap = await getDoc(doc(db, 'rentals', p.rentalId));
-          if (rentalSnap.exists()) {
-            const r = rentalSnap.data();
-            const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || 'Véhicule';
-            addConv('rentals', p.rentalId, r.ownerName, vehicleName, null);
-          }
-        } catch(e) {}
-      }
-
-      // 8. Location — propositions reçues (moi = propriétaire de l'annonce)
-      const rentalPropAsOwner = await getDocs(query(collection(db, 'rentalProposals'), where('requesterId','==',uid)));
-      rentalPropAsOwner.forEach(d => {
-        const p = d.data();
-        addConv('rentals', p.rentalId, p.driverName, 'Proposition sur votre annonce', null);
-      });
-
-      if (convs.length === 0) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">💬</div><div class="empty-text">Aucune conversation pour l\'instant</div></div>';
+      // Toutes les conversations dont je fais partie (fils \u00e0 2 personnes uniquement)
+      const snap = await getDocs(query(
+        collection(db, 'chats'), where('participants', 'array-contains', uid)
+      ));
+      if (snap.empty) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">\ud83d\udcac</div><div class="empty-text">Aucune conversation pour l\'instant</div></div>';
         updateMsgBadges(0);
         return;
       }
 
+      const lastRead = (await getDoc(doc(db, 'users', uid))).data()?.chatLastRead || {};
+      const convs = snap.docs.map(d => {
+        const c = d.data();
+        const otherUid = (c.participants || []).find(p => p !== uid) || '';
+        const updated = c.updatedAt?.seconds || 0;
+        return {
+          key: d.id,
+          name: (c.names && c.names[otherUid]) || 'Utilisateur',
+          lastMsg: c.lastMsg || '',
+          lastSenderId: c.lastSenderId || '',
+          subtitle: LISTING_LABELS[c.listingCollection] || '',
+          updated,
+          unread: c.lastSenderId && c.lastSenderId !== uid && updated > (lastRead[d.id] || 0)
+        };
+      });
+
+      convs.sort((a, b) => b.updated - a.updated);
+
       list.innerHTML = '';
+      let unreadTotal = 0;
       convs.forEach(c => {
-        window[c.key] = { col: c.col, id: c.id, name: c.name };
+        window[`conv_${c.key}`] = { chatId: c.key, name: c.name };
+        if (c.unread) unreadTotal++;
+        const preview = c.lastMsg
+          ? (c.lastSenderId === uid ? 'Vous : ' : '') + escapeHtml(c.lastMsg.slice(0, 45))
+          : c.subtitle;
         const item = document.createElement('div');
         item.className = 'conv-item';
         item.innerHTML = `
           <div class="conv-avatar">${(c.name||'U')[0].toUpperCase()}</div>
-          <div class="conv-info" onclick="openChatFromConvKey('${c.key}')" style="flex:1;cursor:pointer">
-            <div class="conv-name">${c.name}</div>
-            <div class="conv-preview">${c.subtitle}</div>
-          </div>`;
+          <div class="conv-info" onclick="openChatFromConvKey('conv_${c.key}')" style="flex:1;cursor:pointer;min-width:0">
+            <div class="conv-name" style="${c.unread ? 'font-weight:800' : ''}">${escapeHtml(c.name)}</div>
+            <div class="conv-preview" style="${c.unread ? 'color:var(--text);font-weight:600' : ''};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</div>
+          </div>
+          ${c.unread ? '<div class="unread-badge">1</div>' : ''}`;
         list.appendChild(item);
       });
-      updateMsgBadges(0);
+      updateMsgBadges(unreadTotal);
     } catch(e) {
       console.error(e);
       list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>';
     }
+  }
+
+  const LISTING_LABELS = { trips: 'Trajet', parcels: 'Colis', rentals: 'Location' };
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   function updateMsgBadges(count) {
@@ -4224,10 +4260,27 @@
     }
   }
 
-  window.openChatFromConvKey = function(key) {
+  // Marque une conversation comme lue (mémorisé sur le profil, donc synchronisé entre appareils)
+  async function markChatRead(chatId) {
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        chatLastRead: { [chatId]: Math.floor(Date.now() / 1000) }
+      }, { merge: true });
+    } catch(e) {}
+  }
+
+  // Ouvre une conversation déjà existante depuis la liste des messages
+  window.openChatFromConvKey = async function(key) {
     const d = window[key];
     if (!d) return;
-    openChatGeneric(d.col, d.id, d.name);
+    currentChatId = d.chatId;
+    currentChatUser = { name: d.name, id: null };
+    document.getElementById('chat-name').textContent = d.name || 'Utilisateur';
+    document.getElementById('chat-avatar').textContent = (d.name||'?')[0].toUpperCase();
+    document.getElementById('chat-screen').classList.add('open');
+    document.getElementById('chat-messages').innerHTML = '';
+    listenMessages(d.chatId);
+    markChatRead(d.chatId);
   }
 
   window.openChatFromKey = async function(key) {
@@ -4246,16 +4299,7 @@
       } catch(e) {}
     }
     if (!tripId) { showToast('Impossible d\'ouvrir le chat','error'); return; }
-    openChatFromBooking(tripId, d.name, d.id);
-  }
-
-  window.openChatFromBooking = function(tripId, name, driverId) {
-    currentChatUser = { name, id: driverId };
-    document.getElementById('chat-name').textContent = name;
-    document.getElementById('chat-avatar').textContent = name[0].toUpperCase();
-    document.getElementById('chat-screen').classList.add('open');
-    document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(tripId);
+    openChat('trips', tripId, d.id, d.name);
   }
 
 
@@ -4349,17 +4393,25 @@
 
   window.openMyTrips = function() {
     document.getElementById('panel-my-trips').classList.add('open');
-    loadMyTrips('driver');
+    setMyTripsDedicated(false);
+    switchTripsTab('driver');
     loadRecurringTripsList();
+  }
+
+  // Mode dédié : la page ne montre qu'un seul type d'annonces, sans les autres onglets
+  function setMyTripsDedicated(on) {
+    document.getElementById('my-trips-tabs').style.display = on ? 'none' : 'flex';
   }
 
   window.openMyParcelsDirect = function() {
     document.getElementById('panel-my-trips').classList.add('open');
+    setMyTripsDedicated(true);
     switchTripsTab('parcels');
   }
 
   window.openMyRentalsDirect = function() {
     document.getElementById('panel-my-trips').classList.add('open');
+    setMyTripsDedicated(true);
     switchTripsTab('rentals');
   }
 
@@ -4373,7 +4425,7 @@
     document.getElementById('my-trips-list').style.display = (tab === 'driver' || tab === 'passenger') ? 'block' : 'none';
     document.getElementById('my-parcels-list').style.display = tab === 'parcels' ? 'block' : 'none';
     document.getElementById('my-rentals-list').style.display = tab === 'rentals' ? 'block' : 'none';
-    const titles = { driver: 'Mes trajets', passenger: 'Mes réservations', parcels: 'Mes annonces colis', rentals: 'Mes annonces location' };
+    const titles = { driver: 'Mes trajets', passenger: 'Mes réservations', parcels: 'Colis', rentals: 'Location' };
     document.getElementById('my-trips-panel-title').textContent = titles[tab] || 'Mes trajets';
     if (tab === 'parcels') loadMyParcels();
     else if (tab === 'rentals') loadMyRentals();
@@ -4451,16 +4503,16 @@
         const isPourvu = isGpOffre ? (p.kgRestants != null && p.kgRestants <= 0) : p.statut === 'pourvu';
         const inactive = p.statut !== 'actif' && !isPourvu;
         const scopeBadge = scope === 'gp'
-          ? `<div class="trip-badge" style="background:rgba(30,144,255,.12);color:#1e90ff">✈️ GP</div>`
-          : `<div class="trip-badge" style="background:var(--orange-dim);color:var(--orange)">🇸🇳 Local</div>`;
+          ? `<div class="trip-badge" style="background:rgba(30,144,255,.12);color:#1e90ff"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP</div>`
+          : `<div class="trip-badge" style="background:var(--orange-dim);color:var(--orange)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local</div>`;
         let priceLine, kgBar = '';
         if (isGpOffre) {
           const pct = p.kgTotal ? Math.round(((p.kgRestants ?? p.kgTotal) / p.kgTotal) * 100) : 0;
-          priceLine = p.price ? Number(p.price).toLocaleString('fr-FR')+' / kg' : 'À négocier';
+          priceLine = p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p)+'/kg' : 'À négocier';
           kgBar = `<div style="background:var(--dark2);border-radius:100px;height:6px;overflow:hidden;margin:8px 0 4px"><div style="background:#1e90ff;height:100%;border-radius:100px;width:${pct}%"></div></div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">${p.kgRestants ?? p.kgTotal} kg / ${p.kgTotal} kg restants${p.flightDate ? ' · Vol du '+p.flightDate : ''}</div>`;
         } else {
-          priceLine = p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier';
+          priceLine = p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p) : 'À négocier';
         }
         return `<div class="trip-card" style="margin-bottom:10px;${(inactive||isPourvu)?'opacity:.6':''}">
           <div class="trip-header">
@@ -4524,6 +4576,12 @@
   let editingGpId = null;
   let editingGpType = 'offre';
 
+  window.updateEditGpCurrencyLabels = function() {
+    const sym = document.getElementById('edit-gp-currency').value === 'XOF' ? 'FCFA' : '€';
+    document.getElementById('edit-gp-price-kg-label').textContent = `Prix par kg (${sym})`;
+    document.getElementById('edit-gp-price-label').textContent = `Budget (${sym})`;
+  }
+
   function openEditGp(id, p) {
     editingGpId = id;
     editingGpType = p.type || 'recherche';
@@ -4531,6 +4589,8 @@
     document.getElementById('edit-gp-to').value = p.to || '';
 
     const isOffre = editingGpType === 'offre';
+    document.getElementById('edit-gp-currency').value = p.currency === 'XOF' ? 'XOF' : 'EUR';
+    updateEditGpCurrencyLabels();
     document.getElementById('edit-gp-flightdate-group').style.display = isOffre ? 'block' : 'none';
     document.getElementById('edit-gp-kg-group').style.display = isOffre ? 'block' : 'none';
     document.getElementById('edit-gp-poids-group').style.display = isOffre ? 'none' : 'grid';
@@ -4570,7 +4630,7 @@
     const to = document.getElementById('edit-gp-to').value.trim();
     if (!from || !to) { showToast('Renseignez le départ et l\'arrivée', 'error'); return; }
 
-    const payload = { from, to };
+    const payload = { from, to, currency: document.getElementById('edit-gp-currency').value || 'EUR' };
     if (editingGpType === 'offre') {
       const flightDate = document.getElementById('edit-gp-flight-date').value;
       const newKgTotal = Number(document.getElementById('edit-gp-kg-total').value) || 1;
@@ -4775,6 +4835,7 @@
         return;
       }
       list.innerHTML = '';
+      const listingCol = kind === 'colis' ? 'parcels' : (kind === 'location' ? 'rentals' : 'trips');
       snap.forEach(d => {
         const b = d.data();
         const isPending = !b.status || b.status === 'pending';
@@ -4784,6 +4845,10 @@
         const displayName = isProposal ? (b.driverName || phone) : phone;
         const initial = displayName[0].toUpperCase();
         const dateStr = b.createdAt ? new Date(b.createdAt.seconds*1000).toLocaleDateString('fr-FR') : '—';
+        // Interlocuteur = celui qui a fait la proposition / la réservation
+        const otherUid = isProposal ? (b.driverId || '') : (b.passengerId || '');
+        const paxKey = `pax_${d.id}`;
+        window[paxKey] = { col: listingCol, listingId: tripId, otherUid, name: displayName };
         list.innerHTML += `<div class="passenger-item" id="pax-${d.id}">
           <div class="passenger-avatar">${initial}</div>
           <div class="passenger-info">
@@ -4794,6 +4859,7 @@
                 <a href="tel:${phone}" style="font-size:11px;color:var(--orange);text-decoration:none;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 4.5c0-1 .8-1.5 1.7-1.3l2.6.6c.7.2 1.2.8 1.3 1.5l.4 2.5c.1.6-.1 1.3-.6 1.7l-1.4 1.3c1 2.4 2.9 4.3 5.3 5.3l1.3-1.4c.4-.5 1.1-.7 1.7-.6l2.5.4c.7.1 1.3.6 1.5 1.3l.6 2.6c.2.9-.3 1.7-1.3 1.7C10.5 20.6 3.4 13.5 4 4.5Z"/></svg> Appeler</a>
                 <a href="https://wa.me/${phone.replace('+','')}" target="_blank" style="font-size:11px;color:#25D366;text-decoration:none;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp</a>
               ` : ''}
+              ${otherUid ? `<a onclick="openChatFromPaxKey('${paxKey}')" style="font-size:11px;color:var(--blue,#1e90ff);text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 7 9-7"/></svg> Message</a>` : ''}
             </div>
             ${isAccepted ? '<span class="passenger-status ps-accepted"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg> Accepté</span>' : ''}
             ${isRefused ? '<span class="passenger-status ps-refused"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Refusé</span>' : ''}
@@ -4812,6 +4878,12 @@
       console.error('Erreur passagers:', e);
       list.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur: ${e.message}</div></div>`;
     }
+  }
+
+  window.openChatFromPaxKey = function(key) {
+    const d = window[key];
+    if (!d || !d.otherUid) { showToast('Impossible d\'ouvrir la conversation','error'); return; }
+    openChat(d.col, d.listingId, d.otherUid, d.name);
   }
 
   const PROPOSAL_CONFIG = {
@@ -5134,6 +5206,19 @@
   }
 
   // ===== NOTIFICATIONS =====
+  // Firestore limite l'opérateur 'in' à 10 valeurs. Au-delà de 10 annonces, les propositions
+  // sur les annonces suivantes ne remontaient plus du tout. On découpe donc en lots de 10.
+  async function getDocsInChunks(collName, field, ids) {
+    const docsOut = [];
+    for (let i = 0; i < ids.length; i += 10) {
+      const chunk = ids.slice(i, i + 10);
+      if (chunk.length === 0) continue;
+      const snap = await getDocs(query(collection(db, collName), where(field, 'in', chunk)));
+      snap.forEach(d => docsOut.push(d));
+    }
+    return docsOut;
+  }
+
   let lastLoadedNotifs = [];
   async function loadNotifications() {
     const notifs = [];
@@ -5147,12 +5232,8 @@
       const myTripIds = [];
       myTripsSnap.forEach(d => myTripIds.push(d.id));
       if (myTripIds.length > 0) {
-        // Firestore limite à 10 éléments dans 'in', on prend les 10 premiers
-        const bookSnap = await getDocs(query(
-          collection(db, 'bookings'),
-          where('tripId','in', myTripIds.slice(0,10))
-        ));
-        bookSnap.forEach(d => {
+        const bookDocs = await getDocsInChunks('bookings', 'tripId', myTripIds);
+        bookDocs.forEach(d => {
           const b = d.data();
           if (b.status && b.status !== 'pending') return;
           notifs.push({
@@ -5219,10 +5300,8 @@
       const myReqIds = [];
       myReqSnap.forEach(d => myReqIds.push(d.id));
       if (myReqIds.length > 0) {
-        const propSnap = await getDocs(query(
-          collection(db, 'proposals'), where('tripId','in', myReqIds.slice(0,10))
-        ));
-        propSnap.forEach(d => {
+        const propDocs = await getDocsInChunks('proposals', 'tripId', myReqIds);
+        propDocs.forEach(d => {
           const p = d.data();
           if (p.status && p.status !== 'pending') return;
           const req = myReqSnap.docs.find(t => t.id === p.tripId)?.data() || {};
@@ -5243,10 +5322,8 @@
       const myParcelIds = [];
       myParcelsSnap.forEach(d => myParcelIds.push(d.id));
       if (myParcelIds.length > 0) {
-        const propSnap = await getDocs(query(
-          collection(db, 'parcelProposals'), where('parcelId','in', myParcelIds.slice(0,10))
-        ));
-        propSnap.forEach(d => {
+        const propDocs = await getDocsInChunks('parcelProposals', 'parcelId', myParcelIds);
+        propDocs.forEach(d => {
           const p = d.data();
           if (p.status && p.status !== 'pending') return;
           const parcel = myParcelsSnap.docs.find(t => t.id === p.parcelId)?.data() || {};
@@ -5267,10 +5344,8 @@
       const myRentalIds = [];
       myRentalsSnap.forEach(d => myRentalIds.push(d.id));
       if (myRentalIds.length > 0) {
-        const propSnap = await getDocs(query(
-          collection(db, 'rentalProposals'), where('rentalId','in', myRentalIds.slice(0,10))
-        ));
-        propSnap.forEach(d => {
+        const propDocs = await getDocsInChunks('rentalProposals', 'rentalId', myRentalIds);
+        propDocs.forEach(d => {
           const p = d.data();
           if (p.status && p.status !== 'pending') return;
           const rental = myRentalsSnap.docs.find(t => t.id === p.rentalId)?.data() || {};
@@ -5374,6 +5449,29 @@
       });
     } catch(e) {}
 
+    // 9. Nouveaux messages non lus (fils de discussion à 2 personnes)
+    try {
+      const chatsSnap = await getDocs(query(
+        collection(db, 'chats'), where('participants', 'array-contains', currentUser.uid)
+      ));
+      const lastRead = (await getDoc(doc(db, 'users', currentUser.uid))).data()?.chatLastRead || {};
+      chatsSnap.forEach(d => {
+        const c = d.data();
+        if (!c.lastMsg || !c.lastSenderId || c.lastSenderId === currentUser.uid) return;
+        const updated = c.updatedAt?.seconds || 0;
+        if (updated <= (lastRead[d.id] || 0)) return; // déjà lu
+        const otherUid = (c.participants || []).find(p => p !== currentUser.uid) || '';
+        const senderName = (c.names && c.names[otherUid]) || 'Un utilisateur';
+        notifs.push({
+          id: 'msg_' + d.id, type: 'message', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.7 8.7 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>`,
+          title: `Message de ${senderName}`,
+          desc: c.lastMsg.slice(0, 70),
+          time: c.updatedAt, read: false,
+          actionChatId: d.id, actionChatName: senderName
+        });
+      });
+    } catch(e) {}
+
     // Trier par date décroissante
     notifs.sort((a,b) => {
       const ta = a.time?.seconds || 0;
@@ -5408,6 +5506,7 @@
       if (n.type === 'rate') window[notifKey] = { bookingId: n.bookingId, driverId: n.driverId, driverName: n.driverName||'Conducteur' };
       const isActionable = ['booking','proposal_passager','proposal_colis','proposal_location'].includes(n.type);
       if (isActionable) window[notifKey] = { tripId: n.actionTripId, from: n.actionFrom, to: n.actionTo, kind: n.actionKind || 'conducteur' };
+      if (n.type === 'message') window[notifKey] = { chatId: n.actionChatId, name: n.actionChatName };
       return `
       <div class="notif-item ${n.read ? '' : 'unread'}" id="notif-${n.id.replace(/[^a-zA-Z0-9]/g,'_')}">
         <div class="notif-icon">${n.icon}</div>
@@ -5417,6 +5516,7 @@
           <div class="notif-time">${timeAgo(n.time)}</div>
           ${n.type==='rate' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px;margin-top:8px;display:inline-flex;align-items:center;gap:5px" onclick="openRateTripFromKey('${notifKey}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="white" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Noter maintenant</button>` : ''}
           ${isActionable ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px;margin-top:8px" onclick="openPassengersFromKey('${notifKey}')">Voir la demande</button>` : ''}
+          ${n.type==='message' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px;margin-top:8px" onclick="openChatFromNotifKey('${notifKey}')">Répondre</button>` : ''}
         </div>
         ${!n.read ? '<div class="notif-dot"></div>' : ''}
       </div>`
@@ -5424,6 +5524,20 @@
     // Mettre à jour le badge
     const unread = notifs.filter(n => !n.read).length;
     updateNotifBadge(unread);
+  }
+
+  window.openChatFromNotifKey = function(key) {
+    const d = window[key];
+    if (!d || !d.chatId) return;
+    closePanel('panel-notifications');
+    currentChatId = d.chatId;
+    currentChatUser = { name: d.name, id: null };
+    document.getElementById('chat-name').textContent = d.name || 'Utilisateur';
+    document.getElementById('chat-avatar').textContent = (d.name||'?')[0].toUpperCase();
+    document.getElementById('chat-screen').classList.add('open');
+    document.getElementById('chat-messages').innerHTML = '';
+    listenMessages(d.chatId);
+    markChatRead(d.chatId);
   }
 
   window.openRateTripFromKey = function(key) {
@@ -5484,6 +5598,9 @@
           return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
         } else if (n.type === 'proposal_location_refused') {
           return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'message') {
+          // Marque le fil comme lu (même mécanique que l'ouverture de la conversation)
+          return markChatRead(n.id.replace(/^msg_/, ''));
         }
       } catch(e) {}
       return Promise.resolve();
@@ -5505,6 +5622,33 @@
       updateNotifBadge(unread);
     } catch(e) {}
   }
+
+  // Rafraîchissement automatique des notifications : sans cela, une acceptation de proposition
+  // n'apparaissait qu'après une fermeture/réouverture complète de l'application.
+  // Les fréquences sont volontairement espacées pour limiter le nombre de lectures Firestore (facturation Blaze).
+  let notifPollInterval = null;
+  let pollTick = 0;
+  function startNotifPolling() {
+    if (notifPollInterval) clearInterval(notifPollInterval);
+    pollTick = 0;
+    notifPollInterval = setInterval(() => {
+      if (!currentUser || document.hidden) return; // rien en arrière-plan : pas de lecture inutile
+      pollTick++;
+      refreshNotifBadge();                    // toutes les 60 s
+      if (pollTick % 3 === 0) loadConversations(); // toutes les 3 min
+    }, 60000);
+  }
+
+  // Rafraîchit dès que l'utilisateur revient sur l'app (retour d'arrière-plan sur mobile)
+  let lastVisibilityRefresh = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !currentUser) return;
+    const now = Date.now();
+    if (now - lastVisibilityRefresh < 20000) return; // évite les rafales d'allers-retours
+    lastVisibilityRefresh = now;
+    refreshNotifBadge();
+    loadConversations();
+  });
 
   async function checkPendingRatings() {
     const today = new Date().toISOString().slice(0,10);
