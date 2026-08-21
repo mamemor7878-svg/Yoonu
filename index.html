@@ -1039,12 +1039,12 @@
     </div>
     <div class="menu-item" onclick="openMyParcelsDirect()">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div>
-      <div><div class="menu-label">Mes annonces colis</div><div class="menu-sub">Local et GP International</div></div>
+      <div><div class="menu-label">Mes colis</div><div class="menu-sub">Mes annonces et colis confirmés</div></div>
       <div class="menu-arrow">›</div>
     </div>
     <div class="menu-item" onclick="openMyRentalsDirect()">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/></svg></div>
-      <div><div class="menu-label">Mes annonces location</div><div class="menu-sub">Véhicules à louer et recherches</div></div>
+      <div><div class="menu-label">Mes locations</div><div class="menu-sub">Mes annonces et locations confirmées</div></div>
       <div class="menu-arrow">›</div>
     </div>
     <div class="menu-item" onclick="showToast('Fonctionnalité à venir')">
@@ -1476,12 +1476,17 @@
       <button class="option-toggle" id="tab-parcels" onclick="switchTripsTab('parcels')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Colis</button>
       <button class="option-toggle" id="tab-rentals" onclick="switchTripsTab('rentals')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/></svg> Location</button>
     </div>
+    <div id="my-sub-tabs" style="display:none;gap:6px;margin-bottom:16px">
+      <button class="option-toggle on" id="sub-tab-mine" onclick="switchMySubTab('mine')" style="flex:1;min-width:0;justify-content:center;font-size:12px;padding:9px 5px">Mes annonces</button>
+      <button class="option-toggle" id="sub-tab-confirmed" onclick="switchMySubTab('confirmed')" style="flex:1;min-width:0;justify-content:center;font-size:12px;padding:9px 5px"><span id="sub-tab-confirmed-label">Confirmés</span> <span id="sub-tab-confirmed-count" class="count-badge">0</span></button>
+    </div>
     <div id="recurring-trips-list"></div>
     <div id="my-trips-list">
       <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
     </div>
     <div id="my-parcels-list" style="display:none"></div>
     <div id="my-rentals-list" style="display:none"></div>
+    <div id="my-confirmed-list" style="display:none"></div>
   </div>
 </div>
 
@@ -4427,6 +4432,21 @@
     document.getElementById('my-rentals-list').style.display = tab === 'rentals' ? 'block' : 'none';
     const titles = { driver: 'Mes trajets', passenger: 'Mes réservations', parcels: 'Colis', rentals: 'Location' };
     document.getElementById('my-trips-panel-title').textContent = titles[tab] || 'Mes trajets';
+
+    // Sous-onglets "Mes annonces / Confirmés" : uniquement en mode dédié Colis ou Location
+    const dedicated = document.getElementById('my-trips-tabs').style.display === 'none';
+    const showSub = dedicated && (tab === 'parcels' || tab === 'rentals');
+    document.getElementById('my-sub-tabs').style.display = showSub ? 'flex' : 'none';
+    document.getElementById('my-confirmed-list').style.display = 'none';
+    if (showSub) {
+      const kind = tab === 'parcels' ? 'colis' : 'location';
+      document.getElementById('sub-tab-confirmed-label').textContent = tab === 'parcels' ? 'Colis confirmés' : 'Locations confirmées';
+      currentMySubTab = 'mine';
+      document.getElementById('sub-tab-mine').classList.add('on');
+      document.getElementById('sub-tab-confirmed').classList.remove('on');
+      refreshConfirmedCount(kind);
+    }
+
     if (tab === 'parcels') loadMyParcels();
     else if (tab === 'rentals') loadMyRentals();
     else loadMyTrips(tab);
@@ -4472,13 +4492,108 @@
     }
   }
 
-  window.deleteRental = async function(id) {
-    if (!confirm('Supprimer cette annonce ?')) return;
+  // Marque les propositions d'une annonce supprimée, pour que ceux qui s'étaient engagés
+  // en soient informés au lieu de voir leur engagement disparaître sans explication.
+  async function flagProposalsOnDelete(propColl, idField, listingId) {
     try {
+      const snap = await getDocs(query(collection(db, propColl), where(idField, '==', listingId)));
+      const updates = [];
+      snap.forEach(d => {
+        const st = d.data().status;
+        if (st !== 'refused' && st !== 'cancelled') {
+          updates.push(updateDoc(doc(db, propColl, d.id), { status: 'listing_deleted' }));
+        }
+      });
+      await Promise.all(updates);
+    } catch(e) {}
+  }
+
+  window.deleteRental = async function(id) {
+    if (!confirm('Supprimer cette annonce ? Les personnes engagées en seront informées.')) return;
+    try {
+      await flagProposalsOnDelete('rentalProposals', 'rentalId', id);
       await deleteDoc(doc(db, 'rentals', id));
       showToast('Annonce supprimée', 'success');
       loadMyRentals();
     } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  // Annonces sur lesquelles MA proposition a été acceptée (je ne suis pas le propriétaire).
+  // Affichées dans le sous-onglet "Confirmés" des pages Mes colis / Mes locations.
+  async function renderAcceptedCommitments(kind) {
+    const cfg = kind === 'colis'
+      ? { propColl: 'parcelProposals', idField: 'parcelId', listingColl: 'parcels', empty: 'Aucun colis confirmé pour l\'instant' }
+      : { propColl: 'rentalProposals', idField: 'rentalId', listingColl: 'rentals', empty: 'Aucune location confirmée pour l\'instant' };
+    try {
+      // On filtre le statut côté client : évite d'avoir à créer un index composite Firestore
+      const snap = await getDocs(query(
+        collection(db, cfg.propColl),
+        where('driverId', '==', currentUser.uid)
+      ));
+      const accepted = snap.docs.filter(d => d.data().status === 'accepted');
+      const cards = [];
+      for (const d of accepted) {
+        const prop = d.data();
+        const lid = prop[cfg.idField];
+        if (!lid) continue;
+        try {
+          const ls = await getDoc(doc(db, cfg.listingColl, lid));
+          if (!ls.exists()) continue;
+          const l = ls.data();
+          const key = `commit_${d.id}`;
+          window[key] = { col: cfg.listingColl, listingId: lid, otherUid: l.ownerId, name: l.ownerName || 'Propriétaire', proposalId: d.id };
+          const title = kind === 'colis'
+            ? `${l.from || ''} → ${l.to || ''}`
+            : ([l.marque, l.modele].filter(Boolean).join(' ') || 'Véhicule');
+          const sub = kind === 'colis'
+            ? (l.price ? Number(l.price).toLocaleString('fr-FR') + ' ' + parcelCur(l) : 'À négocier')
+            : (l.price ? Number(l.price).toLocaleString('fr-FR') + ' FCFA/j' : 'À négocier');
+          cards.push(`<div class="trip-card" style="margin-bottom:10px;border-left:3px solid var(--green,#17c978)">
+            <div class="trip-header">
+              <div class="trip-route">${escapeHtml(title)}</div>
+              <div class="trip-price">${sub}</div>
+            </div>
+            <div class="trip-meta">
+              <div class="trip-badge" style="background:rgba(23,201,120,.14);color:var(--green,#17c978)">Proposition acceptée</div>
+              <div class="trip-badge">${escapeHtml(l.ownerName || 'Propriétaire')}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openChatFromPaxKey('${key}')">Message</button>
+              ${l.ownerPhone ? `<a class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;text-align:center;text-decoration:none" href="tel:${l.ownerPhone}">Appeler</a>` : ''}
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:8px;padding:8px;font-size:12px;color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="cancelMyCommitment('${key}')">Annuler mon engagement</button>
+          </div>`);
+        } catch(e) {}
+      }
+      return { count: cards.length, html: cards.length
+        ? cards.join('')
+        : `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.6 2.6L16 9.5"/></svg></div><div class="empty-text">${cfg.empty}</div></div>` };
+    } catch(e) { return { count: 0, html: '<div class="empty"><div class="empty-text">Erreur de chargement</div></div>' }; }
+  }
+
+  // Sous-onglets "Mes annonces" / "Confirmés" dans les pages dédiées Colis et Location
+  let currentMySubTab = 'mine';
+  window.switchMySubTab = async function(sub) {
+    currentMySubTab = sub;
+    document.getElementById('sub-tab-mine').classList.toggle('on', sub === 'mine');
+    document.getElementById('sub-tab-confirmed').classList.toggle('on', sub === 'confirmed');
+    const kind = currentTripsTab === 'parcels' ? 'colis' : 'location';
+    const ownListId = currentTripsTab === 'parcels' ? 'my-parcels-list' : 'my-rentals-list';
+    const confirmedEl = document.getElementById('my-confirmed-list');
+    document.getElementById(ownListId).style.display = sub === 'mine' ? 'block' : 'none';
+    confirmedEl.style.display = sub === 'confirmed' ? 'block' : 'none';
+    if (sub === 'confirmed') {
+      confirmedEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+      const res = await renderAcceptedCommitments(kind);
+      confirmedEl.innerHTML = res.html;
+      document.getElementById('sub-tab-confirmed-count').textContent = res.count;
+    }
+  }
+
+  // Met à jour le compteur du sous-onglet sans changer d'onglet
+  async function refreshConfirmedCount(kind) {
+    const res = await renderAcceptedCommitments(kind);
+    document.getElementById('sub-tab-confirmed-count').textContent = res.count;
   }
 
   async function loadMyParcels() {
@@ -4540,8 +4655,9 @@
   }
 
   window.deleteParcel = async function(id) {
-    if (!confirm('Supprimer cette annonce de colis ?')) return;
+    if (!confirm('Supprimer cette annonce de colis ? Les personnes engagées en seront informées.')) return;
     try {
+      await flagProposalsOnDelete('parcelProposals', 'parcelId', id);
       await deleteDoc(doc(db, 'parcels', id));
       showToast('Annonce supprimée', 'success');
       loadMyParcels();
@@ -4691,19 +4807,64 @@
     } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
   }
 
+  // Demandes passager sur lesquelles MA proposition de conducteur a été acceptée.
+  // Le trajet appartient au passager, donc il n'apparaissait dans aucun onglet côté conducteur.
+  async function renderAcceptedTripProposals() {
+    try {
+      const snap = await getDocs(query(
+        collection(db, 'proposals'), where('driverId', '==', currentUser.uid)
+      ));
+      const accepted = snap.docs.filter(d => d.data().status === 'accepted');
+      if (accepted.length === 0) return '';
+      const cards = [];
+      for (const d of accepted) {
+        const p = d.data();
+        if (!p.tripId) continue;
+        try {
+          const ts = await getDoc(doc(db, 'trips', p.tripId));
+          if (!ts.exists()) continue;
+          const t = ts.data();
+          const key = `tripcommit_${d.id}`;
+          window[key] = { col: 'trips', listingId: p.tripId, otherUid: t.driverId, name: t.driverName || 'Passager', proposalId: d.id };
+          cards.push(`<div class="trip-card" style="margin-bottom:10px;border-left:3px solid var(--green,#17c978)">
+            <div class="trip-header">
+              <div class="trip-route">${escapeHtml(t.from||'')} → ${escapeHtml(t.to||'')}</div>
+              <div class="trip-price">${t.price ? Number(t.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+            </div>
+            <div class="trip-meta">
+              <div class="trip-badge" style="background:rgba(23,201,120,.14);color:var(--green,#17c978)">Proposition acceptée</div>
+              <div class="trip-badge">${escapeHtml(t.date||'')} ${escapeHtml(t.time||'')}</div>
+              <div class="trip-badge">${escapeHtml(t.driverName || 'Passager')}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openChatFromPaxKey('${key}')">Message</button>
+              ${t.driverPhone ? `<a class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;text-align:center;text-decoration:none" href="tel:${t.driverPhone}">Appeler</a>` : ''}
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:8px;padding:8px;font-size:12px;color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="cancelMyCommitment('${key}')">Annuler mon engagement</button>
+          </div>`);
+        } catch(e) {}
+      }
+      if (cards.length === 0) return '';
+      return `<div class="section-title" style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin:4px 0 10px">Passagers à emmener</div>${cards.join('')}
+        <div class="section-title" style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin:20px 0 10px">Mes réservations</div>`;
+    } catch(e) { return ''; }
+  }
+
   async function loadMyTrips(tab) {
     const list = document.getElementById('my-trips-list');
     list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
     try {
+      // Onglet "Résa" : on ajoute en tête les demandes passager où ma proposition a été acceptée
+      const tripCommitments = tab === 'passenger' ? await renderAcceptedTripProposals() : '';
       const field = tab === 'driver' ? 'driverId' : 'passengerId';
       const col = tab === 'driver' ? 'trips' : 'bookings';
       const q = query(collection(db, col), where(field, '==', currentUser.uid), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
       if (snap.empty) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">Aucun trajet pour l\'instant</div></div>';
+        list.innerHTML = tripCommitments + '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">Aucun trajet pour l\'instant</div></div>';
         return;
       }
-      list.innerHTML = '';
+      list.innerHTML = tripCommitments;
       const today = new Date().toISOString().slice(0, 10);
 
       // Utiliser for...of au lieu de forEach pour pouvoir utiliser await
@@ -4721,6 +4882,7 @@
         if (tab === 'passenger') {
           if (t.status === 'accepted') { statusClass = 'status-accepted'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg> Acceptée'; }
           else if (t.status === 'refused') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Refusée'; }
+          else if (t.status === 'trip_cancelled') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Trajet annulé'; }
           else if (t.status === 'rated') { statusClass = 'status-done'; statusLabel = 'Noté <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg>'; }
           else { statusClass = 'status-pending'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente'; }
         } else {
@@ -4794,6 +4956,7 @@
             </div>
           </div>
           ${t.note && tab === 'driver' ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg> ${t.note}</div>` : ''}
+          ${tab === 'passenger' && t.status === 'trip_cancelled' ? `<div style="font-size:12px;color:var(--red);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M12 7.5v5.5M12 16.3v.1"/></svg> Le conducteur a annulé ce trajet.</div>` : ''}
           ${tab === 'passenger' && t.status === 'refused' ? `<div style="font-size:12px;color:var(--red);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Le conducteur a refusé votre réservation.</div>` : ''}
           ${tab === 'passenger' && t.status === 'rated' ? `<div style="font-size:12px;color:var(--green);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Vous avez noté ce trajet. Merci !</div>` : ''}
         </div>`;
@@ -4841,6 +5004,7 @@
         const isPending = !b.status || b.status === 'pending';
         const isAccepted = b.status === 'accepted';
         const isRefused = b.status === 'refused';
+        const isCancelled = b.status === 'cancelled';
         const phone = isProposal ? (b.driverPhone || b.driverId || 'Conducteur') : (b.passengerPhone || b.passengerId || 'Passager');
         const displayName = isProposal ? (b.driverName || phone) : phone;
         const initial = displayName[0].toUpperCase();
@@ -4863,6 +5027,7 @@
             </div>
             ${isAccepted ? '<span class="passenger-status ps-accepted"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg> Accepté</span>' : ''}
             ${isRefused ? '<span class="passenger-status ps-refused"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Refusé</span>' : ''}
+            ${isCancelled ? '<span class="passenger-status ps-refused"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Annulé par l\'utilisateur</span>' : ''}
             ${isPending ? '<span class="passenger-status ps-pending"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente</span>' : ''}
           </div>
           <div class="passenger-actions">
@@ -5003,6 +5168,49 @@
     } catch(e) { showToast('Erreur: ' + e.message,'error'); }
   }
 
+  // Annulation par la personne dont la proposition avait été acceptée.
+  // Remet l'annonce à disposition : restitution des kg (GP offre) ou repassage en 'actif'.
+  window.cancelMyCommitment = async function(key) {
+    const d = window[key];
+    if (!d) return;
+    if (!confirm('Annuler cet engagement ? Le propriétaire en sera informé et son annonce redeviendra disponible.')) return;
+    const cfg = d.col === 'parcels'
+      ? { propColl: 'parcelProposals', resetStatut: 'actif' }
+      : (d.col === 'trips'
+          ? { propColl: 'proposals', resetStatut: 'ouvert' }
+          : { propColl: 'rentalProposals', resetStatut: 'actif' });
+    try {
+      const propRef = doc(db, cfg.propColl, d.proposalId);
+      const propSnap = await getDoc(propRef);
+      const prop = propSnap.exists() ? propSnap.data() : {};
+
+      const listingSnap = await getDoc(doc(db, d.col, d.listingId));
+      const listing = listingSnap.exists() ? listingSnap.data() : {};
+
+      // Colis GP "offre" : on rend les kg réservés au lieu de rouvrir l'annonce entière
+      if (d.col === 'parcels' && listing.scope === 'gp' && listing.type === 'offre') {
+        const kg = prop.kgDemandes || 1;
+        const restants = Math.min(
+          listing.kgTotal ?? kg,
+          (listing.kgRestants ?? 0) + kg
+        );
+        await setDoc(doc(db, 'parcels', d.listingId), {
+          kgRestants: restants,
+          statut: restants > 0 ? 'actif' : 'pourvu'
+        }, { merge: true });
+      } else {
+        await setDoc(doc(db, d.col, d.listingId), { statut: cfg.resetStatut }, { merge: true });
+      }
+
+      // 'cancelled' plutôt que 'refused' : distingue un désistement d'un refus du propriétaire
+      await updateDoc(propRef, { status: 'cancelled', cancelledBy: currentUser.uid });
+      showToast('Engagement annulé','success');
+      if (d.col === 'trips') loadMyTrips('passenger');
+      else switchMySubTab('confirmed');
+      refreshNotifBadge();
+    } catch(e) { showToast('Erreur: ' + e.message,'error'); }
+  }
+
   // ===== LOCALISATION / ITINÉRAIRE =====
   window.openTripLocation = function(from, to) {
     const url = `https://www.google.com/maps/dir/${encodeURIComponent(from+', Sénégal')}/${encodeURIComponent(to+', Sénégal')}`;
@@ -5077,17 +5285,38 @@
 
   // ===== CANCEL TRIP =====
   window.cancelTrip = async function(tripId) {
-    if (!confirm('Êtes-vous sûr de vouloir annuler ce trajet ?')) return;
+    if (!confirm('Êtes-vous sûr de vouloir annuler ce trajet ? Les passagers ayant réservé en seront informés.')) return;
     try {
       const tripSnap = await getDoc(doc(db, 'trips', tripId));
       if (!tripSnap.exists() || tripSnap.data().driverId !== currentUser.uid) {
         showToast('Action non autorisée', 'error'); return;
       }
-      await deleteDoc(doc(db, 'trips', tripId));
+      const t = tripSnap.data();
+
+      // On NE supprime PAS les réservations : on les marque annulées pour que le passager
+      // garde une trace et reçoive une notification (sinon son trajet disparaissait sans explication).
       const bSnap = await getDocs(query(collection(db, 'bookings'), where('tripId', '==', tripId)));
-      const delPromises = [];
-      bSnap.forEach(d => delPromises.push(deleteDoc(doc(db, 'bookings', d.id))));
-      await Promise.all(delPromises);
+      const updates = [];
+      bSnap.forEach(d => {
+        updates.push(updateDoc(doc(db, 'bookings', d.id), {
+          status: 'trip_cancelled',
+          from: d.data().from || t.from || '',
+          to: d.data().to || t.to || '',
+          date: d.data().date || t.date || ''
+        }));
+      });
+
+      // Idem pour les propositions reçues sur une demande passager
+      const pSnap = await getDocs(query(collection(db, 'proposals'), where('tripId', '==', tripId)));
+      pSnap.forEach(d => {
+        const st = d.data().status;
+        if (st !== 'refused' && st !== 'cancelled') {
+          updates.push(updateDoc(doc(db, 'proposals', d.id), { status: 'listing_deleted' }));
+        }
+      });
+      await Promise.all(updates);
+
+      await deleteDoc(doc(db, 'trips', tripId));
       showToast('Trajet annulé ✅', 'success');
       await loadMyTrips('driver');
       loadTrips();
@@ -5270,6 +5499,13 @@
             desc: `Le conducteur a refusé votre demande pour ${b.from} → ${b.to} le ${b.date}. Cherchez un autre trajet.`,
             time: b.createdAt, read: b.readRefused || false
           });
+        } else if (status === 'trip_cancelled') {
+          notifs.push({
+            id: d.id + '_tripcancelled', type: 'trip_cancelled', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="M12 7.5v5.5M12 16.3v.1" stroke="#e53935"/></svg>`,
+            title: 'Trajet annulé par le conducteur',
+            desc: `Le trajet ${b.from} → ${b.to} du ${b.date} a été annulé. Cherchez un autre trajet.`,
+            time: b.createdAt, read: b.readTripCancelled || false
+          });
         } else {
           notifs.push({
             id: d.id + '_pending', type: 'pending', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3.3 2"/></svg>`,
@@ -5419,6 +5655,34 @@
       });
     } catch(e) {}
 
+    // 8bis. Engagements annulés sur MES annonces — le transporteur/locataire s'est désisté
+    try {
+      for (const c of [
+        { propColl: 'parcelProposals', idField: 'parcelId', listingColl: 'parcels', label: 'colis', ownerField: 'ownerId' },
+        { propColl: 'rentalProposals', idField: 'rentalId', listingColl: 'rentals', label: 'location', ownerField: 'ownerId' },
+        { propColl: 'proposals', idField: 'tripId', listingColl: 'trips', label: 'demande de trajet', ownerField: 'driverId' }
+      ]) {
+        const mineSnap = await getDocs(query(
+          collection(db, c.listingColl), where(c.ownerField, '==', currentUser.uid)
+        ));
+        const myIds = mineSnap.docs.map(d => d.id);
+        if (myIds.length === 0) continue;
+        const propDocs = await getDocsInChunks(c.propColl, c.idField, myIds);
+        propDocs.forEach(d => {
+          const p = d.data();
+          if (p.status !== 'cancelled') return;
+          const typeMap = { colis: 'proposal_colis_cancelled', location: 'proposal_location_cancelled', 'demande de trajet': 'proposal_passager_cancelled' };
+          notifs.push({
+            id: d.id + '_cancelled', type: typeMap[c.label],
+            icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="M12 7.5v5.5M12 16.3v.1" stroke="#e53935"/></svg>`,
+            title: 'Engagement annulé',
+            desc: `${p.driverName || 'Un utilisateur'} a annulé son engagement sur votre ${c.label}. Votre annonce est à nouveau disponible.`,
+            time: p.createdAt, read: p.readCancelled || false
+          });
+        });
+      }
+    } catch(e) {}
+
     // 8. Mes propositions location (statut accepté/refusé) — vues par moi, celui qui a proposé
     try {
       const myRentalPropSnap = await getDocs(query(collection(db, 'rentalProposals'), where('driverId','==',currentUser.uid)));
@@ -5470,6 +5734,30 @@
           actionChatId: d.id, actionChatName: senderName
         });
       });
+    } catch(e) {}
+
+    // 9bis. Annonces supprimées alors que j'y étais engagé
+    try {
+      for (const c of [
+        { propColl: 'parcelProposals', label: 'colis' },
+        { propColl: 'rentalProposals', label: 'location' },
+        { propColl: 'proposals', label: 'trajet' }
+      ]) {
+        const snap = await getDocs(query(
+          collection(db, c.propColl), where('driverId', '==', currentUser.uid)
+        ));
+        snap.forEach(d => {
+          const p = d.data();
+          if (p.status !== 'listing_deleted') return;
+          notifs.push({
+            id: d.id + '_deleted', type: 'listing_deleted_' + c.label,
+            icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="M12 7.5v5.5M12 16.3v.1" stroke="#e53935"/></svg>`,
+            title: 'Annonce supprimée',
+            desc: `L'annonce ${c.label} sur laquelle vous étiez engagé a été supprimée par son auteur.`,
+            time: p.createdAt, read: p.readDeleted || false
+          });
+        });
+      }
     } catch(e) {}
 
     // Trier par date décroissante
@@ -5580,6 +5868,8 @@
           return updateDoc(doc(db, 'bookings', n.id.replace(/_accepted$/, '')), { readAccepted: true });
         } else if (n.type === 'refused') {
           return updateDoc(doc(db, 'bookings', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'trip_cancelled') {
+          return updateDoc(doc(db, 'bookings', n.id.replace(/_tripcancelled$/, '')), { readTripCancelled: true });
         } else if (n.type === 'proposal_passager') {
           return updateDoc(doc(db, 'proposals', n.id), { readByOwner: true });
         } else if (n.type === 'proposal_colis') {
@@ -5598,6 +5888,18 @@
           return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
         } else if (n.type === 'proposal_location_refused') {
           return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'proposal_passager_cancelled') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_cancelled$/, '')), { readCancelled: true });
+        } else if (n.type === 'proposal_colis_cancelled') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_cancelled$/, '')), { readCancelled: true });
+        } else if (n.type === 'proposal_location_cancelled') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_cancelled$/, '')), { readCancelled: true });
+        } else if (n.type === 'listing_deleted_colis') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_deleted$/, '')), { readDeleted: true });
+        } else if (n.type === 'listing_deleted_location') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_deleted$/, '')), { readDeleted: true });
+        } else if (n.type === 'listing_deleted_trajet') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_deleted$/, '')), { readDeleted: true });
         } else if (n.type === 'message') {
           // Marque le fil comme lu (même mécanique que l'ouverture de la conversation)
           return markChatRead(n.id.replace(/^msg_/, ''));
