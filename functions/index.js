@@ -125,3 +125,110 @@ exports.onNewMessage = onDocumentCreated(
     await sendPushToUser(recipientId, senderName, preview, { type: "message", chatId });
   }
 );
+
+// ===== 4. Nouvelle proposition sur une demande passager -> notifie le passager =====
+exports.onNewTripProposal = onDocumentCreated("proposals/{proposalId}", async (event) => {
+  const p = event.data.data();
+  if (!p || !p.requesterId) return;
+  const tripSnap = await db.collection("trips").doc(p.tripId).get();
+  const trip = tripSnap.exists ? tripSnap.data() : {};
+  await sendPushToUser(
+    p.requesterId,
+    "Nouvelle proposition de conducteur",
+    `${p.driverName || "Un conducteur"} propose de vous emmener sur ${trip.from || ""} → ${trip.to || ""}`,
+    { type: "proposal_passager", tripId: p.tripId || "" }
+  );
+});
+
+// ===== 5. Statut d'une proposition sur demande passager -> notifie le conducteur proposant =====
+exports.onTripProposalStatusChange = onDocumentUpdated("proposals/{proposalId}", async (event) => {
+  const before = event.data.before.data();
+  const after = event.data.after.data();
+  if (!after || !after.driverId) return;
+  if (before.status === after.status) return;
+  if (after.status !== "accepted" && after.status !== "refused") return;
+
+  const tripSnap = await db.collection("trips").doc(after.tripId).get();
+  const trip = tripSnap.exists ? tripSnap.data() : {};
+  const title = after.status === "accepted" ? "Proposition acceptée !" : "Proposition refusée";
+  const body =
+    after.status === "accepted"
+      ? `Votre proposition pour ${trip.from || ""} → ${trip.to || ""} a été acceptée`
+      : `Votre proposition pour ${trip.from || ""} → ${trip.to || ""} n'a pas été retenue`;
+  await sendPushToUser(after.driverId, title, body, {
+    type: "proposal_passager_status",
+    tripId: after.tripId || "",
+  });
+});
+
+// ===== 6. Nouvelle proposition sur un colis -> notifie le propriétaire du colis =====
+exports.onNewParcelProposal = onDocumentCreated("parcelProposals/{proposalId}", async (event) => {
+  const p = event.data.data();
+  if (!p || !p.requesterId) return;
+  const parcelSnap = await db.collection("parcels").doc(p.parcelId).get();
+  const parcel = parcelSnap.exists ? parcelSnap.data() : {};
+  await sendPushToUser(
+    p.requesterId,
+    "Nouvelle proposition pour votre colis",
+    `${p.driverName || "Un transporteur"} propose de prendre en charge votre colis ${parcel.from || ""} → ${parcel.to || ""}`,
+    { type: "proposal_colis", parcelId: p.parcelId || "" }
+  );
+});
+
+// ===== 7. Statut d'une proposition colis -> notifie le transporteur proposant =====
+exports.onParcelProposalStatusChange = onDocumentUpdated("parcelProposals/{proposalId}", async (event) => {
+  const before = event.data.before.data();
+  const after = event.data.after.data();
+  if (!after || !after.driverId) return;
+  if (before.status === after.status) return;
+  if (after.status !== "accepted" && after.status !== "refused") return;
+
+  const parcelSnap = await db.collection("parcels").doc(after.parcelId).get();
+  const parcel = parcelSnap.exists ? parcelSnap.data() : {};
+  const title = after.status === "accepted" ? "Proposition colis acceptée !" : "Proposition colis refusée";
+  const body =
+    after.status === "accepted"
+      ? `Votre proposition pour le colis ${parcel.from || ""} → ${parcel.to || ""} a été acceptée`
+      : `Votre proposition pour le colis ${parcel.from || ""} → ${parcel.to || ""} n'a pas été retenue`;
+  await sendPushToUser(after.driverId, title, body, {
+    type: "proposal_colis_status",
+    parcelId: after.parcelId || "",
+  });
+});
+
+// ===== 8. Nouvelle proposition sur une location -> notifie le propriétaire du véhicule =====
+exports.onNewRentalProposal = onDocumentCreated("rentalProposals/{proposalId}", async (event) => {
+  const p = event.data.data();
+  if (!p || !p.requesterId) return;
+  const rentalSnap = await db.collection("rentals").doc(p.rentalId).get();
+  const rental = rentalSnap.exists ? rentalSnap.data() : {};
+  const vehicleName = [rental.marque, rental.modele].filter(Boolean).join(" ") || "votre véhicule";
+  await sendPushToUser(
+    p.requesterId,
+    "Nouvelle proposition pour votre annonce",
+    `${p.driverName || "Quelqu'un"} est intéressé par ${vehicleName}`,
+    { type: "proposal_location", rentalId: p.rentalId || "" }
+  );
+});
+
+// ===== 9. Statut d'une proposition location -> notifie la personne intéressée =====
+exports.onRentalProposalStatusChange = onDocumentUpdated("rentalProposals/{proposalId}", async (event) => {
+  const before = event.data.before.data();
+  const after = event.data.after.data();
+  if (!after || !after.driverId) return;
+  if (before.status === after.status) return;
+  if (after.status !== "accepted" && after.status !== "refused") return;
+
+  const rentalSnap = await db.collection("rentals").doc(after.rentalId).get();
+  const rental = rentalSnap.exists ? rentalSnap.data() : {};
+  const vehicleName = [rental.marque, rental.modele].filter(Boolean).join(" ") || "le véhicule";
+  const title = after.status === "accepted" ? "Proposition location acceptée !" : "Proposition location refusée";
+  const body =
+    after.status === "accepted"
+      ? `Votre proposition pour ${vehicleName} a été acceptée`
+      : `Votre proposition pour ${vehicleName} n'a pas été retenue`;
+  await sendPushToUser(after.driverId, title, body, {
+    type: "proposal_location_status",
+    rentalId: after.rentalId || "",
+  });
+});
