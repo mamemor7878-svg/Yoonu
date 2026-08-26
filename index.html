@@ -698,6 +698,7 @@
   <div class="header">
     <div class="icon-btn" onclick="toggleHamburgerMenu(event)" aria-label="Menu" style="justify-self:start;position:relative">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <div id="hamburger-msg-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e53935;color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;border:2px solid var(--dark2)">0</div>
       <div id="hamburger-menu" style="display:none;position:absolute;top:48px;left:0;background:var(--dark3);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-card);width:190px;padding:8px;z-index:60">
         <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('home', document.querySelector('.nav-item:nth-child(1)'))" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V19a1 1 0 0 0 1 1H9v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4h2.5a1 1 0 0 0 1-1V9.5"/><circle cx="12" cy="15.4" r=".5" fill="currentColor" stroke="none"/></svg> Accueil
@@ -705,11 +706,15 @@
         <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('publish', document.querySelector('.nav-item:nth-child(2)'))" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h1.5l7 3.3V5.7l-7 3.3H4a1 1 0 0 0-1 1Z"/><path d="M16.8 9a4 4 0 0 1 0 6"/><path d="M19.3 6.3a8 8 0 0 1 0 11.4"/></svg> Publier
         </button>
-        <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('location', document.querySelector('.nav-item:nth-child(3)'))" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
+        <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('colis', document.querySelector('.nav-item:nth-child(3)'));loadColisPage()" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg> Colis
+        </button>
+        <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('location', document.querySelector('.nav-item:nth-child(4)'))" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12" r="3.3"/><path d="M10.1 12H19M15.8 12v2.4M18.6 12v3"/><circle cx="7" cy="12" r=".9" fill="currentColor" stroke="none"/></svg> Location
         </button>
-        <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('messages', document.querySelector('.nav-item:nth-child(4)'));loadConversations()" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
+        <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('messages');loadConversations()" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;position:relative">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.8A2.5 2.5 0 0 1 6.5 4.3h11A2.5 2.5 0 0 1 20 6.8v6.4a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.7v-3.7H6.5A2.5 2.5 0 0 1 4 13.2Z"/><circle cx="8.5" cy="10" r=".85" fill="currentColor" stroke="none"/><circle cx="12" cy="10" r=".85" fill="currentColor" stroke="none"/><circle cx="15.5" cy="10" r=".85" fill="currentColor" stroke="none"/></svg> Messages
+          <span id="hamburger-msg-count" style="display:none;margin-left:auto;background:var(--orange);color:white;border-radius:50%;width:17px;height:17px;font-size:9.5px;font-weight:800;align-items:center;justify-content:center">0</span>
         </button>
         <button onclick="event.stopPropagation();closeHamburgerMenu();goTo('profile', document.querySelector('.nav-item:nth-child(5)'))" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;text-align:left">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="12" height="14" rx="2.5"/><path d="M9 7V4.7A1.7 1.7 0 0 1 10.7 3h2.6A1.7 1.7 0 0 1 15 4.7V7"/><circle cx="12" cy="12.6" r="2"/><path d="M8.7 18c.5-1.7 1.8-2.6 3.3-2.6s2.8.9 3.3 2.6"/></svg> Profil
@@ -731,9 +736,8 @@
     <div class="greeting-sub">Où allez-vous aujourd'hui ?</div>
 
     <div class="mode-toggle" id="home-mode-toggle">
-      <button class="mode-toggle-btn active" id="home-mode-conducteur" onclick="setHomeType('conducteur')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets <span id="count-badge-conducteur" class="count-badge">0</span></button>
-      <button class="mode-toggle-btn" id="home-mode-passager" onclick="setHomeType('passager')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Passagers <span id="count-badge-passager" class="count-badge">0</span></button>
-      <button class="mode-toggle-btn" id="home-mode-colis" onclick="setHomeType('colis')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg> Colis <span id="count-badge-colis" class="count-badge">0</span></button>
+      <button class="mode-toggle-btn active" id="home-mode-conducteur" onclick="setHomeType('conducteur')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets conducteurs <span id="count-badge-conducteur" class="count-badge">0</span></button>
+      <button class="mode-toggle-btn" id="home-mode-passager" onclick="setHomeType('passager')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Demandes passagers <span id="count-badge-passager" class="count-badge">0</span></button>
     </div>
 
     <div class="search-card" id="home-search-fields">
@@ -804,7 +808,6 @@
     <div class="mode-toggle" id="publish-mode-toggle">
       <button class="mode-toggle-btn active" id="pub-mode-conducteur" onclick="setPublishType('conducteur')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Je conduis</button>
       <button class="mode-toggle-btn" id="pub-mode-passager" onclick="setPublishType('passager')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Je cherche</button>
-      <button class="mode-toggle-btn" id="pub-mode-colis" onclick="setPublishType('colis')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg> Colis</button>
     </div>
 
     <div id="pub-trip-form">
@@ -988,46 +991,6 @@
     </div>
     </div>
 
-    <div id="pub-colis-form" style="display:none">
-      <div class="form-section">
-        <div class="step-header">
-          <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/></svg></div>
-          <div style="flex:1"><div class="step-title">1. Itinéraire du colis</div><div class="step-sub">D'où part le colis, où va-t-il ?</div></div>
-        </div>
-        <div class="input-group">
-          <label>Ville de départ</label>
-          <select id="colis-from"></select>
-        </div>
-        <div class="input-group" style="margin-top:12px">
-          <label>Ville de destination</label>
-          <select id="colis-to"></select>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <div class="step-header">
-          <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v9a2 2 0 0 0 2 2h6"/><path d="M6 9h5a2 2 0 0 1 2 2v4"/><path d="M6 20h12"/><path d="M16 15v3a2 2 0 0 0 2 2h1"/></svg></div>
-          <div><div class="step-title">2. Détails du colis</div><div class="step-sub">Poids, description et budget</div></div>
-        </div>
-        <div class="form-row">
-          <div class="input-group">
-            <label>Poids approximatif (kg)</label>
-            <input type="number" id="colis-poids" placeholder="Ex: 5"/>
-          </div>
-          <div class="input-group">
-            <label>Budget proposé (FCFA)</label>
-            <input type="number" id="colis-price" placeholder="Ex: 2000"/>
-          </div>
-        </div>
-        <div class="input-group" style="margin-top:12px">
-          <label>Description du colis</label>
-          <textarea id="colis-description" placeholder="Ex: Un carton de documents, fragile..."></textarea>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" onclick="publishColis()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> Publier mon colis</button>
-    </div>
-
     <button class="btn btn-primary" id="pub-trip-submit" onclick="publishTrip()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> <span id="pub-submit-label">Publier le trajet</span></button>
   </div>
 
@@ -1067,6 +1030,21 @@
     <div class="menu-item" onclick="openMyAlerts()">
       <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c-3.3 0-5.3 2.5-5.3 6.2 0 4.6-1.9 6.1-1.9 6.8 0 .6.5.9 1.1.9h12.2c.6 0 1.1-.3 1.1-.9 0-.7-1.9-2.2-1.9-6.8 0-3.7-2-6.2-5.3-6.2Z"/><path d="M9.3 20.2c.4 1.1 1.4 1.8 2.7 1.8s2.3-.7 2.7-1.8"/><circle cx="17.3" cy="4.2" r="1.4" fill="currentColor" stroke="none"/></svg></div>
       <div><div class="menu-label">Mes alertes</div><div class="menu-sub">Recherches sauvegardées</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="goTo('messages');loadConversations()">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.8A2.5 2.5 0 0 1 6.5 4.3h11A2.5 2.5 0 0 1 20 6.8v6.4a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.7v-3.7H6.5A2.5 2.5 0 0 1 4 13.2Z"/><circle cx="8.5" cy="10" r=".85" fill="currentColor" stroke="none"/><circle cx="12" cy="10" r=".85" fill="currentColor" stroke="none"/><circle cx="15.5" cy="10" r=".85" fill="currentColor" stroke="none"/></svg></div>
+      <div><div class="menu-label">Messages</div><div class="menu-sub">Vos conversations</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="openMyParcelsDirect()">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div>
+      <div><div class="menu-label">Mes colis</div><div class="menu-sub">Mes annonces et colis confirmés</div></div>
+      <div class="menu-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="openMyRentalsDirect()">
+      <div class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/></svg></div>
+      <div><div class="menu-label">Mes locations</div><div class="menu-sub">Mes annonces et locations confirmées</div></div>
       <div class="menu-arrow">›</div>
     </div>
     <div class="menu-item" onclick="showToast('Fonctionnalité à venir')">
@@ -1128,8 +1106,8 @@
     <!-- Sous-page : Parcourir -->
     <div id="loc-browse-section">
       <div class="mode-toggle" id="loc-browse-mode-toggle">
-        <button class="mode-toggle-btn active" id="loc-browse-offre" onclick="setRentalBrowseType('offre')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg> Véhicules à louer</button>
-        <button class="mode-toggle-btn" id="loc-browse-recherche" onclick="setRentalBrowseType('recherche')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Recherches</button>
+        <button class="mode-toggle-btn active" id="loc-browse-offre" onclick="setRentalBrowseType('offre')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg> Véhicules à louer <span id="count-badge-loc-offre" class="count-badge">0</span></button>
+        <button class="mode-toggle-btn" id="loc-browse-recherche" onclick="setRentalBrowseType('recherche')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/></svg> Recherches <span id="count-badge-loc-recherche" class="count-badge">0</span></button>
       </div>
 
       <div class="search-card">
@@ -1237,6 +1215,140 @@
     </div>
   </div>
 
+  <!-- COLIS -->
+  <div id="page-colis" class="page">
+    <div class="section-title" style="margin-bottom:16px">Colis</div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="option-toggle on" id="colis-subtab-browse" onclick="switchColisSubTab('browse')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Parcourir</button>
+      <button class="option-toggle" id="colis-subtab-publish" onclick="switchColisSubTab('publish')" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Publier</button>
+    </div>
+
+    <!-- Sous-page : Parcourir -->
+    <div id="colis-browse-section">
+      <div class="mode-toggle" id="colis-browse-scope-toggle">
+        <button class="mode-toggle-btn active" id="colis-browse-local" onclick="setColisScope('browse','local')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local <span id="count-badge-colis-local" class="count-badge">0</span></button>
+        <button class="mode-toggle-btn" id="colis-browse-gp" onclick="setColisScope('browse','gp')" style="position:relative"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International <span id="count-badge-colis-gp" class="count-badge">0</span></button>
+      </div>
+
+      <div id="colis-browse-gp-mode-toggle" class="mode-toggle" style="display:none;background:var(--blue-dim,rgba(30,144,255,.1))">
+        <button class="mode-toggle-btn active" id="colis-browse-gp-offre" onclick="setColisGpBrowseMode('offre')" style="position:relative" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP disponibles <span id="count-badge-gp-offre" class="count-badge">0</span></button>
+        <button class="mode-toggle-btn" id="colis-browse-gp-recherche" onclick="setColisGpBrowseMode('recherche')" style="position:relative" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Demandes d'envoi <span id="count-badge-gp-recherche" class="count-badge">0</span></button>
+      </div>
+
+      <div class="search-card">
+        <h3 style="margin-bottom:14px">Filtrer</h3>
+        <div class="input-group" style="margin-bottom:10px">
+          <label>Départ</label>
+          <input type="text" id="colis-search-from" placeholder="Ex: Dakar ou Paris"/>
+        </div>
+        <div class="input-group" style="margin-bottom:14px">
+          <label>Destination</label>
+          <input type="text" id="colis-search-to" placeholder="Ex: Thiès ou Dakar"/>
+        </div>
+        <button class="btn btn-primary" onclick="loadColisList()" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Filtrer</button>
+      </div>
+
+      <div class="section-title" id="colis-list-title">Colis locaux disponibles</div>
+      <div id="colis-list">
+        <div class="skeleton-card"><div class="skeleton-line" style="width:60%;margin-bottom:10px"></div><div class="skeleton-line" style="width:40%;margin-bottom:14px"></div><div class="skeleton-line" style="width:90%"></div></div>
+      </div>
+    </div>
+
+    <!-- Sous-page : Publier -->
+    <div id="colis-publish-section" style="display:none">
+      <div class="mode-toggle" id="colis-publish-scope-toggle">
+        <button class="mode-toggle-btn active" id="colis-pub-local" onclick="setColisScope('publish','local')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local</button>
+        <button class="mode-toggle-btn" id="colis-pub-gp" onclick="setColisScope('publish','gp')"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International</button>
+      </div>
+
+      <div id="colis-pub-gp-type-toggle" class="mode-toggle" style="display:none;background:var(--blue-dim,rgba(30,144,255,.1))">
+        <button class="mode-toggle-btn active" id="colis-pub-gp-offre" onclick="setColisGpPublishType('offre')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> Je suis GP</button>
+        <button class="mode-toggle-btn" id="colis-pub-gp-recherche" onclick="setColisGpPublishType('recherche')" style="color:#1e90ff"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Je cherche un GP</button>
+      </div>
+
+      <div id="colis-pub-disclaimer" class="form-section" style="display:none;background:#fff8ec;border-color:#f0dca8">
+        <p style="font-size:12px;color:#7a5c1f;line-height:1.5;margin:0">⚠️ Yoonu met uniquement en relation. Vérifiez les règles douanières et le contenu autorisé avant tout envoi international. Aucune responsabilité en cas de perte, saisie ou litige.</p>
+      </div>
+
+      <div class="form-section">
+        <div class="step-header">
+          <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div>
+          <div style="flex:1"><div class="step-title" id="colis-pub-step1-title">1. Itinéraire du colis</div><div class="step-sub" id="colis-pub-step1-sub">D'où part le colis, où va-t-il ?</div></div>
+        </div>
+        <div class="input-group" id="colis-pub-from-group">
+          <label>Ville de départ</label>
+          <select id="colis-from"></select>
+        </div>
+        <input type="text" id="colis-from-gp" placeholder="Ex: Paris" style="display:none;margin-bottom:12px"/>
+        <div class="input-group" id="colis-pub-to-group" style="margin-top:12px">
+          <label>Ville de destination</label>
+          <select id="colis-to"></select>
+        </div>
+        <input type="text" id="colis-to-gp" placeholder="Ex: Dakar" style="display:none"/>
+        <div class="input-group" id="colis-pub-flightdate-group" style="display:none;margin-top:12px">
+          <label>Date du vol (aller)</label>
+          <input type="date" id="colis-flight-date"/>
+        </div>
+        <label id="colis-pub-roundtrip-label" style="display:none;align-items:center;gap:8px;cursor:pointer;margin-top:12px;font-size:13px;color:var(--text-muted)">
+          <input type="checkbox" id="colis-roundtrip" onchange="toggleColisReturnDate(this)" style="width:16px;height:16px;flex-shrink:0"/>
+          Trajet aller-retour (je peux aussi transporter au retour)
+        </label>
+        <div class="input-group" id="colis-pub-returndate-group" style="display:none;margin-top:12px">
+          <label>Date du vol (retour)</label>
+          <input type="date" id="colis-return-date"/>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="step-header">
+          <div class="step-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg></div>
+          <div><div class="step-title" id="colis-pub-step2-title">2. Détails du colis</div><div class="step-sub">Poids, description et budget</div></div>
+        </div>
+
+        <div id="colis-pub-poids-group" class="form-row">
+          <div class="input-group">
+            <label>Poids approximatif (kg)</label>
+            <input type="number" id="colis-poids" placeholder="Ex: 5"/>
+          </div>
+          <div class="input-group">
+            <label id="colis-price-label">Budget proposé (FCFA)</label>
+            <input type="number" id="colis-price" placeholder="Ex: 2000"/>
+          </div>
+        </div>
+
+        <div class="input-group" id="colis-currency-group" style="display:none;margin-top:12px">
+          <label>Devise</label>
+          <select id="colis-currency" onchange="updateColisCurrencyLabels()">
+            <option value="EUR">Euro (€)</option>
+            <option value="XOF">Franc CFA (FCFA)</option>
+          </select>
+        </div>
+
+        <div id="colis-pub-kg-group" style="display:none">
+          <label style="font-size:11px;color:var(--text-muted);margin-bottom:7px;display:block;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Kg disponibles</label>
+          <div class="qty-stepper" style="margin-bottom:12px">
+            <button type="button" class="qty-btn" onclick="stepColisKg(-1)">−</button>
+            <span class="qty-value" id="colis-kg-display">10</span>
+            <button type="button" class="qty-btn" onclick="stepColisKg(1)">+</button>
+          </div>
+          <input type="hidden" id="colis-kg-total" value="10"/>
+          <div class="input-group">
+            <label id="colis-price-kg-label">Prix par kg (€)</label>
+            <input type="number" id="colis-price-per-kg" placeholder="Ex: 15"/>
+          </div>
+        </div>
+
+        <div class="input-group" id="colis-pub-desc-group" style="margin-top:12px">
+          <label>Description du colis</label>
+          <textarea id="colis-description" placeholder="Ex: Un carton de documents, fragile..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="publishColis()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> <span id="colis-pub-submit-label">Publier mon colis</span></button>
+    </div>
+  </div>
+
   <!-- NAV -->
   <nav class="nav">
     <button class="nav-item active" onclick="goTo('home',this)">
@@ -1245,12 +1357,11 @@
     <button class="nav-item" onclick="goTo('publish',this)">
       <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div><span>Publier</span>
     </button>
+    <button class="nav-item" onclick="goTo('colis',this);loadColisPage()">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><span>Colis</span>
+    </button>
     <button class="nav-item" onclick="goTo('location',this)">
       <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/></svg></div><span>Location</span>
-    </button>
-    <button class="nav-item" onclick="goTo('messages',this);loadConversations()">
-      <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><span>Messages</span>
-      <div class="nav-badge" id="msg-badge" style="display:none">0</div>
     </button>
     <button class="nav-item" onclick="goTo('profile',this)">
       <div class="nav-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg></div><span>Profil</span>
@@ -1356,14 +1467,18 @@
 <div class="panel" id="panel-my-trips">
   <div class="panel-header">
     <button class="panel-back" onclick="closePanel('panel-my-trips')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-    <div class="panel-title">Mes trajets</div>
+    <div class="panel-title" id="my-trips-panel-title">Mes trajets</div>
   </div>
   <div class="panel-body">
-    <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">
+    <div id="my-trips-tabs" style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">
       <button class="option-toggle on" id="tab-driver" onclick="switchTripsTab('driver')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> Trajets</button>
       <button class="option-toggle" id="tab-passenger" onclick="switchTripsTab('passenger')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg> Résa</button>
       <button class="option-toggle" id="tab-parcels" onclick="switchTripsTab('parcels')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg> Colis</button>
       <button class="option-toggle" id="tab-rentals" onclick="switchTripsTab('rentals')" style="flex:1;min-width:0;justify-content:center;font-size:11.5px;white-space:nowrap;padding:9px 5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/></svg> Location</button>
+    </div>
+    <div id="my-sub-tabs" style="display:none;gap:6px;margin-bottom:16px">
+      <button class="option-toggle on" id="sub-tab-mine" onclick="switchMySubTab('mine')" style="flex:1;min-width:0;justify-content:center;font-size:12px;padding:9px 5px">Mes annonces</button>
+      <button class="option-toggle" id="sub-tab-confirmed" onclick="switchMySubTab('confirmed')" style="flex:1;min-width:0;justify-content:center;font-size:12px;padding:9px 5px"><span id="sub-tab-confirmed-label">Confirmés</span> <span id="sub-tab-confirmed-count" class="count-badge">0</span></button>
     </div>
     <div id="recurring-trips-list"></div>
     <div id="my-trips-list">
@@ -1371,6 +1486,7 @@
     </div>
     <div id="my-parcels-list" style="display:none"></div>
     <div id="my-rentals-list" style="display:none"></div>
+    <div id="my-confirmed-list" style="display:none"></div>
   </div>
 </div>
 
@@ -1414,7 +1530,7 @@
       <button class="btn" style="background:white;color:var(--orange);width:auto;padding:10px 20px;font-size:13px;display:inline-flex;align-items:center;gap:7px" onclick="shareReferralCode()"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg> Partager sur WhatsApp</button>
     </div>
 
-    <p style="font-size:12.5px;color:var(--text-muted);text-align:center;margin:14px 0 20px">Invitez un ami à rejoindre Yoonu. Dès son premier trajet réservé, vous recevez chacun <strong>500 FCFA</strong> par Wave.</p>
+    <p style="font-size:12.5px;color:var(--text-muted);text-align:center;margin:14px 0 20px">Invitez un ami à rejoindre Yoonu. Dès son premier trajet réservé, vous recevez chacun <strong>1000 FCFA</strong> par Wave.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
       <div class="form-section" style="text-align:center;padding:16px">
@@ -1741,6 +1857,70 @@
   </div>
 </div>
 
+<!-- MODAL MODIFIER GP INTERNATIONAL -->
+<div class="modal-overlay" id="edit-gp-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Modifier mon annonce GP</div>
+    <div class="form-row">
+      <div class="input-group">
+        <label>Départ</label>
+        <input type="text" id="edit-gp-from" placeholder="Ex: Paris"/>
+      </div>
+      <div class="input-group">
+        <label>Arrivée</label>
+        <input type="text" id="edit-gp-to" placeholder="Ex: Dakar"/>
+      </div>
+    </div>
+    <div class="input-group" id="edit-gp-flightdate-group" style="margin-top:12px;display:none">
+      <label>Date du vol</label>
+      <input type="date" id="edit-gp-flight-date"/>
+    </div>
+
+    <div id="edit-gp-kg-group" style="display:none;margin-top:12px">
+      <label style="font-size:11px;color:var(--text-muted);margin-bottom:7px;display:block;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Kg totaux (capacité)</label>
+      <div class="qty-stepper" style="margin-bottom:12px">
+        <button type="button" class="qty-btn" onclick="stepEditGpKg(-1)">−</button>
+        <span class="qty-value" id="edit-gp-kg-display">10</span>
+        <button type="button" class="qty-btn" onclick="stepEditGpKg(1)">+</button>
+      </div>
+      <input type="hidden" id="edit-gp-kg-total" value="10"/>
+      <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px">Les kg déjà pris par des propositions acceptées seront automatiquement déduits de ce total.</div>
+      <div class="input-group">
+        <label id="edit-gp-price-kg-label">Prix par kg (€)</label>
+        <input type="number" id="edit-gp-price-per-kg" placeholder="Ex: 15"/>
+      </div>
+    </div>
+
+    <div id="edit-gp-poids-group" class="form-row" style="margin-top:12px">
+      <div class="input-group">
+        <label>Poids (kg)</label>
+        <input type="number" id="edit-gp-poids" placeholder="Ex: 5"/>
+      </div>
+      <div class="input-group">
+        <label id="edit-gp-price-label">Budget (€)</label>
+        <input type="number" id="edit-gp-price" placeholder="Ex: 50"/>
+      </div>
+    </div>
+
+    <div class="input-group" style="margin-top:12px">
+      <label>Devise</label>
+      <select id="edit-gp-currency" onchange="updateEditGpCurrencyLabels()">
+        <option value="EUR">Euro (€)</option>
+        <option value="XOF">Franc CFA (FCFA)</option>
+      </select>
+    </div>
+
+    <div class="input-group" id="edit-gp-desc-group" style="margin-top:12px">
+      <label>Description</label>
+      <textarea id="edit-gp-description" placeholder="Décrivez votre colis..."></textarea>
+    </div>
+
+    <button class="btn btn-primary" onclick="saveEditGp()" style="margin-top:18px">Enregistrer les modifications</button>
+    <button class="btn btn-ghost" onclick="closeEditGp()">Annuler</button>
+  </div>
+</div>
+
 <!-- MODAL SUPPRESSION DE COMPTE -->
 <div class="modal-overlay" id="delete-account-modal">
   <div class="modal" style="text-align:center">
@@ -1819,7 +1999,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, setPersistence, browserLocalPersistence, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePhoneNumber, PhoneAuthProvider, sendPasswordResetEmail, deleteUser, reauthenticateWithCredential, EmailAuthProvider }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc }
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, arrayUnion, limit }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
   import { getStorage, ref as storageRef, uploadBytes, getDownloadURL }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
@@ -1906,6 +2086,7 @@
         loadConversations();
         checkPendingRatings();
         refreshNotifBadge();
+        startNotifPolling();
         setupPushNotifications();
         checkAndPublishRecurringTrips();
         refreshSavedSearchesCache().then(startAlertsListener);
@@ -1916,17 +2097,65 @@
         }
       }
     } else {
+      currentUser = null;
+      if (notifPollInterval) { clearInterval(notifPollInterval); notifPollInterval = null; }
       document.getElementById('auth-screen').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
       setupRecaptcha();
     }
   });
 
+  // Affiche soit la photo (si photoURL existe), soit l'initiale du nom, sur un élément .profile-avatar
   // ===== NOTIFICATIONS PUSH (Firebase Cloud Messaging) =====
   let messaging = null;
+  let nativePushBridgeReady = false;
+
+  // Pont avec l'app iOS native (générée par PWABuilder) : les Service Workers/Web Push
+  // ne fonctionnent pas dans une WKWebView, donc on passe par les messageHandlers natifs.
+  function isNativeIOSShell() {
+    return !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers['push-permission-request']);
+  }
+
+  function setupNativePushBridge() {
+    if (!nativePushBridgeReady) {
+      window.addEventListener('push-token', async (e) => {
+        const token = e.detail;
+        if (!token || token === 'ERROR GET TOKEN' || !currentUser) return;
+        try {
+          await setDoc(doc(db, 'users', currentUser.uid), { fcmTokens: { [token]: true } }, { merge: true });
+        } catch (err) { console.warn('Erreur sauvegarde token push natif:', err); }
+      });
+
+      window.addEventListener('push-notification', (e) => {
+        let data = {};
+        try { data = typeof e.detail === 'string' ? JSON.parse(e.detail) : (e.detail || {}); } catch (_) {}
+        const alert = (data.aps && data.aps.alert) || {};
+        const title = alert.title || data.title || 'Yoonu';
+        const body = alert.body || data.body || '';
+        showToast(`<b>${title}</b>${body ? ' — ' + body : ''}`, 'info');
+        refreshNotifBadge();
+      });
+
+      window.addEventListener('push-notification-click', () => {
+        openNotifications();
+      });
+
+      nativePushBridgeReady = true;
+    }
+    // Déclenche la demande de permission côté natif (affiche la boîte de dialogue iOS)
+    window.webkit.messageHandlers['push-permission-request'].postMessage('');
+  }
 
   async function setupPushNotifications() {
     if (!currentUser) return;
+
+    // App iOS native (wrapper PWABuilder) : pont natif via window.webkit.messageHandlers
+    if (isNativeIOSShell()) {
+      setupNativePushBridge();
+      return;
+    }
+
+    // Navigateur web classique : Firebase Cloud Messaging standard (VAPID + Service Worker)
     try {
       const supported = await isMessagingSupported().catch(() => false);
       if (!supported || !('Notification' in window) || !('serviceWorker' in navigator)) return;
@@ -1962,7 +2191,6 @@
     }
   }
 
-  // Affiche soit la photo (si photoURL existe), soit l'initiale du nom, sur un élément .profile-avatar
   function setAvatarDisplay(elId, name, photoURL) {
     const el = document.getElementById(elId);
     if (!el) return;
@@ -2226,7 +2454,7 @@
   window.shareReferralCode = function() {
     const code = document.getElementById('referral-code-display').textContent;
     const appUrl = `https://mamemor7878-svg.github.io/Yoonu/?ref=${code}`;
-    const text = `🚗 Rejoins-moi sur Yoonu, l'appli sénégalaise de covoiturage, colis et location de véhicules !\n\nUtilise mon code ${code} en t'inscrivant, et on gagne chacun 500 FCFA dès ton premier trajet 🎉\n\n${appUrl}`;
+    const text = `🚗 Rejoins-moi sur Yoonu, l'appli sénégalaise de covoiturage, colis et location de véhicules !\n\nUtilise mon code ${code} en t'inscrivant, et on gagne chacun 1000 FCFA dès ton premier trajet 🎉\n\n${appUrl}`;
     window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
   }
 
@@ -2274,60 +2502,187 @@
     currentHomeType = type;
     document.getElementById('home-mode-conducteur').classList.toggle('active', type === 'conducteur');
     document.getElementById('home-mode-passager').classList.toggle('active', type === 'passager');
-    document.getElementById('home-mode-colis').classList.toggle('active', type === 'colis');
     const titleEl = document.getElementById('search-card-title');
     const subtitleEl = document.getElementById('search-card-subtitle');
     const listTitleTextEl = document.getElementById('trips-list-title-text');
     const listIconEl = document.getElementById('trips-list-icon');
     const ICONS_BY_TYPE = {
       conducteur: '<path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/>',
-      passager: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/>',
-      colis: '<path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/><circle cx="19" cy="5" r="3.6" fill="var(--orange-dim)" stroke="currentColor"/><circle cx="19" cy="4" r=".9" stroke-width="1.2"/><path d="M19 4.9v2.3" stroke-width="1.2"/>'
+      passager: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 1.7 4.5 4.3"/>'
     };
     listIconEl.innerHTML = ICONS_BY_TYPE[type];
-    document.getElementById('search-from').placeholder = type === 'colis' ? 'Départ (ex: Dakar)' : 'Départ (ex: Dakar)';
-    document.getElementById('search-to').placeholder = type === 'colis' ? 'Destination (ex: Thiès)' : 'Destination (ex: Thiès)';
     if (type === 'conducteur') {
       titleEl.textContent = 'Rechercher un trajet';
       if (subtitleEl) subtitleEl.textContent = 'Trouve ton trajet en toute simplicité';
       listTitleTextEl.textContent = 'Trajets disponibles';
-      loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
-    } else if (type === 'passager') {
+    } else {
       titleEl.textContent = 'Rechercher une demande de passager';
       if (subtitleEl) subtitleEl.textContent = 'Trouve un passager à embarquer';
       listTitleTextEl.textContent = 'Passagers en recherche de conducteur';
-      loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
-    } else {
-      titleEl.textContent = 'Rechercher un colis';
-      if (subtitleEl) subtitleEl.textContent = 'Trouve un colis à transporter';
-      listTitleTextEl.textContent = 'Colis disponibles';
-      loadParcels(document.getElementById('search-from').value, document.getElementById('search-to').value);
     }
+    loadTrips(document.getElementById('search-from').value, document.getElementById('search-to').value);
   }
 
 
-  // ===== COLIS (affichage) =====
-  async function loadParcels(fromFilter, toFilter) {
-    const list = document.getElementById('trips-list');
+  // ===== COLIS (page dédiée : Local + GP International) =====
+  let colisSubTab = 'browse';
+  let colisBrowseScope = 'local';
+  let colisPublishScope = 'local';
+  let colisGpBrowseMode = 'offre';
+  let colisPublishGpType = 'offre';
+
+  window.loadColisPage = function() {
+    if (!document.getElementById('colis-from').options.length) {
+      document.getElementById('colis-from').innerHTML = document.getElementById('pub-from').innerHTML;
+      document.getElementById('colis-to').innerHTML = document.getElementById('pub-to').innerHTML;
+    }
+    loadColisList();
+  }
+
+  window.switchColisSubTab = function(tab) {
+    colisSubTab = tab;
+    document.getElementById('colis-subtab-browse').classList.toggle('on', tab === 'browse');
+    document.getElementById('colis-subtab-publish').classList.toggle('on', tab === 'publish');
+    document.getElementById('colis-browse-section').style.display = tab === 'browse' ? 'block' : 'none';
+    document.getElementById('colis-publish-section').style.display = tab === 'publish' ? 'block' : 'none';
+    if (tab === 'browse') loadColisList();
+  }
+
+  window.setColisScope = function(where, scope) {
+    if (where === 'browse') {
+      colisBrowseScope = scope;
+      document.getElementById('colis-browse-local').classList.toggle('active', scope === 'local');
+      document.getElementById('colis-browse-gp').classList.toggle('active', scope === 'gp');
+      document.getElementById('colis-browse-gp-mode-toggle').style.display = scope === 'gp' ? 'flex' : 'none';
+      loadColisList();
+    } else {
+      colisPublishScope = scope;
+      document.getElementById('colis-pub-local').classList.toggle('active', scope === 'local');
+      document.getElementById('colis-pub-gp').classList.toggle('active', scope === 'gp');
+      document.getElementById('colis-pub-gp-type-toggle').style.display = scope === 'gp' ? 'flex' : 'none';
+      document.getElementById('colis-pub-disclaimer').style.display = scope === 'gp' ? 'block' : 'none';
+      updateColisPublishFormFields();
+    }
+  }
+
+  window.setColisGpBrowseMode = function(mode) {
+    colisGpBrowseMode = mode;
+    document.getElementById('colis-browse-gp-offre').classList.toggle('active', mode === 'offre');
+    document.getElementById('colis-browse-gp-recherche').classList.toggle('active', mode === 'recherche');
+    loadColisList();
+  }
+
+  window.setColisGpPublishType = function(type) {
+    colisPublishGpType = type;
+    document.getElementById('colis-pub-gp-offre').classList.toggle('active', type === 'offre');
+    document.getElementById('colis-pub-gp-recherche').classList.toggle('active', type === 'recherche');
+    updateColisPublishFormFields();
+  }
+
+  function updateColisPublishFormFields() {
+    const isGpOffre = colisPublishScope === 'gp' && colisPublishGpType === 'offre';
+    const isGp = colisPublishScope === 'gp';
+    document.getElementById('colis-pub-from-group').style.display = isGp ? 'none' : 'block';
+    document.getElementById('colis-pub-to-group').style.display = isGp ? 'none' : 'block';
+    document.getElementById('colis-from-gp').style.display = isGp ? 'block' : 'none';
+    document.getElementById('colis-to-gp').style.display = isGp ? 'block' : 'none';
+    document.getElementById('colis-pub-flightdate-group').style.display = isGpOffre ? 'block' : 'none';
+    document.getElementById('colis-pub-roundtrip-label').style.display = isGpOffre ? 'flex' : 'none';
+    if (!isGpOffre) {
+      document.getElementById('colis-roundtrip').checked = false;
+      document.getElementById('colis-pub-returndate-group').style.display = 'none';
+    }
+    document.getElementById('colis-pub-poids-group').style.display = isGpOffre ? 'none' : 'grid';
+    document.getElementById('colis-pub-kg-group').style.display = isGpOffre ? 'block' : 'none';
+    document.getElementById('colis-pub-desc-group').style.display = isGpOffre ? 'none' : 'block';
+    document.getElementById('colis-pub-step1-title').textContent = isGpOffre ? '1. Mon trajet' : '1. Itinéraire du colis';
+    document.getElementById('colis-pub-step1-sub').textContent = isGpOffre ? 'D\'où à où, et quand' : 'D\'où part le colis, où va-t-il ?';
+    document.getElementById('colis-pub-step2-title').textContent = isGpOffre ? '2. Capacité disponible' : '2. Détails du colis';
+    document.getElementById('colis-price-label').textContent = isGp ? 'Budget proposé' : 'Budget proposé (FCFA)';
+    // La devise est au choix uniquement pour les GP internationaux (local = toujours FCFA)
+    document.getElementById('colis-currency-group').style.display = isGp ? 'block' : 'none';
+    updateColisCurrencyLabels();
+    document.getElementById('colis-pub-submit-label').textContent = isGpOffre ? 'Publier mon GP' : (isGp ? 'Publier ma demande' : 'Publier mon colis');
+  }
+
+  // Symbole de devise d'une annonce colis. Les anciennes annonces GP sans champ
+  // 'currency' sont considérées en euros (comportement d'origine du GP international).
+  function parcelCur(p) {
+    if ((p.scope || 'local') !== 'gp') return 'FCFA';
+    return p.currency === 'XOF' ? 'FCFA' : '€';
+  }
+
+  // Met à jour les libellés de prix selon la devise choisie
+  window.updateColisCurrencyLabels = function() {
+    const sel = document.getElementById('colis-currency');
+    const sym = sel && sel.value === 'XOF' ? 'FCFA' : '€';
+    const kgLabel = document.getElementById('colis-price-kg-label');
+    if (kgLabel) kgLabel.textContent = `Prix par kg (${sym})`;
+    const priceLabel = document.getElementById('colis-price-label');
+    if (priceLabel && document.getElementById('colis-currency-group').style.display !== 'none') {
+      priceLabel.textContent = `Budget proposé (${sym})`;
+    }
+  }
+
+  window.toggleColisReturnDate = function(checkbox) {
+    document.getElementById('colis-pub-returndate-group').style.display = checkbox.checked ? 'block' : 'none';
+  }
+
+  window.stepColisKg = function(delta) {
+    const input = document.getElementById('colis-kg-total');
+    const display = document.getElementById('colis-kg-display');
+    let val = parseInt(input.value, 10) + delta;
+    val = Math.max(1, Math.min(50, val));
+    input.value = val;
+    display.textContent = val;
+  }
+
+  async function loadColisList() {
+    const list = document.getElementById('colis-list');
+    const titleEl = document.getElementById('colis-list-title');
     list.innerHTML = '<div class="skeleton-card"><div class="skeleton-line" style="width:60%;margin-bottom:10px"></div><div class="skeleton-line" style="width:40%;margin-bottom:14px"></div><div class="skeleton-line" style="width:90%"></div></div>';
-    fromFilter = (fromFilter || '').toLowerCase().trim();
-    toFilter = (toFilter || '').toLowerCase().trim();
+    const fromFilter = (document.getElementById('colis-search-from').value || '').toLowerCase().trim();
+    const toFilter = (document.getElementById('colis-search-to').value || '').toLowerCase().trim();
+    const scope = colisBrowseScope;
+    const gpMode = colisGpBrowseMode;
+
+    titleEl.textContent = scope === 'local'
+      ? 'Colis locaux disponibles'
+      : (gpMode === 'offre' ? 'GP disponibles' : 'Demandes d\'envoi');
+
     try {
       const q = query(collection(db, 'parcels'), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
       const parcels = [];
-      let countColis = 0;
+      // Compteurs globaux (non filtrés par la recherche), comme sur l'onglet Accueil
+      let countLocal = 0, countGpOffre = 0, countGpRecherche = 0;
       snap.forEach(d => {
         const data = { id: d.id, ...d.data() };
-        if (data.statut !== 'actif') return;
-        countColis++;
+        if (data.statut !== 'actif' && data.statut !== 'pourvu') return;
+        const dataScope = data.scope || 'local';
+        const dataType = data.type || 'recherche';
+        // On ne compte que ce qui est réellement disponible
+        const isGpOffreDoc = dataScope === 'gp' && dataType === 'offre';
+        const indisponible = isGpOffreDoc
+          ? (data.kgRestants != null && data.kgRestants <= 0)
+          : data.statut === 'pourvu';
+        if (!indisponible) {
+          if (dataScope === 'local') countLocal++;
+          else if (isGpOffreDoc) countGpOffre++;
+          else countGpRecherche++;
+        }
+        if (dataScope !== scope) return;
+        if (scope === 'gp' && dataType !== gpMode) return;
         if (fromFilter && !(data.from || '').toLowerCase().includes(fromFilter)) return;
         if (toFilter && !(data.to || '').toLowerCase().includes(toFilter)) return;
         parcels.push(data);
       });
-      document.getElementById('count-badge-colis').textContent = countColis;
+      document.getElementById('count-badge-colis-local').textContent = countLocal;
+      document.getElementById('count-badge-colis-gp').textContent = countGpOffre + countGpRecherche;
+      document.getElementById('count-badge-gp-offre').textContent = countGpOffre;
+      document.getElementById('count-badge-gp-recherche').textContent = countGpRecherche;
       if (parcels.length === 0) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><div class="empty-text">Aucun colis pour l\'instant</div></div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.3 19 7.6v8.8L11 20.7 3 16.4V7.6Z"/><path d="M3 7.6 11 12l8-4.4"/><path d="M11 12v8.7"/></svg></div><div class="empty-text">Rien pour l\'instant</div></div>';
         return;
       }
       list.innerHTML = parcels.map(parcelCard).join('');
@@ -2337,17 +2692,36 @@
   }
 
   function parcelCard(p) {
-    const isPourvu = p.statut === 'pourvu';
-    return `<div class="trip-card" onclick="openParcel(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="${isPourvu?'opacity:.6':''}">
-      ${isPourvu ? `<div class="type-badge" style="background:rgba(140,140,140,.16);color:#6b6b6b">Transporteur trouvé</div>` : ''}
+    const scope = p.scope || 'local';
+    const isGpOffre = scope === 'gp' && p.type === 'offre';
+    const isFullyPourvu = isGpOffre ? (p.kgRestants != null && p.kgRestants <= 0) : p.statut === 'pourvu';
+    const scopeBadge = scope === 'gp'
+      ? `<div class="type-badge" style="background:rgba(30,144,255,.12);color:#1e90ff"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP International</div>`
+      : `<div class="type-badge" style="background:var(--orange-dim);color:var(--orange)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local</div>`;
+    const pourvuBadge = isFullyPourvu ? `<div class="type-badge" style="background:rgba(140,140,140,.16);color:#6b6b6b">${isGpOffre ? 'Complet' : 'Transporteur trouvé'}</div>` : '';
+
+    let priceLine, extraLine = '';
+    if (isGpOffre) {
+      const pct = p.kgTotal ? Math.round(((p.kgRestants ?? p.kgTotal) / p.kgTotal) * 100) : 0;
+      priceLine = `${p.price ? Number(p.price).toLocaleString('fr-FR') : '?'}<span> ${parcelCur(p)}/kg</span>`;
+      extraLine = `
+        <div style="font-size:11px;color:var(--text-muted);margin:6px 0 2px">${p.flightDate ? 'Vol du '+p.flightDate : ''}</div>
+        <div style="background:var(--dark2);border-radius:100px;height:6px;overflow:hidden;margin:6px 0"><div style="background:#1e90ff;height:100%;border-radius:100px;width:${pct}%"></div></div>
+        <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:8px">${p.kgRestants ?? p.kgTotal} kg / ${p.kgTotal} kg disponibles</div>`;
+    } else {
+      priceLine = p.price ? `${Number(p.price).toLocaleString('fr-FR')}<span> ${parcelCur(p)}</span>` : `<span style="font-size:14px">À négocier</span>`;
+    }
+
+    return `<div class="trip-card" onclick="openParcel(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="${isFullyPourvu?'opacity:.6':''}">
+      ${scopeBadge}
+      ${pourvuBadge}
       <div class="trip-header">
         <div class="trip-route">${p.from} → ${p.to}</div>
-        <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+        <div class="trip-price">${priceLine}</div>
       </div>
-      <div class="trip-meta">
-        ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
-      </div>
-      <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
+      ${extraLine}
+      ${p.poids ? `<div class="trip-meta"><div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div></div>` : ''}
+      ${p.description ? `<p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${p.description.slice(0,80)}</p>` : ''}
       <div class="trip-driver" style="margin-top:10px">
         <div class="driver-avatar">${(p.ownerName||'?')[0].toUpperCase()}</div>
         <div class="driver-info"><div class="driver-name">${p.ownerName||'Utilisateur'}${verifiedBadge(p.ownerPhone)}</div></div>
@@ -2360,13 +2734,32 @@
     currentTripData = null;
     currentRentalData = null;
     currentParcelData = p;
+    const scope = p.scope || 'local';
+    const isGpOffre = scope === 'gp' && p.type === 'offre';
+    const isFullyPourvu = isGpOffre ? (p.kgRestants != null && p.kgRestants <= 0) : p.statut === 'pourvu';
     document.getElementById('modal-route').textContent = `${p.from} → ${p.to}`;
-    document.getElementById('modal-content').innerHTML = `
-      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${p.description||''}</p>
-      <div class="trip-meta">
+
+    let metaHtml = '';
+    if (isGpOffre) {
+      const pct = p.kgTotal ? Math.round(((p.kgRestants ?? p.kgTotal) / p.kgTotal) * 100) : 0;
+      metaHtml = `
+        <div class="trip-meta">
+          <div class="trip-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> Vol du ${p.flightDate||''}</div>
+          <div class="trip-badge">${p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p)+'/kg' : 'Prix à voir'}</div>
+        </div>
+        <div style="background:var(--dark2);border-radius:100px;height:6px;overflow:hidden;margin:10px 0 4px"><div style="background:#1e90ff;height:100%;border-radius:100px;width:${pct}%"></div></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">${p.kgRestants ?? p.kgTotal} kg / ${p.kgTotal} kg disponibles</div>`;
+    } else {
+      metaHtml = `<div class="trip-meta">
         ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
-        <div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><circle cx="12" cy="12" r="9"/><path d="M12 7.3v9.4"/><path d="M9.2 9.2c.4-.9 1.4-1.5 2.9-1.5 1.9 0 3 .8 3 1.9 0 1.2-1.1 1.6-3 2-2.1.4-3 .9-3 2.1 0 1.1 1.1 1.9 3 1.9 1.5 0 2.5-.5 2.9-1.4" stroke-width="1.5"/></svg> ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
-      </div>
+        <div class="trip-badge">${p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p) : 'À négocier'}</div>
+      </div>`;
+    }
+
+    document.getElementById('modal-content').innerHTML = `
+      ${scope === 'gp' ? '<div style="background:#fff8ec;border:1px solid #f0dca8;border-radius:10px;padding:10px 12px;font-size:11px;color:#7a5c1f;margin-bottom:14px">⚠️ Yoonu met en relation uniquement. Vérifiez les règles douanières avant tout envoi international.</div>' : ''}
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">${p.description||''}</p>
+      ${metaHtml}
       <div class="trip-driver" style="margin-top:16px">
         <div class="driver-avatar">${(p.ownerName||'?')[0].toUpperCase()}</div>
         <div><div class="driver-name">${p.ownerName||'Utilisateur'}${verifiedBadge(p.ownerPhone)}</div><div style="font-size:12px;color:var(--text-muted)">${p.ownerPhone||''}</div></div>
@@ -2374,15 +2767,14 @@
       </div>`;
     const actionBtn = document.getElementById('modal-action-btn');
     const isOwner = p.ownerId === currentUser.uid;
-    const isPourvu = p.statut === 'pourvu';
     actionBtn.style.display = isOwner ? 'none' : 'flex';
-    if (isPourvu) {
-      document.getElementById('modal-action-label').textContent = 'Transporteur déjà trouvé';
+    if (isFullyPourvu) {
+      document.getElementById('modal-action-label').textContent = isGpOffre ? 'Capacité complète' : 'Transporteur déjà trouvé';
       actionBtn.disabled = true;
       actionBtn.style.opacity = '.5';
       actionBtn.onclick = null;
     } else {
-      document.getElementById('modal-action-label').textContent = 'Contacter pour ce colis';
+      document.getElementById('modal-action-label').textContent = isGpOffre ? 'Proposer mon colis' : 'Contacter pour ce colis';
       actionBtn.disabled = false;
       actionBtn.style.opacity = '';
       actionBtn.onclick = function() { proposeForParcel(p); };
@@ -2410,13 +2802,15 @@
           status: 'pending',
           createdAt: serverTimestamp()
         });
+        await setDoc(doc(db, 'parcels', p.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
         showToast('Proposition envoyée !','success');
       }
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
+
     }
     closeModal();
-    openChatGeneric('parcels', p.id, p.ownerName || 'Utilisateur');
+    openChat('parcels', p.id, p.ownerId, p.ownerName || 'Utilisateur');
   }
 
   // ===== TOGGLE MODE PUBLISH (conducteur / passager) =====
@@ -2433,17 +2827,6 @@
     currentPublishType = type;
     document.getElementById('pub-mode-conducteur').classList.toggle('active', type === 'conducteur');
     document.getElementById('pub-mode-passager').classList.toggle('active', type === 'passager');
-    document.getElementById('pub-mode-colis').classList.toggle('active', type === 'colis');
-    document.getElementById('pub-trip-form').style.display = (type === 'colis') ? 'none' : '';
-    document.getElementById('pub-trip-submit').style.display = (type === 'colis') ? 'none' : '';
-    document.getElementById('pub-colis-form').style.display = (type === 'colis') ? '' : 'none';
-    if (type === 'colis') {
-      if (!document.getElementById('colis-from').options.length) {
-        document.getElementById('colis-from').innerHTML = document.getElementById('pub-from').innerHTML;
-        document.getElementById('colis-to').innerHTML = document.getElementById('pub-to').innerHTML;
-      }
-      return;
-    }
     const seatsLabel = document.getElementById('pub-seats-label');
     const priceLabel = document.getElementById('pub-price-label');
     const titleEl = document.getElementById('pub-seats-price-title');
@@ -2617,7 +3000,6 @@
   window.searchTrips = function() {
     const f = document.getElementById('search-from').value;
     const t = document.getElementById('search-to').value;
-    if (currentHomeType === 'colis') { loadParcels(f, t); return; }
     loadTrips(f, t);
   }
 
@@ -2726,13 +3108,14 @@
           status: 'pending',
           createdAt: serverTimestamp()
         });
+        await setDoc(doc(db, 'trips', currentTripData.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
         showToast('Proposition envoyée !','success');
       }
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
     }
     closeModal();
-    openChatWithDriver(currentTripData);
+    openChat('trips', currentTripData.id, currentTripData.driverId, currentTripData.driverName || 'Conducteur');
   }
 
   // Partage un trajet (ou une annonce de location) sur WhatsApp avec un texte prérempli
@@ -2743,7 +3126,7 @@
       const p = currentParcelData;
       text = `📦 Colis à transporter sur Yoonu !\n📍 ${p.from} → ${p.to}\n`
            + (p.poids ? `⚖️ ${p.poids} kg\n` : '')
-           + `💰 ${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}\n`
+           + `💰 ${p.price ? Number(p.price).toLocaleString('fr-FR') + ' ' + parcelCur(p) + (p.scope === 'gp' && p.type === 'offre' ? '/kg' : '') : 'À négocier'}\n`
            + `\nVoir l'annonce : ${appUrl}`;
     } else if (currentRentalData) {
       const r = currentRentalData;
@@ -2822,14 +3205,22 @@
     try {
       const snap = await getDocs(query(collection(db, 'rentals'), orderBy('createdAt', 'desc')));
       const rentals = [];
+      // Compteurs globaux (non filtrés), comme sur l'onglet Accueil
+      let countOffre = 0, countRecherche = 0;
       snap.forEach(d => {
         const data = { id: d.id, ...d.data() };
-        if ((data.type||'offre') !== currentRentalBrowseType) return;
+        const dataType = data.type || 'offre';
+        if (!data.statut || data.statut === 'actif') {
+          if (dataType === 'offre') countOffre++; else countRecherche++;
+        }
+        if (dataType !== currentRentalBrowseType) return;
         if (data.statut && data.statut !== 'actif') return;
         if (villeFilter && !(data.ville||'').toLowerCase().includes(villeFilter)) return;
         if (catFilter && data.category !== catFilter) return;
         rentals.push(data);
       });
+      document.getElementById('count-badge-loc-offre').textContent = countOffre;
+      document.getElementById('count-badge-loc-recherche').textContent = countRecherche;
       if (rentals.length === 0) {
         const emptyLabel = currentRentalBrowseType === 'offre' ? 'Aucun véhicule disponible pour l\'instant' : 'Aucune recherche pour l\'instant';
         list.innerHTML = `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M5 10 6.5 5.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L19 10"/></svg></div><div class="empty-text">${emptyLabel}</div></div>`;
@@ -2937,13 +3328,14 @@
           status: 'pending',
           createdAt: serverTimestamp()
         });
+        await setDoc(doc(db, 'rentals', r.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
         showToast('Proposition envoyée !','success');
       }
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
     }
     closeModal();
-    openChatGeneric('rentals', r.id, r.ownerName || 'Propriétaire');
+    openChat('rentals', r.id, r.ownerId, r.ownerName || 'Propriétaire');
   }
 
   window.publishRental = async function() {
@@ -2981,6 +3373,7 @@
         ownerName: userData.name,
         ownerPhone: currentUser.phoneNumber || userData.phone || '',
         ownerRating: userData.rating||5,
+        participants: [currentUser.uid],
         createdAt: serverTimestamp()
       });
       showToast(type === 'offre' ? 'Offre publiée !' : 'Recherche publiée !','success');
@@ -3044,6 +3437,7 @@
         price: currentTripData.price,
         status: 'pending', createdAt: serverTimestamp()
       });
+      await setDoc(doc(db, 'trips', currentTripData.id), { participants: arrayUnion(currentUser.uid) }, { merge: true });
       closeModal();
       showBookingConfirmation(currentTripData.from, currentTripData.to, currentTripData.date, currentTripData.price);
       showToast('Réservation envoyée ! 🎉','success');
@@ -3342,6 +3736,7 @@
         driverName: userData.name,
         driverPhone: currentUser.phoneNumber || userData.phone || '',
         driverRating: userData.rating||5,
+        participants: [currentUser.uid],
         createdAt: serverTimestamp()
       });
 
@@ -3392,40 +3787,84 @@
 
   // ===== PUBLIER UN COLIS =====
   window.publishColis = async function() {
-    const from = document.getElementById('colis-from').value;
-    const to = document.getElementById('colis-to').value;
-    const poids = document.getElementById('colis-poids').value;
-    const price = document.getElementById('colis-price').value;
+    const scope = colisPublishScope;
+    const gpType = colisPublishGpType;
     const description = document.getElementById('colis-description').value.trim();
 
+    let from, to;
+    if (scope === 'gp') {
+      from = document.getElementById('colis-from-gp').value.trim();
+      to = document.getElementById('colis-to-gp').value.trim();
+    } else {
+      from = document.getElementById('colis-from').value;
+      to = document.getElementById('colis-to').value;
+    }
     if (!from || !to) { showToast('Choisissez un départ et une destination', 'error'); return; }
-    if (from === to) { showToast('Départ et arrivée identiques', 'error'); return; }
-    if (!description) { showToast('Décrivez votre colis', 'error'); return; }
+    if (from.toLowerCase() === to.toLowerCase()) { showToast('Départ et arrivée identiques', 'error'); return; }
 
     const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
     const userData = userDoc.data();
 
+    const payload = {
+      scope, from, to,
+      statut: 'actif',
+      // Devise : au choix pour les GP internationaux, toujours FCFA en local
+      currency: scope === 'gp' ? (document.getElementById('colis-currency').value || 'EUR') : 'XOF',
+      ownerId: currentUser.uid,
+      ownerName: userData.name,
+      ownerPhone: currentUser.phoneNumber || userData.phone || '',
+      ownerRating: userData.rating || 5,
+      participants: [currentUser.uid],
+      createdAt: serverTimestamp()
+    };
+
+    let isRoundTrip = false;
+    let returnDate = '';
+    if (scope === 'gp' && gpType === 'offre') {
+      const kgTotal = Number(document.getElementById('colis-kg-total').value) || 1;
+      const pricePerKg = document.getElementById('colis-price-per-kg').value;
+      const flightDate = document.getElementById('colis-flight-date').value;
+      if (!flightDate) { showToast('Indiquez la date du vol', 'error'); return; }
+      isRoundTrip = document.getElementById('colis-roundtrip').checked;
+      if (isRoundTrip) {
+        returnDate = document.getElementById('colis-return-date').value;
+        if (!returnDate) { showToast('Indiquez la date du vol retour', 'error'); return; }
+      }
+      payload.type = 'offre';
+      payload.flightDate = flightDate;
+      payload.kgTotal = kgTotal;
+      payload.kgRestants = kgTotal;
+      payload.price = pricePerKg ? Number(pricePerKg) : 0;
+    } else {
+      // scope local, ou scope gp + recherche : même modèle (poids/prix/description)
+      const poids = document.getElementById('colis-poids').value;
+      const price = document.getElementById('colis-price').value;
+      if (!description) { showToast('Décrivez votre colis', 'error'); return; }
+      if (scope === 'gp') payload.type = 'recherche';
+      payload.poids = poids ? Number(poids) : null;
+      payload.price = price ? Number(price) : 0;
+      payload.description = description;
+    }
+
     try {
-      await addDoc(collection(db, 'parcels'), {
-        from, to,
-        poids: poids ? Number(poids) : null,
-        price: price ? Number(price) : 0,
-        description,
-        statut: 'actif',
-        ownerId: currentUser.uid,
-        ownerName: userData.name,
-        ownerPhone: currentUser.phoneNumber || userData.phone || '',
-        ownerRating: userData.rating || 5,
-        createdAt: serverTimestamp()
+      await addDoc(collection(db, 'parcels'), payload);
+      if (isRoundTrip) {
+        const returnPayload = { ...payload, from: payload.to, to: payload.from, flightDate: returnDate };
+        await addDoc(collection(db, 'parcels'), returnPayload);
+      }
+      showToast(isRoundTrip ? 'GP aller-retour publié !' : (scope === 'gp' && gpType === 'offre' ? 'GP publié !' : 'Colis publié !'), 'success');
+      ['colis-from-gp','colis-to-gp','colis-poids','colis-price','colis-description','colis-price-per-kg','colis-flight-date','colis-return-date'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
       });
-      showToast('Colis publié !', 'success');
       document.getElementById('colis-from').value = '';
       document.getElementById('colis-to').value = '';
-      document.getElementById('colis-poids').value = '';
-      document.getElementById('colis-price').value = '';
-      document.getElementById('colis-description').value = '';
-      goTo('home', document.querySelector('.nav-item'));
-      setHomeType('colis');
+      document.getElementById('colis-kg-total').value = 10;
+      document.getElementById('colis-kg-display').textContent = '10';
+      document.getElementById('colis-roundtrip').checked = false;
+      document.getElementById('colis-pub-returndate-group').style.display = 'none';
+      switchColisSubTab('browse');
+      setColisScope('browse', scope);
+      if (scope === 'gp') setColisGpBrowseMode(gpType === 'offre' ? 'offre' : 'recherche');
     } catch(e) {
       showToast('Erreur: ' + e.message, 'error');
     }
@@ -3460,6 +3899,7 @@
             driverPhone: r.ownerPhone,
             driverRating: 5,
             recurringId: docSnap.id,
+            participants: [currentUser.uid],
             createdAt: serverTimestamp()
           });
           await updateDoc(doc(db, 'recurringTrips', docSnap.id), { lastPublishedDate: nextDate });
@@ -3691,32 +4131,53 @@
   })();
 
   // ===== CHAT =====
-  // Chat générique : fonctionne sur n'importe quelle collection racine ('trips' ou 'rentals')
-  // via une sous-collection {collection}/{id}/messages
-  let editingMsgCol = 'trips';
+  // Une conversation = un fil entre EXACTEMENT 2 personnes, pour une annonce donnée.
+  // Stockage : chats/{chatId}/messages, avec chatId = {collection}_{annonceId}_{uidA}_{uidB}
+  // (les 2 uid triés alphabétiquement pour que les deux côtés calculent le même identifiant).
+  let currentChatId = null;
 
-  function openChatWithDriver(trip) {
-    currentChatUser = { name: trip.driverName, id: trip.driverId };
-    document.getElementById('chat-name').textContent = trip.driverName;
-    document.getElementById('chat-avatar').textContent = (trip.driverName||'?')[0].toUpperCase();
-    document.getElementById('chat-screen').classList.add('open');
-    document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(trip.id, 'trips');
+  function buildChatId(col, listingId, otherUid) {
+    const pair = [currentUser.uid, otherUid].sort();
+    return `${col}_${listingId}_${pair[0]}_${pair[1]}`;
   }
 
-  function openChatGeneric(col, id, name) {
-    currentChatUser = { name, id };
-    document.getElementById('chat-name').textContent = name;
-    document.getElementById('chat-avatar').textContent = (name||'?')[0].toUpperCase();
+  // Crée le document de conversation s'il n'existe pas (porte la liste des 2 participants)
+  async function ensureChatDoc(chatId, col, listingId, otherUid, otherName) {
+    await setDoc(doc(db, 'chats', chatId), {
+      listingCollection: col,
+      listingId,
+      participants: [currentUser.uid, otherUid].sort(),
+      names: { [currentUser.uid]: currentUser.displayName || '', [otherUid]: otherName || '' },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  async function openChat(col, listingId, otherUid, otherName) {
+    if (!otherUid) { showToast('Impossible d\'ouvrir la conversation', 'error'); return; }
+    if (otherUid === currentUser.uid) { showToast('Ceci est votre propre annonce', 'error'); return; }
+    const chatId = buildChatId(col, listingId, otherUid);
+    currentChatId = chatId;
+    currentChatUser = { name: otherName, id: otherUid };
+    document.getElementById('chat-name').textContent = otherName || 'Utilisateur';
+    document.getElementById('chat-avatar').textContent = (otherName||'?')[0].toUpperCase();
     document.getElementById('chat-screen').classList.add('open');
     document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(id, col);
+    try {
+      await ensureChatDoc(chatId, col, listingId, otherUid, otherName);
+    } catch(e) {
+      console.error('ensureChatDoc', e);
+      document.getElementById('chat-messages').innerHTML =
+        '<div class="empty"><div class="empty-text">Conversation indisponible.<br>Vérifiez que les règles Firestore ont bien été publiées.</div></div>';
+      return;
+    }
+    listenMessages(chatId);
+    markChatRead(chatId);
   }
 
   let unsubscribeMessages = null;
-  function listenMessages(tripId, col = 'trips') {
+  function listenMessages(chatId) {
     if (unsubscribeMessages) unsubscribeMessages();
-    const q = query(collection(db, col, tripId, 'messages'), orderBy('createdAt'));
+    const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt'));
     unsubscribeMessages = onSnapshot(q, snap => {
       const container = document.getElementById('chat-messages');
       container.innerHTML = '';
@@ -3734,10 +4195,9 @@
         actions.className = 'msg-actions';
         if (isMine) {
           actions.innerHTML = `
-            <button class="msg-action-btn" onclick="startEditMsg('${d.id}','${tripId}',this,'${col}')">Modifier</button>
-            <button class="msg-action-btn" style="color:var(--red)" onclick="deleteMsg('${d.id}','${tripId}','${col}')">Supprimer</button>
+            <button class="msg-action-btn" onclick="startEditMsg('${d.id}','${chatId}',this)">Modifier</button>
+            <button class="msg-action-btn" style="color:var(--red)" onclick="deleteMsg('${d.id}','${chatId}')">Supprimer</button>
           `;
-          // Store text for edit
           actions.querySelector('.msg-action-btn').dataset.text = m.text;
         }
 
@@ -3747,14 +4207,12 @@
       });
       container.scrollTop = container.scrollHeight;
     });
-    document.getElementById('chat-screen').dataset.tripId = tripId;
-    document.getElementById('chat-screen').dataset.collection = col;
+    document.getElementById('chat-screen').dataset.chatId = chatId;
   }
 
-  window.startEditMsg = function(msgId, tripId, btn, col = 'trips') {
+  window.startEditMsg = function(msgId, chatId, btn) {
     editingMsgId = msgId;
-    editingMsgTripId = tripId;
-    editingMsgCol = col;
+    editingMsgTripId = chatId;
     const text = btn.parentElement.querySelector('.msg-action-btn').dataset.text ||
       btn.closest('.msg-wrap').querySelector('.msg').textContent.replace(' ✏️','');
     document.getElementById('chat-input').value = text;
@@ -3769,40 +4227,43 @@
     document.getElementById('edit-msg-bar').style.display = 'none';
   }
 
-  window.deleteMsg = async function(msgId, tripId, col = 'trips') {
+  window.deleteMsg = async function(msgId, chatId) {
     if (!confirm('Supprimer ce message ?')) return;
     try {
-      await deleteDoc(doc(db, col, tripId, 'messages', msgId));
+      await deleteDoc(doc(db, 'chats', chatId, 'messages', msgId));
       showToast('Message supprimé','success');
     } catch(e) { showToast('Erreur suppression','error'); }
   }
 
+  async function pushMessage(text) {
+    const chatId = document.getElementById('chat-screen').dataset.chatId;
+    if (!chatId) { showToast('Conversation introuvable','error'); return; }
+    await addDoc(collection(db, 'chats', chatId, 'messages'), {
+      text, senderId: currentUser.uid,
+      senderName: currentUser.displayName || currentUser.phoneNumber || '',
+      createdAt: serverTimestamp()
+    });
+    // Horodatage sur le fil : sert au tri et à l'aperçu dans la liste des conversations
+    await setDoc(doc(db, 'chats', chatId), {
+      updatedAt: serverTimestamp(), lastMsg: text.slice(0, 80), lastSenderId: currentUser.uid
+    }, { merge: true });
+  }
+
   window.sendQuickReply = async function(text) {
-    const chatScreen = document.getElementById('chat-screen');
-    const tripId = chatScreen.dataset.tripId;
-    const col = chatScreen.dataset.collection || 'trips';
-    try {
-      await addDoc(collection(db, col, tripId, 'messages'), {
-        text, senderId: currentUser.uid,
-        senderName: currentUser.displayName || currentUser.phoneNumber,
-        createdAt: serverTimestamp()
-      });
-    } catch(e) { showToast('Erreur envoi','error'); }
+    try { await pushMessage(text); }
+    catch(e) { showToast('Erreur envoi','error'); }
   }
 
   window.sendMsg = async function() {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
-    const chatScreen = document.getElementById('chat-screen');
-    const tripId = chatScreen.dataset.tripId;
-    const col = chatScreen.dataset.collection || 'trips';
     input.value = '';
 
     // Mode édition
     if (editingMsgId) {
       try {
-        await updateDoc(doc(db, editingMsgCol, editingMsgTripId, 'messages', editingMsgId), {
+        await updateDoc(doc(db, 'chats', editingMsgTripId, 'messages', editingMsgId), {
           text, edited: true
         });
         cancelEditMsg();
@@ -3811,13 +4272,8 @@
       return;
     }
 
-    try {
-      await addDoc(collection(db, col, tripId, 'messages'), {
-        text, senderId: currentUser.uid,
-        senderName: currentUser.displayName || currentUser.phoneNumber,
-        createdAt: serverTimestamp()
-      });
-    } catch(e) { showToast('Erreur envoi','error'); }
+    try { await pushMessage(text); }
+    catch(e) { showToast('Erreur envoi','error'); }
   }
 
   window.closeChat = function() {
@@ -3827,69 +4283,120 @@
 
   async function loadConversations() {
     const list = document.getElementById('convs-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
-    const q = query(collection(db, 'bookings'), where('passengerId','==',currentUser.uid));
+    list.innerHTML = '<div class="empty"><div class="empty-icon">\u23f3</div><div class="empty-text">Chargement...</div></div>';
+    const uid = currentUser.uid;
     try {
-      const snap = await getDocs(q);
+      // Toutes les conversations dont je fais partie (fils \u00e0 2 personnes uniquement)
+      const snap = await getDocs(query(
+        collection(db, 'chats'), where('participants', 'array-contains', uid)
+      ));
       if (snap.empty) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">💬</div><div class="empty-text">Aucune conversation pour l\'instant</div></div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon">\ud83d\udcac</div><div class="empty-text">Aucune conversation pour l\'instant</div></div>';
+        updateMsgBadges(0);
         return;
       }
+
+      const lastRead = (await getDoc(doc(db, 'users', uid))).data()?.chatLastRead || {};
+      const convs = snap.docs.map(d => {
+        const c = d.data();
+        const otherUid = (c.participants || []).find(p => p !== uid) || '';
+        const updated = c.updatedAt?.seconds || 0;
+        return {
+          key: d.id,
+          name: (c.names && c.names[otherUid]) || 'Utilisateur',
+          lastMsg: c.lastMsg || '',
+          lastSenderId: c.lastSenderId || '',
+          subtitle: LISTING_LABELS[c.listingCollection] || '',
+          updated,
+          unread: c.lastSenderId && c.lastSenderId !== uid && updated > (lastRead[d.id] || 0)
+        };
+      });
+
+      convs.sort((a, b) => b.updated - a.updated);
+
       list.innerHTML = '';
-      let newMsgs = 0;
-      snap.forEach(d => {
-        const b = d.data();
-        // Stocker les données dans une variable globale pour éviter les problèmes d'échappement
-        const convKey = `conv_${d.id}`;
-        window[convKey] = { tripId: b.tripId||'', name: b.driverName||'Conducteur', driverId: b.driverId||'' };
+      let unreadTotal = 0;
+      convs.forEach(c => {
+        window[`conv_${c.key}`] = { chatId: c.key, name: c.name };
+        if (c.unread) unreadTotal++;
+        const preview = c.lastMsg
+          ? (c.lastSenderId === uid ? 'Vous : ' : '') + escapeHtml(c.lastMsg.slice(0, 45))
+          : c.subtitle;
         const item = document.createElement('div');
         item.className = 'conv-item';
         item.innerHTML = `
-          <div class="conv-avatar">${(b.driverName||'C')[0]}</div>
-          <div class="conv-info" onclick="openChatFromConvKey('${convKey}')" style="flex:1;cursor:pointer">
-            <div class="conv-name">${b.driverName||'Conducteur'}</div>
-            <div class="conv-preview">${b.from||''} → ${b.to||''} · ${b.date||''}</div>
+          <div class="conv-avatar">${(c.name||'U')[0].toUpperCase()}</div>
+          <div class="conv-info" onclick="openChatFromConvKey('conv_${c.key}')" style="flex:1;cursor:pointer;min-width:0">
+            <div class="conv-name" style="${c.unread ? 'font-weight:800' : ''}">${escapeHtml(c.name)}</div>
+            <div class="conv-preview" style="${c.unread ? 'color:var(--text);font-weight:600' : ''};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</div>
           </div>
-          <div class="conv-item-actions">
-            ${b.unread ? '<div class="unread-badge">1</div>' : ''}
-            <button class="conv-del-btn" onclick="deleteConversation('${d.id}','${b.tripId||''}')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"/><path d="M9.5 7V4.8a1.3 1.3 0 0 1 1.3-1.3h2.4a1.3 1.3 0 0 1 1.3 1.3V7"/><path d="M6.5 7l1 13.2a1.8 1.8 0 0 0 1.8 1.7h5.4a1.8 1.8 0 0 0 1.8-1.7L17.5 7"/><path d="M10.3 11v6M13.7 11v6"/></svg></button>
-          </div>`;
+          ${c.unread ? '<div class="unread-badge">1</div>' : ''}`;
         list.appendChild(item);
-        if (b.unread) newMsgs++;
       });
-      const badge = document.getElementById('msg-badge');
-      if (newMsgs > 0) { badge.textContent = newMsgs; badge.style.display = 'flex'; }
-      else { badge.style.display = 'none'; }
-    } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>'; }
+      updateMsgBadges(unreadTotal);
+    } catch(e) {
+      console.error(e);
+      list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur de chargement</div></div>';
+    }
   }
 
-  window.openChatFromConvKey = function(key) {
+  const LISTING_LABELS = { trips: 'Trajet', parcels: 'Colis', rentals: 'Location' };
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function updateMsgBadges(count) {
+    const hamBadge = document.getElementById('hamburger-msg-badge');
+    const hamCount = document.getElementById('hamburger-msg-count');
+    if (count > 0) {
+      hamBadge.style.display = 'flex';
+      hamCount.textContent = count;
+      hamCount.style.display = 'flex';
+    } else {
+      hamBadge.style.display = 'none';
+      hamCount.style.display = 'none';
+    }
+  }
+
+  // Marque une conversation comme lue (mémorisé sur le profil, donc synchronisé entre appareils)
+  async function markChatRead(chatId) {
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        chatLastRead: { [chatId]: Math.floor(Date.now() / 1000) }
+      }, { merge: true });
+    } catch(e) {}
+  }
+
+  // Ouvre une conversation déjà existante depuis la liste des messages
+  window.openChatFromConvKey = async function(key) {
     const d = window[key];
     if (!d) return;
-    openChatFromBooking(d.tripId, d.name, d.driverId);
-  }
-
-  window.deleteConversation = async function(bookingId, tripId) {
-    if (!confirm('Supprimer cette conversation ?')) return;
-    try {
-      // Supprimer les messages du chat
-      const msgsSnap = await getDocs(collection(db, 'trips', tripId, 'messages'));
-      const dels = [];
-      msgsSnap.forEach(m => dels.push(deleteDoc(doc(db, 'trips', tripId, 'messages', m.id))));
-      await Promise.all(dels);
-      // Supprimer la réservation (conversation)
-      await deleteDoc(doc(db, 'bookings', bookingId));
-      showToast('Conversation supprimée','success');
-      loadConversations();
-    } catch(e) { showToast('Erreur: ' + e.message,'error'); }
+    currentChatId = d.chatId;
+    currentChatUser = { name: d.name, id: null };
+    document.getElementById('chat-name').textContent = d.name || 'Utilisateur';
+    document.getElementById('chat-avatar').textContent = (d.name||'?')[0].toUpperCase();
+    document.getElementById('chat-screen').classList.add('open');
+    document.getElementById('chat-messages').innerHTML = '';
+    listenMessages(d.chatId);
+    markChatRead(d.chatId);
   }
 
   window.openChatFromKey = async function(key) {
     const d = window[key];
     if (!d) { showToast('Erreur: données manquantes', 'error'); return; }
     let tripId = d.tripId;
-    // Si tripId vide, chercher dans bookings
-    if (!tripId) {
+    // Si le tripId manque sur la réservation, on le relit depuis le document booking lui-même
+    if (!tripId && d.bookingId) {
+      try {
+        const bSnap = await getDoc(doc(db, 'bookings', d.bookingId));
+        if (bSnap.exists()) tripId = bSnap.data().tripId || '';
+      } catch(e) {}
+    }
+    // Dernier recours : retrouver la réservation via le conducteur
+    if (!tripId && d.id) {
       try {
         const bSnap = await getDocs(query(
           collection(db, 'bookings'),
@@ -3899,17 +4406,9 @@
         if (!bSnap.empty) tripId = bSnap.docs[0].data().tripId || '';
       } catch(e) {}
     }
-    if (!tripId) { showToast('Impossible d\'ouvrir le chat','error'); return; }
-    openChatFromBooking(tripId, d.name, d.id);
-  }
-
-  window.openChatFromBooking = function(tripId, name, driverId) {
-    currentChatUser = { name, id: driverId };
-    document.getElementById('chat-name').textContent = name;
-    document.getElementById('chat-avatar').textContent = name[0].toUpperCase();
-    document.getElementById('chat-screen').classList.add('open');
-    document.getElementById('chat-messages').innerHTML = '';
-    listenMessages(tripId);
+    if (!tripId) { showToast('Trajet introuvable, impossible d\'ouvrir la conversation','error'); return; }
+    if (!d.id) { showToast('Conducteur introuvable, impossible d\'ouvrir la conversation','error'); return; }
+    openChat('trips', tripId, d.id, d.name);
   }
 
 
@@ -4003,8 +4502,26 @@
 
   window.openMyTrips = function() {
     document.getElementById('panel-my-trips').classList.add('open');
-    loadMyTrips('driver');
+    setMyTripsDedicated(false);
+    switchTripsTab('driver');
     loadRecurringTripsList();
+  }
+
+  // Mode dédié : la page ne montre qu'un seul type d'annonces, sans les autres onglets
+  function setMyTripsDedicated(on) {
+    document.getElementById('my-trips-tabs').style.display = on ? 'none' : 'flex';
+  }
+
+  window.openMyParcelsDirect = function() {
+    document.getElementById('panel-my-trips').classList.add('open');
+    setMyTripsDedicated(true);
+    switchTripsTab('parcels');
+  }
+
+  window.openMyRentalsDirect = function() {
+    document.getElementById('panel-my-trips').classList.add('open');
+    setMyTripsDedicated(true);
+    switchTripsTab('rentals');
   }
 
   window.switchTripsTab = function(tab) {
@@ -4017,6 +4534,23 @@
     document.getElementById('my-trips-list').style.display = (tab === 'driver' || tab === 'passenger') ? 'block' : 'none';
     document.getElementById('my-parcels-list').style.display = tab === 'parcels' ? 'block' : 'none';
     document.getElementById('my-rentals-list').style.display = tab === 'rentals' ? 'block' : 'none';
+    const titles = { driver: 'Mes trajets', passenger: 'Mes réservations', parcels: 'Colis', rentals: 'Location' };
+    document.getElementById('my-trips-panel-title').textContent = titles[tab] || 'Mes trajets';
+
+    // Sous-onglets "Mes annonces / Confirmés" : uniquement en mode dédié Colis ou Location
+    const dedicated = document.getElementById('my-trips-tabs').style.display === 'none';
+    const showSub = dedicated && (tab === 'parcels' || tab === 'rentals');
+    document.getElementById('my-sub-tabs').style.display = showSub ? 'flex' : 'none';
+    document.getElementById('my-confirmed-list').style.display = 'none';
+    if (showSub) {
+      const kind = tab === 'parcels' ? 'colis' : 'location';
+      document.getElementById('sub-tab-confirmed-label').textContent = tab === 'parcels' ? 'Colis confirmés' : 'Locations confirmées';
+      currentMySubTab = 'mine';
+      document.getElementById('sub-tab-mine').classList.add('on');
+      document.getElementById('sub-tab-confirmed').classList.remove('on');
+      refreshConfirmedCount(kind);
+    }
+
     if (tab === 'parcels') loadMyParcels();
     else if (tab === 'rentals') loadMyRentals();
     else loadMyTrips(tab);
@@ -4062,13 +4596,108 @@
     }
   }
 
-  window.deleteRental = async function(id) {
-    if (!confirm('Supprimer cette annonce ?')) return;
+  // Marque les propositions d'une annonce supprimée, pour que ceux qui s'étaient engagés
+  // en soient informés au lieu de voir leur engagement disparaître sans explication.
+  async function flagProposalsOnDelete(propColl, idField, listingId) {
     try {
+      const snap = await getDocs(query(collection(db, propColl), where(idField, '==', listingId)));
+      const updates = [];
+      snap.forEach(d => {
+        const st = d.data().status;
+        if (st !== 'refused' && st !== 'cancelled') {
+          updates.push(updateDoc(doc(db, propColl, d.id), { status: 'listing_deleted' }));
+        }
+      });
+      await Promise.all(updates);
+    } catch(e) {}
+  }
+
+  window.deleteRental = async function(id) {
+    if (!confirm('Supprimer cette annonce ? Les personnes engagées en seront informées.')) return;
+    try {
+      await flagProposalsOnDelete('rentalProposals', 'rentalId', id);
       await deleteDoc(doc(db, 'rentals', id));
       showToast('Annonce supprimée', 'success');
       loadMyRentals();
     } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  // Annonces sur lesquelles MA proposition a été acceptée (je ne suis pas le propriétaire).
+  // Affichées dans le sous-onglet "Confirmés" des pages Mes colis / Mes locations.
+  async function renderAcceptedCommitments(kind) {
+    const cfg = kind === 'colis'
+      ? { propColl: 'parcelProposals', idField: 'parcelId', listingColl: 'parcels', empty: 'Aucun colis confirmé pour l\'instant' }
+      : { propColl: 'rentalProposals', idField: 'rentalId', listingColl: 'rentals', empty: 'Aucune location confirmée pour l\'instant' };
+    try {
+      // On filtre le statut côté client : évite d'avoir à créer un index composite Firestore
+      const snap = await getDocs(query(
+        collection(db, cfg.propColl),
+        where('driverId', '==', currentUser.uid)
+      ));
+      const accepted = snap.docs.filter(d => d.data().status === 'accepted');
+      const cards = [];
+      for (const d of accepted) {
+        const prop = d.data();
+        const lid = prop[cfg.idField];
+        if (!lid) continue;
+        try {
+          const ls = await getDoc(doc(db, cfg.listingColl, lid));
+          if (!ls.exists()) continue;
+          const l = ls.data();
+          const key = `commit_${d.id}`;
+          window[key] = { col: cfg.listingColl, listingId: lid, otherUid: l.ownerId, name: l.ownerName || 'Propriétaire', proposalId: d.id };
+          const title = kind === 'colis'
+            ? `${l.from || ''} → ${l.to || ''}`
+            : ([l.marque, l.modele].filter(Boolean).join(' ') || 'Véhicule');
+          const sub = kind === 'colis'
+            ? (l.price ? Number(l.price).toLocaleString('fr-FR') + ' ' + parcelCur(l) : 'À négocier')
+            : (l.price ? Number(l.price).toLocaleString('fr-FR') + ' FCFA/j' : 'À négocier');
+          cards.push(`<div class="trip-card" style="margin-bottom:10px;border-left:3px solid var(--green,#17c978)">
+            <div class="trip-header">
+              <div class="trip-route">${escapeHtml(title)}</div>
+              <div class="trip-price">${sub}</div>
+            </div>
+            <div class="trip-meta">
+              <div class="trip-badge" style="background:rgba(23,201,120,.14);color:var(--green,#17c978)">Proposition acceptée</div>
+              <div class="trip-badge">${escapeHtml(l.ownerName || 'Propriétaire')}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openChatFromPaxKey('${key}')">Message</button>
+              ${l.ownerPhone ? `<a class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;text-align:center;text-decoration:none" href="tel:${l.ownerPhone}">Appeler</a>` : ''}
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:8px;padding:8px;font-size:12px;color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="cancelMyCommitment('${key}')">Annuler mon engagement</button>
+          </div>`);
+        } catch(e) {}
+      }
+      return { count: cards.length, html: cards.length
+        ? cards.join('')
+        : `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.6 2.6L16 9.5"/></svg></div><div class="empty-text">${cfg.empty}</div></div>` };
+    } catch(e) { return { count: 0, html: '<div class="empty"><div class="empty-text">Erreur de chargement</div></div>' }; }
+  }
+
+  // Sous-onglets "Mes annonces" / "Confirmés" dans les pages dédiées Colis et Location
+  let currentMySubTab = 'mine';
+  window.switchMySubTab = async function(sub) {
+    currentMySubTab = sub;
+    document.getElementById('sub-tab-mine').classList.toggle('on', sub === 'mine');
+    document.getElementById('sub-tab-confirmed').classList.toggle('on', sub === 'confirmed');
+    const kind = currentTripsTab === 'parcels' ? 'colis' : 'location';
+    const ownListId = currentTripsTab === 'parcels' ? 'my-parcels-list' : 'my-rentals-list';
+    const confirmedEl = document.getElementById('my-confirmed-list');
+    document.getElementById(ownListId).style.display = sub === 'mine' ? 'block' : 'none';
+    confirmedEl.style.display = sub === 'confirmed' ? 'block' : 'none';
+    if (sub === 'confirmed') {
+      confirmedEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+      const res = await renderAcceptedCommitments(kind);
+      confirmedEl.innerHTML = res.html;
+      document.getElementById('sub-tab-confirmed-count').textContent = res.count;
+    }
+  }
+
+  // Met à jour le compteur du sous-onglet sans changer d'onglet
+  async function refreshConfirmedCount(kind) {
+    const res = await renderAcceptedCommitments(kind);
+    document.getElementById('sub-tab-confirmed-count').textContent = res.count;
   }
 
   async function loadMyParcels() {
@@ -4088,16 +4717,32 @@
       }
       list.innerHTML = docs.map(d => {
         const p = { id: d.id, ...d.data() };
-        const isPourvu = p.statut === 'pourvu';
+        const scope = p.scope || 'local';
+        const isGpOffre = scope === 'gp' && p.type === 'offre';
+        const isPourvu = isGpOffre ? (p.kgRestants != null && p.kgRestants <= 0) : p.statut === 'pourvu';
         const inactive = p.statut !== 'actif' && !isPourvu;
+        const scopeBadge = scope === 'gp'
+          ? `<div class="trip-badge" style="background:rgba(30,144,255,.12);color:#1e90ff"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-2px"><path d="M12 2c.6 0 1 .6 1 1.3v5.2l7.3 4.2c.4.2.7.7.7 1.2v1.3l-8-2.3v4.6l2.3 1.7v1.3l-3.3-1-3.3 1v-1.3l2.3-1.7v-4.6l-8 2.3v-1.3c0-.5.3-1 .7-1.2L11 8.5V3.3C11 2.6 11.4 2 12 2Z"/></svg> GP</div>`
+          : `<div class="trip-badge" style="background:var(--orange-dim);color:var(--orange)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg> Local</div>`;
+        let priceLine, kgBar = '';
+        if (isGpOffre) {
+          const pct = p.kgTotal ? Math.round(((p.kgRestants ?? p.kgTotal) / p.kgTotal) * 100) : 0;
+          priceLine = p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p)+'/kg' : 'À négocier';
+          kgBar = `<div style="background:var(--dark2);border-radius:100px;height:6px;overflow:hidden;margin:8px 0 4px"><div style="background:#1e90ff;height:100%;border-radius:100px;width:${pct}%"></div></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">${p.kgRestants ?? p.kgTotal} kg / ${p.kgTotal} kg restants${p.flightDate ? ' · Vol du '+p.flightDate : ''}</div>`;
+        } else {
+          priceLine = p.price ? Number(p.price).toLocaleString('fr-FR')+' '+parcelCur(p) : 'À négocier';
+        }
         return `<div class="trip-card" style="margin-bottom:10px;${(inactive||isPourvu)?'opacity:.6':''}">
           <div class="trip-header">
             <div class="trip-route">${p.from} → ${p.to}</div>
-            <div class="trip-price">${p.price ? Number(p.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+            <div class="trip-price">${priceLine}</div>
           </div>
+          ${kgBar}
           <div class="trip-meta">
+            ${scopeBadge}
             ${p.poids ? `<div class="trip-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M12 3v18M8.5 21h7"/><path d="M4.5 7h4.8M14.7 7h4.8"/><path d="M4.5 7 2.2 11.8a2.3 2.3 0 0 0 4.6 0Z"/><path d="M19.5 7l-2.3 4.8a2.3 2.3 0 0 0 4.6 0Z"/></svg> ${p.poids} kg</div>` : ''}
-            ${isPourvu ? `<div class="trip-badge">Transporteur trouvé</div>` : ''}
+            ${isPourvu ? `<div class="trip-badge">${isGpOffre ? 'Complet' : 'Transporteur trouvé'}</div>` : ''}
             ${inactive ? `<div class="trip-badge">Inactif</div>` : ''}
           </div>
           <p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">${(p.description||'').slice(0,80)}</p>
@@ -4114,8 +4759,9 @@
   }
 
   window.deleteParcel = async function(id) {
-    if (!confirm('Supprimer cette annonce de colis ?')) return;
+    if (!confirm('Supprimer cette annonce de colis ? Les personnes engagées en seront informées.')) return;
     try {
+      await flagProposalsOnDelete('parcelProposals', 'parcelId', id);
       await deleteDoc(doc(db, 'parcels', id));
       showToast('Annonce supprimée', 'success');
       loadMyParcels();
@@ -4128,6 +4774,10 @@
       const snap = await getDoc(doc(db, 'parcels', id));
       if (!snap.exists()) { showToast('Annonce introuvable', 'error'); return; }
       const p = snap.data();
+      if ((p.scope || 'local') === 'gp') {
+        openEditGp(id, p);
+        return;
+      }
       editingParcelId = id;
       if (!document.getElementById('edit-colis-from').options.length) {
         document.getElementById('edit-colis-from').innerHTML = document.getElementById('pub-from').innerHTML;
@@ -4139,6 +4789,99 @@
       document.getElementById('edit-colis-price').value = p.price || '';
       document.getElementById('edit-colis-description').value = p.description || '';
       document.getElementById('edit-colis-modal').classList.add('open');
+    } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  }
+
+  // ===== EDIT GP INTERNATIONAL =====
+  let editingGpId = null;
+  let editingGpType = 'offre';
+
+  window.updateEditGpCurrencyLabels = function() {
+    const sym = document.getElementById('edit-gp-currency').value === 'XOF' ? 'FCFA' : '€';
+    document.getElementById('edit-gp-price-kg-label').textContent = `Prix par kg (${sym})`;
+    document.getElementById('edit-gp-price-label').textContent = `Budget (${sym})`;
+  }
+
+  function openEditGp(id, p) {
+    editingGpId = id;
+    editingGpType = p.type || 'recherche';
+    document.getElementById('edit-gp-from').value = p.from || '';
+    document.getElementById('edit-gp-to').value = p.to || '';
+
+    const isOffre = editingGpType === 'offre';
+    document.getElementById('edit-gp-currency').value = p.currency === 'XOF' ? 'XOF' : 'EUR';
+    updateEditGpCurrencyLabels();
+    document.getElementById('edit-gp-flightdate-group').style.display = isOffre ? 'block' : 'none';
+    document.getElementById('edit-gp-kg-group').style.display = isOffre ? 'block' : 'none';
+    document.getElementById('edit-gp-poids-group').style.display = isOffre ? 'none' : 'grid';
+    document.getElementById('edit-gp-desc-group').style.display = isOffre ? 'none' : 'block';
+
+    if (isOffre) {
+      document.getElementById('edit-gp-flight-date').value = p.flightDate || '';
+      const kgTotal = p.kgTotal || 10;
+      document.getElementById('edit-gp-kg-total').value = kgTotal;
+      document.getElementById('edit-gp-kg-display').textContent = kgTotal;
+      document.getElementById('edit-gp-price-per-kg').value = p.price || '';
+    } else {
+      document.getElementById('edit-gp-poids').value = p.poids || '';
+      document.getElementById('edit-gp-price').value = p.price || '';
+      document.getElementById('edit-gp-description').value = p.description || '';
+    }
+    document.getElementById('edit-gp-modal').classList.add('open');
+  }
+
+  window.closeEditGp = function() {
+    document.getElementById('edit-gp-modal').classList.remove('open');
+    editingGpId = null;
+  }
+
+  window.stepEditGpKg = function(delta) {
+    const input = document.getElementById('edit-gp-kg-total');
+    const display = document.getElementById('edit-gp-kg-display');
+    let val = parseInt(input.value, 10) + delta;
+    val = Math.max(1, Math.min(50, val));
+    input.value = val;
+    display.textContent = val;
+  }
+
+  window.saveEditGp = async function() {
+    if (!editingGpId) return;
+    const from = document.getElementById('edit-gp-from').value.trim();
+    const to = document.getElementById('edit-gp-to').value.trim();
+    if (!from || !to) { showToast('Renseignez le départ et l\'arrivée', 'error'); return; }
+
+    const payload = { from, to, currency: document.getElementById('edit-gp-currency').value || 'EUR' };
+    if (editingGpType === 'offre') {
+      const flightDate = document.getElementById('edit-gp-flight-date').value;
+      const newKgTotal = Number(document.getElementById('edit-gp-kg-total').value) || 1;
+      const pricePerKg = document.getElementById('edit-gp-price-per-kg').value;
+      if (!flightDate) { showToast('Indiquez la date du vol', 'error'); return; }
+      try {
+        const snap = await getDoc(doc(db, 'parcels', editingGpId));
+        const current = snap.exists() ? snap.data() : {};
+        const kgDejaUtilises = (current.kgTotal || newKgTotal) - (current.kgRestants ?? current.kgTotal ?? newKgTotal);
+        const newKgRestants = Math.max(0, newKgTotal - kgDejaUtilises);
+        payload.flightDate = flightDate;
+        payload.kgTotal = newKgTotal;
+        payload.kgRestants = newKgRestants;
+        payload.price = pricePerKg ? Number(pricePerKg) : 0;
+        payload.statut = newKgRestants <= 0 ? 'pourvu' : 'actif';
+      } catch(e) { showToast('Erreur: ' + e.message, 'error'); return; }
+    } else {
+      const poids = document.getElementById('edit-gp-poids').value;
+      const price = document.getElementById('edit-gp-price').value;
+      const description = document.getElementById('edit-gp-description').value.trim();
+      if (!description) { showToast('Décrivez votre colis', 'error'); return; }
+      payload.poids = poids ? Number(poids) : null;
+      payload.price = price ? Number(price) : 0;
+      payload.description = description;
+    }
+
+    try {
+      await updateDoc(doc(db, 'parcels', editingGpId), payload);
+      showToast('Annonce GP mise à jour', 'success');
+      closeEditGp();
+      loadMyParcels();
     } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
   }
 
@@ -4168,19 +4911,64 @@
     } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
   }
 
+  // Demandes passager sur lesquelles MA proposition de conducteur a été acceptée.
+  // Le trajet appartient au passager, donc il n'apparaissait dans aucun onglet côté conducteur.
+  async function renderAcceptedTripProposals() {
+    try {
+      const snap = await getDocs(query(
+        collection(db, 'proposals'), where('driverId', '==', currentUser.uid)
+      ));
+      const accepted = snap.docs.filter(d => d.data().status === 'accepted');
+      if (accepted.length === 0) return '';
+      const cards = [];
+      for (const d of accepted) {
+        const p = d.data();
+        if (!p.tripId) continue;
+        try {
+          const ts = await getDoc(doc(db, 'trips', p.tripId));
+          if (!ts.exists()) continue;
+          const t = ts.data();
+          const key = `tripcommit_${d.id}`;
+          window[key] = { col: 'trips', listingId: p.tripId, otherUid: t.driverId, name: t.driverName || 'Passager', proposalId: d.id };
+          cards.push(`<div class="trip-card" style="margin-bottom:10px;border-left:3px solid var(--green,#17c978)">
+            <div class="trip-header">
+              <div class="trip-route">${escapeHtml(t.from||'')} → ${escapeHtml(t.to||'')}</div>
+              <div class="trip-price">${t.price ? Number(t.price).toLocaleString('fr-FR')+' FCFA' : 'À négocier'}</div>
+            </div>
+            <div class="trip-meta">
+              <div class="trip-badge" style="background:rgba(23,201,120,.14);color:var(--green,#17c978)">Proposition acceptée</div>
+              <div class="trip-badge">${escapeHtml(t.date||'')} ${escapeHtml(t.time||'')}</div>
+              <div class="trip-badge">${escapeHtml(t.driverName || 'Passager')}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="openChatFromPaxKey('${key}')">Message</button>
+              ${t.driverPhone ? `<a class="btn btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;text-align:center;text-decoration:none" href="tel:${t.driverPhone}">Appeler</a>` : ''}
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:8px;padding:8px;font-size:12px;color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="cancelMyCommitment('${key}')">Annuler mon engagement</button>
+          </div>`);
+        } catch(e) {}
+      }
+      if (cards.length === 0) return '';
+      return `<div class="section-title" style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin:4px 0 10px">Passagers à emmener</div>${cards.join('')}
+        <div class="section-title" style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin:20px 0 10px">Mes réservations</div>`;
+    } catch(e) { return ''; }
+  }
+
   async function loadMyTrips(tab) {
     const list = document.getElementById('my-trips-list');
     list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
     try {
+      // Onglet "Résa" : on ajoute en tête les demandes passager où ma proposition a été acceptée
+      const tripCommitments = tab === 'passenger' ? await renderAcceptedTripProposals() : '';
       const field = tab === 'driver' ? 'driverId' : 'passengerId';
       const col = tab === 'driver' ? 'trips' : 'bookings';
       const q = query(collection(db, col), where(field, '==', currentUser.uid), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
       if (snap.empty) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">Aucun trajet pour l\'instant</div></div>';
+        list.innerHTML = tripCommitments + '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></div><div class="empty-text">Aucun trajet pour l\'instant</div></div>';
         return;
       }
-      list.innerHTML = '';
+      list.innerHTML = tripCommitments;
       const today = new Date().toISOString().slice(0, 10);
 
       // Utiliser for...of au lieu de forEach pour pouvoir utiliser await
@@ -4198,6 +4986,7 @@
         if (tab === 'passenger') {
           if (t.status === 'accepted') { statusClass = 'status-accepted'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg> Acceptée'; }
           else if (t.status === 'refused') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Refusée'; }
+          else if (t.status === 'trip_cancelled') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Trajet annulé'; }
           else if (t.status === 'rated') { statusClass = 'status-done'; statusLabel = 'Noté <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg>'; }
           else { statusClass = 'status-pending'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente'; }
         } else {
@@ -4233,7 +5022,10 @@
 
         // Stocker les infos conducteur pour le chat
         const driverKey = `driver_${d.id}`;
-        window[driverKey] = { tripId: t.tripId||d.id, name: t.driverName||'Conducteur', id: t.driverId||'' };
+        // IMPORTANT : ne jamais retomber sur l'id de la réservation. Le fil de discussion est
+        // identifié par l'id du TRAJET ; utiliser l'id du booking créerait un fil parallèle
+        // que le conducteur ne verrait jamais.
+        window[driverKey] = { tripId: t.tripId || '', bookingId: d.id, name: t.driverName||'Conducteur', id: t.driverId||'' };
 
         list.innerHTML += `<div class="my-trip-card">
           ${typeBadgeSmall ? `<div style="margin-bottom:8px">${typeBadgeSmall}</div>` : ''}
@@ -4271,6 +5063,7 @@
             </div>
           </div>
           ${t.note && tab === 'driver' ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 4.5h16v13l-5 4-5-4H4z"/><path d="M8 9h8M8 13h5"/></svg> ${t.note}</div>` : ''}
+          ${tab === 'passenger' && t.status === 'trip_cancelled' ? `<div style="font-size:12px;color:var(--red);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M12 7.5v5.5M12 16.3v.1"/></svg> Le conducteur a annulé ce trajet.</div>` : ''}
           ${tab === 'passenger' && t.status === 'refused' ? `<div style="font-size:12px;color:var(--red);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Le conducteur a refusé votre réservation.</div>` : ''}
           ${tab === 'passenger' && t.status === 'rated' ? `<div style="font-size:12px;color:var(--green);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Vous avez noté ce trajet. Merci !</div>` : ''}
         </div>`;
@@ -4312,15 +5105,21 @@
         return;
       }
       list.innerHTML = '';
+      const listingCol = kind === 'colis' ? 'parcels' : (kind === 'location' ? 'rentals' : 'trips');
       snap.forEach(d => {
         const b = d.data();
         const isPending = !b.status || b.status === 'pending';
         const isAccepted = b.status === 'accepted';
         const isRefused = b.status === 'refused';
+        const isCancelled = b.status === 'cancelled';
         const phone = isProposal ? (b.driverPhone || b.driverId || 'Conducteur') : (b.passengerPhone || b.passengerId || 'Passager');
         const displayName = isProposal ? (b.driverName || phone) : phone;
         const initial = displayName[0].toUpperCase();
         const dateStr = b.createdAt ? new Date(b.createdAt.seconds*1000).toLocaleDateString('fr-FR') : '—';
+        // Interlocuteur = celui qui a fait la proposition / la réservation
+        const otherUid = isProposal ? (b.driverId || '') : (b.passengerId || '');
+        const paxKey = `pax_${d.id}`;
+        window[paxKey] = { col: listingCol, listingId: tripId, otherUid, name: displayName };
         list.innerHTML += `<div class="passenger-item" id="pax-${d.id}">
           <div class="passenger-avatar">${initial}</div>
           <div class="passenger-info">
@@ -4331,9 +5130,11 @@
                 <a href="tel:${phone}" style="font-size:11px;color:var(--orange);text-decoration:none;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 4.5c0-1 .8-1.5 1.7-1.3l2.6.6c.7.2 1.2.8 1.3 1.5l.4 2.5c.1.6-.1 1.3-.6 1.7l-1.4 1.3c1 2.4 2.9 4.3 5.3 5.3l1.3-1.4c.4-.5 1.1-.7 1.7-.6l2.5.4c.7.1 1.3.6 1.5 1.3l.6 2.6c.2.9-.3 1.7-1.3 1.7C10.5 20.6 3.4 13.5 4 4.5Z"/></svg> Appeler</a>
                 <a href="https://wa.me/${phone.replace('+','')}" target="_blank" style="font-size:11px;color:#25D366;text-decoration:none;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp</a>
               ` : ''}
+              ${otherUid ? `<a onclick="openChatFromPaxKey('${paxKey}')" style="font-size:11px;color:var(--blue,#1e90ff);text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 7 9-7"/></svg> Message</a>` : ''}
             </div>
             ${isAccepted ? '<span class="passenger-status ps-accepted"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg> Accepté</span>' : ''}
             ${isRefused ? '<span class="passenger-status ps-refused"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Refusé</span>' : ''}
+            ${isCancelled ? '<span class="passenger-status ps-refused"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Annulé par l\'utilisateur</span>' : ''}
             ${isPending ? '<span class="passenger-status ps-pending"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente</span>' : ''}
           </div>
           <div class="passenger-actions">
@@ -4351,6 +5152,12 @@
     }
   }
 
+  window.openChatFromPaxKey = function(key) {
+    const d = window[key];
+    if (!d || !d.otherUid) { showToast('Impossible d\'ouvrir la conversation','error'); return; }
+    openChat(d.col, d.listingId, d.otherUid, d.name);
+  }
+
   const PROPOSAL_CONFIG = {
     passager: { coll: 'proposals', idField: 'tripId', targetColl: 'trips', resetStatut: 'ouvert', acceptMsg: 'Conducteur accepté ✅' },
     colis: { coll: 'parcelProposals', idField: 'parcelId', targetColl: 'parcels', resetStatut: 'actif', acceptMsg: 'Transporteur accepté ✅' },
@@ -4361,6 +5168,24 @@
     const kind = currentPassengersKind;
     const cfg = PROPOSAL_CONFIG[kind];
     try {
+      // Cas spécial : colis GP "offre" — on décrémente les kg au lieu de marquer complet d'un coup
+      if (kind === 'colis' && currentPassengersTripId) {
+        const parcelSnap = await getDoc(doc(db, 'parcels', currentPassengersTripId));
+        if (parcelSnap.exists() && parcelSnap.data().scope === 'gp' && parcelSnap.data().type === 'offre') {
+          const parcelData = parcelSnap.data();
+          const proposalSnap = await getDoc(doc(db, 'parcelProposals', bookingId));
+          const proposalKg = proposalSnap.exists() ? (proposalSnap.data().kgDemandes || 1) : 1;
+          const newKgRestants = Math.max(0, (parcelData.kgRestants ?? parcelData.kgTotal) - proposalKg);
+          await updateDoc(doc(db, 'parcelProposals', bookingId), { status: 'accepted' });
+          await setDoc(doc(db, 'parcels', currentPassengersTripId), {
+            kgRestants: newKgRestants,
+            statut: newKgRestants <= 0 ? 'pourvu' : 'actif'
+          }, { merge: true });
+          await refreshPassengersList(currentPassengersTripId);
+          showToast('Proposition acceptée ✅','success');
+          return;
+        }
+      }
       if (cfg) {
         // Marquer la demande/colis/annonce comme pourvu(e), refuser automatiquement les autres propositions
         await updateDoc(doc(db, cfg.coll, bookingId), { status: 'accepted' });
@@ -4402,7 +5227,7 @@
   }
 
   // Vérifie si le passager de cette réservation a un parrain et n'a jamais été récompensé.
-  // Si oui, crédite 500 FCFA au parrain ET au filleul (à payer manuellement via Wave).
+  // Si oui, crédite 1000 FCFA au parrain ET au filleul (à payer manuellement via Wave).
   async function triggerReferralRewardIfEligible(bookingId) {
     try {
       const bookingSnap = await getDoc(doc(db, 'bookings', bookingId));
@@ -4422,10 +5247,10 @@
 
       await setDoc(doc(db, 'users', passengerId), {
         referralRewarded: true,
-        referralCreditsPending: (passengerData.referralCreditsPending || 0) + 500
+        referralCreditsPending: (passengerData.referralCreditsPending || 0) + 1000
       }, { merge: true });
       await setDoc(doc(db, 'users', referrerDoc.id), {
-        referralCreditsPending: (referrerDoc.data().referralCreditsPending || 0) + 500
+        referralCreditsPending: (referrerDoc.data().referralCreditsPending || 0) + 1000
       }, { merge: true });
     } catch(e) { console.error('Erreur récompense parrainage:', e); }
   }
@@ -4450,6 +5275,54 @@
     } catch(e) { showToast('Erreur: ' + e.message,'error'); }
   }
 
+  // Annulation par la personne dont la proposition avait été acceptée.
+  // Remet l'annonce à disposition : restitution des kg (GP offre) ou repassage en 'actif'.
+  window.cancelMyCommitment = async function(key) {
+    const d = window[key];
+    if (!d) return;
+    if (!confirm('Annuler cet engagement ? Le propriétaire en sera informé et son annonce redeviendra disponible.')) return;
+    const cfg = d.col === 'parcels'
+      ? { propColl: 'parcelProposals', resetStatut: 'actif' }
+      : (d.col === 'trips'
+          ? { propColl: 'proposals', resetStatut: 'ouvert' }
+          : { propColl: 'rentalProposals', resetStatut: 'actif' });
+    try {
+      const propRef = doc(db, cfg.propColl, d.proposalId);
+      const propSnap = await getDoc(propRef);
+      const prop = propSnap.exists() ? propSnap.data() : {};
+
+      const listingSnap = await getDoc(doc(db, d.col, d.listingId));
+      const listing = listingSnap.exists() ? listingSnap.data() : {};
+
+      // Colis GP "offre" : on rend les kg réservés au lieu de rouvrir l'annonce entière
+      if (d.col === 'parcels' && listing.scope === 'gp' && listing.type === 'offre') {
+        const kg = prop.kgDemandes || 1;
+        const restants = Math.min(
+          listing.kgTotal ?? kg,
+          (listing.kgRestants ?? 0) + kg
+        );
+        await setDoc(doc(db, 'parcels', d.listingId), {
+          kgRestants: restants,
+          statut: restants > 0 ? 'actif' : 'pourvu'
+        }, { merge: true });
+      } else {
+        await setDoc(doc(db, d.col, d.listingId), { statut: cfg.resetStatut }, { merge: true });
+      }
+
+      // 'cancelled' plutôt que 'refused' : distingue un désistement d'un refus du propriétaire
+      await updateDoc(propRef, { status: 'cancelled', cancelledBy: currentUser.uid });
+      showToast('Engagement annulé','success');
+      if (d.col === 'trips') loadMyTrips('passenger');
+      else switchMySubTab('confirmed');
+      refreshNotifBadge();
+    } catch(e) {
+      console.error('cancelMyCommitment', e);
+      const msg = (e && e.code === 'permission-denied')
+        ? 'Annulation refusée. Vérifiez que les règles Firestore sont bien publiées.'
+        : 'Erreur: ' + e.message;
+      showToast(msg, 'error');
+    }
+  }
   // ===== LOCALISATION / ITINÉRAIRE =====
   window.openTripLocation = function(from, to) {
     const url = `https://www.google.com/maps/dir/${encodeURIComponent(from+', Sénégal')}/${encodeURIComponent(to+', Sénégal')}`;
@@ -4524,17 +5397,38 @@
 
   // ===== CANCEL TRIP =====
   window.cancelTrip = async function(tripId) {
-    if (!confirm('Êtes-vous sûr de vouloir annuler ce trajet ?')) return;
+    if (!confirm('Êtes-vous sûr de vouloir annuler ce trajet ? Les passagers ayant réservé en seront informés.')) return;
     try {
       const tripSnap = await getDoc(doc(db, 'trips', tripId));
       if (!tripSnap.exists() || tripSnap.data().driverId !== currentUser.uid) {
         showToast('Action non autorisée', 'error'); return;
       }
-      await deleteDoc(doc(db, 'trips', tripId));
+      const t = tripSnap.data();
+
+      // On NE supprime PAS les réservations : on les marque annulées pour que le passager
+      // garde une trace et reçoive une notification (sinon son trajet disparaissait sans explication).
       const bSnap = await getDocs(query(collection(db, 'bookings'), where('tripId', '==', tripId)));
-      const delPromises = [];
-      bSnap.forEach(d => delPromises.push(deleteDoc(doc(db, 'bookings', d.id))));
-      await Promise.all(delPromises);
+      const updates = [];
+      bSnap.forEach(d => {
+        updates.push(updateDoc(doc(db, 'bookings', d.id), {
+          status: 'trip_cancelled',
+          from: d.data().from || t.from || '',
+          to: d.data().to || t.to || '',
+          date: d.data().date || t.date || ''
+        }));
+      });
+
+      // Idem pour les propositions reçues sur une demande passager
+      const pSnap = await getDocs(query(collection(db, 'proposals'), where('tripId', '==', tripId)));
+      pSnap.forEach(d => {
+        const st = d.data().status;
+        if (st !== 'refused' && st !== 'cancelled') {
+          updates.push(updateDoc(doc(db, 'proposals', d.id), { status: 'listing_deleted' }));
+        }
+      });
+      await Promise.all(updates);
+
+      await deleteDoc(doc(db, 'trips', tripId));
       showToast('Trajet annulé ✅', 'success');
       await loadMyTrips('driver');
       loadTrips();
@@ -4653,6 +5547,19 @@
   }
 
   // ===== NOTIFICATIONS =====
+  // Firestore limite l'opérateur 'in' à 10 valeurs. Au-delà de 10 annonces, les propositions
+  // sur les annonces suivantes ne remontaient plus du tout. On découpe donc en lots de 10.
+  async function getDocsInChunks(collName, field, ids) {
+    const docsOut = [];
+    for (let i = 0; i < ids.length; i += 10) {
+      const chunk = ids.slice(i, i + 10);
+      if (chunk.length === 0) continue;
+      const snap = await getDocs(query(collection(db, collName), where(field, 'in', chunk)));
+      snap.forEach(d => docsOut.push(d));
+    }
+    return docsOut;
+  }
+
   let lastLoadedNotifs = [];
   async function loadNotifications() {
     const notifs = [];
@@ -4666,12 +5573,8 @@
       const myTripIds = [];
       myTripsSnap.forEach(d => myTripIds.push(d.id));
       if (myTripIds.length > 0) {
-        // Firestore limite à 10 éléments dans 'in', on prend les 10 premiers
-        const bookSnap = await getDocs(query(
-          collection(db, 'bookings'),
-          where('tripId','in', myTripIds.slice(0,10))
-        ));
-        bookSnap.forEach(d => {
+        const bookDocs = await getDocsInChunks('bookings', 'tripId', myTripIds);
+        bookDocs.forEach(d => {
           const b = d.data();
           if (b.status && b.status !== 'pending') return;
           notifs.push({
@@ -4708,6 +5611,13 @@
             desc: `Le conducteur a refusé votre demande pour ${b.from} → ${b.to} le ${b.date}. Cherchez un autre trajet.`,
             time: b.createdAt, read: b.readRefused || false
           });
+        } else if (status === 'trip_cancelled') {
+          notifs.push({
+            id: d.id + '_tripcancelled', type: 'trip_cancelled', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="M12 7.5v5.5M12 16.3v.1" stroke="#e53935"/></svg>`,
+            title: 'Trajet annulé par le conducteur',
+            desc: `Le trajet ${b.from} → ${b.to} du ${b.date} a été annulé. Cherchez un autre trajet.`,
+            time: b.createdAt, read: b.readTripCancelled || false
+          });
         } else {
           notifs.push({
             id: d.id + '_pending', type: 'pending', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3.3 2"/></svg>`,
@@ -4738,10 +5648,8 @@
       const myReqIds = [];
       myReqSnap.forEach(d => myReqIds.push(d.id));
       if (myReqIds.length > 0) {
-        const propSnap = await getDocs(query(
-          collection(db, 'proposals'), where('tripId','in', myReqIds.slice(0,10))
-        ));
-        propSnap.forEach(d => {
+        const propDocs = await getDocsInChunks('proposals', 'tripId', myReqIds);
+        propDocs.forEach(d => {
           const p = d.data();
           if (p.status && p.status !== 'pending') return;
           const req = myReqSnap.docs.find(t => t.id === p.tripId)?.data() || {};
@@ -4762,10 +5670,8 @@
       const myParcelIds = [];
       myParcelsSnap.forEach(d => myParcelIds.push(d.id));
       if (myParcelIds.length > 0) {
-        const propSnap = await getDocs(query(
-          collection(db, 'parcelProposals'), where('parcelId','in', myParcelIds.slice(0,10))
-        ));
-        propSnap.forEach(d => {
+        const propDocs = await getDocsInChunks('parcelProposals', 'parcelId', myParcelIds);
+        propDocs.forEach(d => {
           const p = d.data();
           if (p.status && p.status !== 'pending') return;
           const parcel = myParcelsSnap.docs.find(t => t.id === p.parcelId)?.data() || {};
@@ -4786,10 +5692,8 @@
       const myRentalIds = [];
       myRentalsSnap.forEach(d => myRentalIds.push(d.id));
       if (myRentalIds.length > 0) {
-        const propSnap = await getDocs(query(
-          collection(db, 'rentalProposals'), where('rentalId','in', myRentalIds.slice(0,10))
-        ));
-        propSnap.forEach(d => {
+        const propDocs = await getDocsInChunks('rentalProposals', 'rentalId', myRentalIds);
+        propDocs.forEach(d => {
           const p = d.data();
           if (p.status && p.status !== 'pending') return;
           const rental = myRentalsSnap.docs.find(t => t.id === p.rentalId)?.data() || {};
@@ -4800,6 +5704,169 @@
             desc: `${p.driverName || 'Quelqu\'un'} est intéressé par ${vehicleName}`,
             time: p.createdAt, read: p.readByOwner || false,
             actionTripId: p.rentalId, actionFrom: vehicleName, actionTo: rental.ville||'', actionKind: 'location'
+          });
+        });
+      }
+    } catch(e) {}
+
+    // 6. Mes propositions passager (statut accepté/refusé) — vues par moi, le conducteur qui a proposé
+    try {
+      const myPropSnap = await getDocs(query(collection(db, 'proposals'), where('driverId','==',currentUser.uid)));
+      const tripIds = [...new Set(myPropSnap.docs.map(d => d.data().tripId).filter(Boolean))];
+      const tripsMap = {};
+      await Promise.all(tripIds.map(async id => {
+        try { const s = await getDoc(doc(db, 'trips', id)); if (s.exists()) tripsMap[id] = s.data(); } catch(e) {}
+      }));
+      myPropSnap.forEach(d => {
+        const p = d.data();
+        const t = tripsMap[p.tripId] || {};
+        if (p.status === 'accepted') {
+          notifs.push({
+            id: d.id + '_accepted', type: 'proposal_passager_accepted', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(23,201,120,.14)" stroke="var(--green)"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="var(--green)"/></svg>`,
+            title: 'Proposition acceptée !',
+            desc: `${t.driverName || 'Le passager'} a accepté votre proposition pour ${t.from||''} → ${t.to||''}`,
+            time: p.createdAt, read: p.readAccepted || false
+          });
+        } else if (p.status === 'refused') {
+          notifs.push({
+            id: d.id + '_refused', type: 'proposal_passager_refused', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="m9 9 6 6M15 9l-6 6" stroke="#e53935"/></svg>`,
+            title: 'Proposition refusée',
+            desc: `Votre proposition pour ${t.from||''} → ${t.to||''} n'a pas été retenue.`,
+            time: p.createdAt, read: p.readRefused || false
+          });
+        }
+      });
+    } catch(e) {}
+
+    // 7. Mes propositions colis (statut accepté/refusé) — vues par moi, le transporteur qui a proposé
+    try {
+      const myParcelPropSnap = await getDocs(query(collection(db, 'parcelProposals'), where('driverId','==',currentUser.uid)));
+      const parcelIds = [...new Set(myParcelPropSnap.docs.map(d => d.data().parcelId).filter(Boolean))];
+      const parcelsMap = {};
+      await Promise.all(parcelIds.map(async id => {
+        try { const s = await getDoc(doc(db, 'parcels', id)); if (s.exists()) parcelsMap[id] = s.data(); } catch(e) {}
+      }));
+      myParcelPropSnap.forEach(d => {
+        const p = d.data();
+        const pc = parcelsMap[p.parcelId] || {};
+        if (p.status === 'accepted') {
+          notifs.push({
+            id: d.id + '_accepted', type: 'proposal_colis_accepted', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(23,201,120,.14)" stroke="var(--green)"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="var(--green)"/></svg>`,
+            title: 'Proposition colis acceptée !',
+            desc: `${pc.ownerName || 'Le propriétaire'} a accepté votre proposition pour le colis ${pc.from||''} → ${pc.to||''}`,
+            time: p.createdAt, read: p.readAccepted || false
+          });
+        } else if (p.status === 'refused') {
+          notifs.push({
+            id: d.id + '_refused', type: 'proposal_colis_refused', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="m9 9 6 6M15 9l-6 6" stroke="#e53935"/></svg>`,
+            title: 'Proposition colis refusée',
+            desc: `Votre proposition pour le colis ${pc.from||''} → ${pc.to||''} n'a pas été retenue.`,
+            time: p.createdAt, read: p.readRefused || false
+          });
+        }
+      });
+    } catch(e) {}
+
+    // 8bis. Engagements annulés sur MES annonces — le transporteur/locataire s'est désisté
+    try {
+      for (const c of [
+        { propColl: 'parcelProposals', idField: 'parcelId', listingColl: 'parcels', label: 'colis', ownerField: 'ownerId' },
+        { propColl: 'rentalProposals', idField: 'rentalId', listingColl: 'rentals', label: 'location', ownerField: 'ownerId' },
+        { propColl: 'proposals', idField: 'tripId', listingColl: 'trips', label: 'demande de trajet', ownerField: 'driverId' }
+      ]) {
+        const mineSnap = await getDocs(query(
+          collection(db, c.listingColl), where(c.ownerField, '==', currentUser.uid)
+        ));
+        const myIds = mineSnap.docs.map(d => d.id);
+        if (myIds.length === 0) continue;
+        const propDocs = await getDocsInChunks(c.propColl, c.idField, myIds);
+        propDocs.forEach(d => {
+          const p = d.data();
+          if (p.status !== 'cancelled') return;
+          const typeMap = { colis: 'proposal_colis_cancelled', location: 'proposal_location_cancelled', 'demande de trajet': 'proposal_passager_cancelled' };
+          notifs.push({
+            id: d.id + '_cancelled', type: typeMap[c.label],
+            icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="M12 7.5v5.5M12 16.3v.1" stroke="#e53935"/></svg>`,
+            title: 'Engagement annulé',
+            desc: `${p.driverName || 'Un utilisateur'} a annulé son engagement sur votre ${c.label}. Votre annonce est à nouveau disponible.`,
+            time: p.createdAt, read: p.readCancelled || false
+          });
+        });
+      }
+    } catch(e) {}
+
+    // 8. Mes propositions location (statut accepté/refusé) — vues par moi, celui qui a proposé
+    try {
+      const myRentalPropSnap = await getDocs(query(collection(db, 'rentalProposals'), where('driverId','==',currentUser.uid)));
+      const rentalIds = [...new Set(myRentalPropSnap.docs.map(d => d.data().rentalId).filter(Boolean))];
+      const rentalsMap = {};
+      await Promise.all(rentalIds.map(async id => {
+        try { const s = await getDoc(doc(db, 'rentals', id)); if (s.exists()) rentalsMap[id] = s.data(); } catch(e) {}
+      }));
+      myRentalPropSnap.forEach(d => {
+        const p = d.data();
+        const r = rentalsMap[p.rentalId] || {};
+        const vehicleName = [r.marque, r.modele].filter(Boolean).join(' ') || 'le véhicule';
+        if (p.status === 'accepted') {
+          notifs.push({
+            id: d.id + '_accepted', type: 'proposal_location_accepted', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(23,201,120,.14)" stroke="var(--green)"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="var(--green)"/></svg>`,
+            title: 'Proposition location acceptée !',
+            desc: `${r.ownerName || 'Le propriétaire'} a accepté votre proposition pour ${vehicleName}`,
+            time: p.createdAt, read: p.readAccepted || false
+          });
+        } else if (p.status === 'refused') {
+          notifs.push({
+            id: d.id + '_refused', type: 'proposal_location_refused', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="m9 9 6 6M15 9l-6 6" stroke="#e53935"/></svg>`,
+            title: 'Proposition location refusée',
+            desc: `Votre proposition pour ${vehicleName} n'a pas été retenue.`,
+            time: p.createdAt, read: p.readRefused || false
+          });
+        }
+      });
+    } catch(e) {}
+
+    // 9. Nouveaux messages non lus (fils de discussion à 2 personnes)
+    try {
+      const chatsSnap = await getDocs(query(
+        collection(db, 'chats'), where('participants', 'array-contains', currentUser.uid)
+      ));
+      const lastRead = (await getDoc(doc(db, 'users', currentUser.uid))).data()?.chatLastRead || {};
+      chatsSnap.forEach(d => {
+        const c = d.data();
+        if (!c.lastMsg || !c.lastSenderId || c.lastSenderId === currentUser.uid) return;
+        const updated = c.updatedAt?.seconds || 0;
+        if (updated <= (lastRead[d.id] || 0)) return; // déjà lu
+        const otherUid = (c.participants || []).find(p => p !== currentUser.uid) || '';
+        const senderName = (c.names && c.names[otherUid]) || 'Un utilisateur';
+        notifs.push({
+          id: 'msg_' + d.id, type: 'message', icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.7 8.7 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>`,
+          title: `Message de ${senderName}`,
+          desc: c.lastMsg.slice(0, 70),
+          time: c.updatedAt, read: false,
+          actionChatId: d.id, actionChatName: senderName
+        });
+      });
+    } catch(e) {}
+
+    // 9bis. Annonces supprimées alors que j'y étais engagé
+    try {
+      for (const c of [
+        { propColl: 'parcelProposals', label: 'colis' },
+        { propColl: 'rentalProposals', label: 'location' },
+        { propColl: 'proposals', label: 'trajet' }
+      ]) {
+        const snap = await getDocs(query(
+          collection(db, c.propColl), where('driverId', '==', currentUser.uid)
+        ));
+        snap.forEach(d => {
+          const p = d.data();
+          if (p.status !== 'listing_deleted') return;
+          notifs.push({
+            id: d.id + '_deleted', type: 'listing_deleted_' + c.label,
+            icon: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="rgba(229,57,53,.12)" stroke="#e53935"/><path d="M12 7.5v5.5M12 16.3v.1" stroke="#e53935"/></svg>`,
+            title: 'Annonce supprimée',
+            desc: `L'annonce ${c.label} sur laquelle vous étiez engagé a été supprimée par son auteur.`,
+            time: p.createdAt, read: p.readDeleted || false
           });
         });
       }
@@ -4839,6 +5906,7 @@
       if (n.type === 'rate') window[notifKey] = { bookingId: n.bookingId, driverId: n.driverId, driverName: n.driverName||'Conducteur' };
       const isActionable = ['booking','proposal_passager','proposal_colis','proposal_location'].includes(n.type);
       if (isActionable) window[notifKey] = { tripId: n.actionTripId, from: n.actionFrom, to: n.actionTo, kind: n.actionKind || 'conducteur' };
+      if (n.type === 'message') window[notifKey] = { chatId: n.actionChatId, name: n.actionChatName };
       return `
       <div class="notif-item ${n.read ? '' : 'unread'}" id="notif-${n.id.replace(/[^a-zA-Z0-9]/g,'_')}">
         <div class="notif-icon">${n.icon}</div>
@@ -4848,6 +5916,7 @@
           <div class="notif-time">${timeAgo(n.time)}</div>
           ${n.type==='rate' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px;margin-top:8px;display:inline-flex;align-items:center;gap:5px" onclick="openRateTripFromKey('${notifKey}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="white" stroke="none"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Noter maintenant</button>` : ''}
           ${isActionable ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px;margin-top:8px" onclick="openPassengersFromKey('${notifKey}')">Voir la demande</button>` : ''}
+          ${n.type==='message' ? `<button class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:12px;margin-top:8px" onclick="openChatFromNotifKey('${notifKey}')">Répondre</button>` : ''}
         </div>
         ${!n.read ? '<div class="notif-dot"></div>' : ''}
       </div>`
@@ -4855,6 +5924,20 @@
     // Mettre à jour le badge
     const unread = notifs.filter(n => !n.read).length;
     updateNotifBadge(unread);
+  }
+
+  window.openChatFromNotifKey = function(key) {
+    const d = window[key];
+    if (!d || !d.chatId) return;
+    closePanel('panel-notifications');
+    currentChatId = d.chatId;
+    currentChatUser = { name: d.name, id: null };
+    document.getElementById('chat-name').textContent = d.name || 'Utilisateur';
+    document.getElementById('chat-avatar').textContent = (d.name||'?')[0].toUpperCase();
+    document.getElementById('chat-screen').classList.add('open');
+    document.getElementById('chat-messages').innerHTML = '';
+    listenMessages(d.chatId);
+    markChatRead(d.chatId);
   }
 
   window.openRateTripFromKey = function(key) {
@@ -4897,12 +5980,41 @@
           return updateDoc(doc(db, 'bookings', n.id.replace(/_accepted$/, '')), { readAccepted: true });
         } else if (n.type === 'refused') {
           return updateDoc(doc(db, 'bookings', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'trip_cancelled') {
+          return updateDoc(doc(db, 'bookings', n.id.replace(/_tripcancelled$/, '')), { readTripCancelled: true });
         } else if (n.type === 'proposal_passager') {
           return updateDoc(doc(db, 'proposals', n.id), { readByOwner: true });
         } else if (n.type === 'proposal_colis') {
           return updateDoc(doc(db, 'parcelProposals', n.id), { readByOwner: true });
         } else if (n.type === 'proposal_location') {
           return updateDoc(doc(db, 'rentalProposals', n.id), { readByOwner: true });
+        } else if (n.type === 'proposal_passager_accepted') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'proposal_passager_refused') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'proposal_colis_accepted') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'proposal_colis_refused') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'proposal_location_accepted') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_accepted$/, '')), { readAccepted: true });
+        } else if (n.type === 'proposal_location_refused') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_refused$/, '')), { readRefused: true });
+        } else if (n.type === 'proposal_passager_cancelled') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_cancelled$/, '')), { readCancelled: true });
+        } else if (n.type === 'proposal_colis_cancelled') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_cancelled$/, '')), { readCancelled: true });
+        } else if (n.type === 'proposal_location_cancelled') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_cancelled$/, '')), { readCancelled: true });
+        } else if (n.type === 'listing_deleted_colis') {
+          return updateDoc(doc(db, 'parcelProposals', n.id.replace(/_deleted$/, '')), { readDeleted: true });
+        } else if (n.type === 'listing_deleted_location') {
+          return updateDoc(doc(db, 'rentalProposals', n.id.replace(/_deleted$/, '')), { readDeleted: true });
+        } else if (n.type === 'listing_deleted_trajet') {
+          return updateDoc(doc(db, 'proposals', n.id.replace(/_deleted$/, '')), { readDeleted: true });
+        } else if (n.type === 'message') {
+          // Marque le fil comme lu (même mécanique que l'ouverture de la conversation)
+          return markChatRead(n.id.replace(/^msg_/, ''));
         }
       } catch(e) {}
       return Promise.resolve();
@@ -4924,6 +6036,33 @@
       updateNotifBadge(unread);
     } catch(e) {}
   }
+
+  // Rafraîchissement automatique des notifications : sans cela, une acceptation de proposition
+  // n'apparaissait qu'après une fermeture/réouverture complète de l'application.
+  // Les fréquences sont volontairement espacées pour limiter le nombre de lectures Firestore (facturation Blaze).
+  let notifPollInterval = null;
+  let pollTick = 0;
+  function startNotifPolling() {
+    if (notifPollInterval) clearInterval(notifPollInterval);
+    pollTick = 0;
+    notifPollInterval = setInterval(() => {
+      if (!currentUser || document.hidden) return; // rien en arrière-plan : pas de lecture inutile
+      pollTick++;
+      refreshNotifBadge();                    // toutes les 60 s
+      if (pollTick % 3 === 0) loadConversations(); // toutes les 3 min
+    }, 60000);
+  }
+
+  // Rafraîchit dès que l'utilisateur revient sur l'app (retour d'arrière-plan sur mobile)
+  let lastVisibilityRefresh = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !currentUser) return;
+    const now = Date.now();
+    if (now - lastVisibilityRefresh < 20000) return; // évite les rafales d'allers-retours
+    lastVisibilityRefresh = now;
+    refreshNotifBadge();
+    loadConversations();
+  });
 
   async function checkPendingRatings() {
     const today = new Date().toISOString().slice(0,10);
