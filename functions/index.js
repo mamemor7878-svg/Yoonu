@@ -12,6 +12,7 @@ const { getMessaging } = require("firebase-admin/messaging");
 const {
   onDocumentCreated,
   onDocumentUpdated,
+  onDocumentDeleted,
 } = require("firebase-functions/v2/firestore");
 const { setGlobalOptions } = require("firebase-functions/v2");
 
@@ -100,7 +101,26 @@ exports.onBookingStatusChange = onDocumentUpdated("bookings/{bookingId}", async 
       `Le conducteur a refusé votre demande pour ${after.from || ""} → ${after.to || ""}.`,
       { type: "refused", tripId: after.tripId || "" }
     );
+  } else if (after.status === "trip_cancelled") {
+    await sendPushToUser(
+      after.passengerId,
+      "Trajet annulé",
+      `Le conducteur a annulé le trajet ${after.from || ""} → ${after.to || ""} du ${after.date || ""}.`,
+      { type: "trip_cancelled", tripId: after.tripId || "" }
+    );
   }
+});
+
+// ===== 2bis. Réservation annulée par le passager (suppression du document) -> notifie le conducteur =====
+exports.onBookingCancelled = onDocumentDeleted("bookings/{bookingId}", async (event) => {
+  const b = event.data.data();
+  if (!b || !b.driverId) return;
+  await sendPushToUser(
+    b.driverId,
+    "Réservation annulée",
+    `${b.passengerPhone || "Le passager"} a annulé sa réservation pour ${b.from || ""} → ${b.to || ""}.`,
+    { type: "booking_cancelled", tripId: b.tripId || "" }
+  );
 });
 
 // ===== 3. Nouveau message -> notifie l'autre personne de la conversation =====
@@ -140,16 +160,29 @@ exports.onNewTripProposal = onDocumentCreated("proposals/{proposalId}", async (e
   );
 });
 
-// ===== 5. Statut d'une proposition sur demande passager -> notifie le conducteur proposant =====
+// ===== 5. Statut d'une proposition sur demande passager -> notifie le conducteur proposant (ou le passager en cas d'annulation) =====
 exports.onTripProposalStatusChange = onDocumentUpdated("proposals/{proposalId}", async (event) => {
   const before = event.data.before.data();
   const after = event.data.after.data();
-  if (!after || !after.driverId) return;
+  if (!after) return;
   if (before.status === after.status) return;
-  if (after.status !== "accepted" && after.status !== "refused") return;
 
   const tripSnap = await db.collection("trips").doc(after.tripId).get();
   const trip = tripSnap.exists ? tripSnap.data() : {};
+
+  if (after.status === "cancelled" && after.requesterId) {
+    await sendPushToUser(
+      after.requesterId,
+      "Engagement annulé",
+      `${after.driverName || "Un conducteur"} a annulé son engagement sur votre demande ${trip.from || ""} → ${trip.to || ""}. Votre annonce est à nouveau disponible.`,
+      { type: "proposal_passager_cancelled", tripId: after.tripId || "" }
+    );
+    return;
+  }
+
+  if (!after.driverId) return;
+  if (after.status !== "accepted" && after.status !== "refused") return;
+
   const title = after.status === "accepted" ? "Proposition acceptée !" : "Proposition refusée";
   const body =
     after.status === "accepted"
@@ -175,16 +208,29 @@ exports.onNewParcelProposal = onDocumentCreated("parcelProposals/{proposalId}", 
   );
 });
 
-// ===== 7. Statut d'une proposition colis -> notifie le transporteur proposant =====
+// ===== 7. Statut d'une proposition colis -> notifie le transporteur proposant (ou le propriétaire en cas d'annulation) =====
 exports.onParcelProposalStatusChange = onDocumentUpdated("parcelProposals/{proposalId}", async (event) => {
   const before = event.data.before.data();
   const after = event.data.after.data();
-  if (!after || !after.driverId) return;
+  if (!after) return;
   if (before.status === after.status) return;
-  if (after.status !== "accepted" && after.status !== "refused") return;
 
   const parcelSnap = await db.collection("parcels").doc(after.parcelId).get();
   const parcel = parcelSnap.exists ? parcelSnap.data() : {};
+
+  if (after.status === "cancelled" && after.requesterId) {
+    await sendPushToUser(
+      after.requesterId,
+      "Engagement annulé",
+      `${after.driverName || "Un transporteur"} a annulé son engagement sur votre colis ${parcel.from || ""} → ${parcel.to || ""}. Votre annonce est à nouveau disponible.`,
+      { type: "proposal_colis_cancelled", parcelId: after.parcelId || "" }
+    );
+    return;
+  }
+
+  if (!after.driverId) return;
+  if (after.status !== "accepted" && after.status !== "refused") return;
+
   const title = after.status === "accepted" ? "Proposition colis acceptée !" : "Proposition colis refusée";
   const body =
     after.status === "accepted"
@@ -211,17 +257,30 @@ exports.onNewRentalProposal = onDocumentCreated("rentalProposals/{proposalId}", 
   );
 });
 
-// ===== 9. Statut d'une proposition location -> notifie la personne intéressée =====
+// ===== 9. Statut d'une proposition location -> notifie la personne intéressée (ou le propriétaire en cas d'annulation) =====
 exports.onRentalProposalStatusChange = onDocumentUpdated("rentalProposals/{proposalId}", async (event) => {
   const before = event.data.before.data();
   const after = event.data.after.data();
-  if (!after || !after.driverId) return;
+  if (!after) return;
   if (before.status === after.status) return;
-  if (after.status !== "accepted" && after.status !== "refused") return;
 
   const rentalSnap = await db.collection("rentals").doc(after.rentalId).get();
   const rental = rentalSnap.exists ? rentalSnap.data() : {};
   const vehicleName = [rental.marque, rental.modele].filter(Boolean).join(" ") || "le véhicule";
+
+  if (after.status === "cancelled" && after.requesterId) {
+    await sendPushToUser(
+      after.requesterId,
+      "Engagement annulé",
+      `${after.driverName || "Un utilisateur"} a annulé son engagement pour ${vehicleName}. Votre annonce est à nouveau disponible.`,
+      { type: "proposal_location_cancelled", rentalId: after.rentalId || "" }
+    );
+    return;
+  }
+
+  if (!after.driverId) return;
+  if (after.status !== "accepted" && after.status !== "refused") return;
+
   const title = after.status === "accepted" ? "Proposition location acceptée !" : "Proposition location refusée";
   const body =
     after.status === "accepted"
