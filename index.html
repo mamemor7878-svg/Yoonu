@@ -354,7 +354,7 @@
   .unread-badge { background: var(--orange); color: white; border-radius: 50%; width: 19px; height: 19px; font-size: 10px; font-weight: 800; display:flex; align-items:center; justify-content:center; }
 
   /* CHAT */
-  #chat-screen { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 200; flex-direction: column; max-width: 480px; margin: 0 auto; }
+  #chat-screen { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 250; flex-direction: column; max-width: 480px; margin: 0 auto; }
   #chat-screen.open { display: flex; }
   .chat-header { padding: 16px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; backdrop-filter: blur(14px); }
   .chat-back { font-size: 22px; cursor: pointer; }
@@ -488,8 +488,8 @@
     background: linear-gradient(135deg,var(--orange-light),var(--orange)); display: flex; align-items: center;
     justify-content: center; font-weight: 800; font-size: 16px; color:#fff; flex-shrink: 0;
   }
-  .passenger-info { flex: 1; }
-  .passenger-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .passenger-info { flex: 1; min-width: 0; }
+  .passenger-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; word-break: break-word; overflow-wrap: anywhere; }
   .passenger-phone { font-size: 12px; color: var(--text-muted); }
   .passenger-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .btn-accept { background: var(--green); color: white; border: none; padding: 7px 13px; border-radius: 100px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
