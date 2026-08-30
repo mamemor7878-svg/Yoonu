@@ -5269,9 +5269,20 @@
         showToast('Proposition refusée','success');
         return;
       }
+      // On ne rend la place que si la réservation avait été acceptée (donc décomptée).
+      // Refuser une demande encore "en attente" ne doit rien rendre.
+      const bSnap = await getDoc(doc(db, 'bookings', bookingId));
+      const wasAccepted = bSnap.exists() && bSnap.data().status === 'accepted';
       await updateDoc(doc(db, 'bookings', bookingId), { status: 'refused' });
+      if (wasAccepted && currentPassengersTripId) {
+        const tripSnap = await getDoc(doc(db, 'trips', currentPassengersTripId));
+        if (tripSnap.exists()) {
+          const seats = (tripSnap.data().seats || 0) + 1;
+          await setDoc(doc(db, 'trips', currentPassengersTripId), { seats }, { merge: true });
+        }
+      }
       await refreshPassengersList(currentPassengersTripId);
-      showToast('Réservation refusée','success');
+      showToast(wasAccepted ? 'Réservation annulée, place rendue ✅' : 'Réservation refusée','success');
     } catch(e) { showToast('Erreur: ' + e.message,'error'); }
   }
 
