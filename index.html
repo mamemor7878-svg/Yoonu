@@ -1211,7 +1211,7 @@
         <textarea id="loc-note" placeholder="Ex: Véhicule récent, entretien à jour..."></textarea>
       </div>
 
-      <button class="btn btn-primary" onclick="publishRental()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> <span id="loc-submit-label">Publier mon offre</span></button>
+      <button class="btn btn-primary" id="loc-submit-btn" onclick="publishRental()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 6.5 6a2 2 0 0 1 2-1.5h7a2 2 0 0 1 2 1.5L19 11"/><rect x="2.5" y="11" width="19" height="6.5" rx="2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg> <span id="loc-submit-label">Publier mon offre</span></button>
     </div>
   </div>
 
@@ -1345,7 +1345,7 @@
         </div>
       </div>
 
-      <button class="btn btn-primary" onclick="publishColis()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> <span id="colis-pub-submit-label">Publier mon colis</span></button>
+      <button class="btn btn-primary" id="colis-submit-btn" onclick="publishColis()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg> <span id="colis-pub-submit-label">Publier mon colis</span></button>
     </div>
   </div>
 
@@ -1482,7 +1482,7 @@
     </div>
     <div id="recurring-trips-list"></div>
     <div id="my-trips-list">
-      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+      <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>
     </div>
     <div id="my-parcels-list" style="display:none"></div>
     <div id="my-rentals-list" style="display:none"></div>
@@ -1499,7 +1499,7 @@
   <div class="panel-body">
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Vous serez notifié dès qu'un trajet correspondant est publié, tant que l'app est ouverte.</p>
     <div id="my-alerts-list">
-      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+      <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>
     </div>
   </div>
 </div>
@@ -1512,7 +1512,7 @@
   </div>
   <div class="panel-body">
     <div id="stats-content">
-      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Calcul en cours...</div></div>
+      <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Calcul en cours...</div></div>
     </div>
   </div>
 </div>
@@ -1545,7 +1545,7 @@
 
     <div class="section-title" style="margin-bottom:12px">Vos filleuls</div>
     <div id="referral-list">
-      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+      <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>
     </div>
   </div>
 </div>
@@ -1590,7 +1590,7 @@
   <div class="panel-body">
     <div id="passengers-trip-info" style="background:var(--dark3);border-radius:12px;padding:12px;margin-bottom:16px;border:1px solid var(--border)"></div>
     <div id="passengers-list">
-      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+      <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>
     </div>
   </div>
 </div>
@@ -1799,11 +1799,11 @@
   <div class="panel-body">
     <div id="reviews-rating" style="background:var(--dark3);border-radius:16px;padding:20px;border:1px solid var(--border);margin-bottom:16px;text-align:center">
       <div style="font-size:42px;font-weight:800;color:var(--orange)" id="reviews-avg">5.0</div>
-      <div id="reviews-stars-display" style="color:#f5c400;font-size:22px;margin:4px 0">★★★★★</div>
+      <div id="reviews-stars-display" style="margin:4px 0"></div>
       <div style="color:var(--text-muted);font-size:13px" id="reviews-count">0 avis</div>
     </div>
     <div id="reviews-list">
-      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+      <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>
     </div>
   </div>
 </div>
@@ -2064,7 +2064,7 @@
   onAuthStateChanged(auth, async (user) => {
     // Bloquer les dates passées sur les formulaires
     const today = new Date().toISOString().slice(0,10);
-    const dateFields = ['pub-date', 'edit-trip-date'];
+    const dateFields = ['pub-date', 'edit-trip-date', 'colis-flight-date', 'colis-return-date', 'loc-date-debut', 'loc-date-fin', 'edit-gp-flight-date'];
     dateFields.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.min = today;
@@ -2955,7 +2955,7 @@
       bagage:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
       femme:'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5l-8-3z"/></svg>'
     };
-    return map[o]||'✓';
+    return map[o]||'<svg viewBox=\"0 0 24 24\" width=\"13\" height=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg>';
   }
 
   window.swapSearchInputs = function() {
@@ -3350,7 +3350,12 @@
     const note = document.getElementById('loc-note').value.trim();
 
     if (!ville) { showToast('Indiquez une ville','error'); return; }
+    if (type === 'offre' && !marque && !modele) { showToast('Indiquez la marque ou le modèle du véhicule','error'); return; }
     if (type === 'offre' && !price) { showToast('Indiquez un prix par jour','error'); return; }
+    if (price && Number(price) <= 0) { showToast('Le prix doit être supérieur à 0','error'); return; }
+    if (dateDebut && dateFin && dateFin < dateDebut) { showToast('La date de fin doit être après la date de début','error'); return; }
+
+    if (!lockSubmit('loc-submit-btn', 'loc-submit-label')) return;
 
     const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
     const userData = userDoc.data();
@@ -3391,10 +3396,13 @@
       document.getElementById('loc-photo-placeholder').style.display = 'flex';
       document.getElementById('loc-chauffeur-toggle').classList.remove('on');
       document.getElementById('loc-chauffeur-label').textContent = 'Avec chauffeur';
+      document.getElementById('loc-category').selectedIndex = 0;
       setRentalBrowseType(type);
       switchLocationSubTab('browse');
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
+    } finally {
+      unlockSubmit('loc-submit-btn', 'loc-submit-label');
     }
   }
 
@@ -3510,7 +3518,7 @@
   window.openStats = async function() {
     document.getElementById('panel-stats').classList.add('open');
     const content = document.getElementById('stats-content');
-    content.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Calcul en cours...</div></div>';
+    content.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Calcul en cours...</div></div>';
 
     function statCard(label, value, sub) {
       return `<div class="form-section" style="text-align:center;padding:16px">
@@ -3600,7 +3608,7 @@
 
         <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:10px">Parrainages à payer (Wave)</div>
         <div id="referral-payments-list">
-          <div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>
+          <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>
         </div>
       `;
       loadReferralPayments();
@@ -3701,6 +3709,36 @@
     }
   }
 
+  // ===== Anti double-clic sur les boutons de publication =====
+  // Sans ce verrou, un utilisateur sur connexion lente peut appuyer plusieurs fois
+  // pendant l'envoi et créer 3 ou 4 fois la même annonce.
+  const _submitting = {};
+  function lockSubmit(btnId, labelId, busyText) {
+    if (_submitting[btnId]) return false;      // déjà en cours : on ignore le clic
+    _submitting[btnId] = true;
+    const btn = document.getElementById(btnId);
+    const label = labelId ? document.getElementById(labelId) : null;
+    if (btn) {
+      btn.dataset.prevLabel = label ? label.textContent : '';
+      btn.disabled = true;
+      btn.style.opacity = '.6';
+      btn.style.pointerEvents = 'none';
+      if (label) label.textContent = busyText || 'Publication en cours…';
+    }
+    return true;
+  }
+  function unlockSubmit(btnId, labelId) {
+    _submitting[btnId] = false;
+    const btn = document.getElementById(btnId);
+    const label = labelId ? document.getElementById(labelId) : null;
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = '';
+      btn.style.pointerEvents = '';
+      if (label && btn.dataset.prevLabel) label.textContent = btn.dataset.prevLabel;
+    }
+  }
+
   window.publishTrip = async function() {
     const from = document.getElementById('pub-from').value;
     const to = document.getElementById('pub-to').value;
@@ -3714,6 +3752,8 @@
 
     if (!from||!to||!date||!time) { showToast('Remplissez tous les champs','error'); return; }
     if (type === 'conducteur' && !price) { showToast('Indiquez un prix','error'); return; }
+    if (price && Number(price) <= 0) { showToast('Le prix doit être supérieur à 0','error'); return; }
+    if (!seats || Number(seats) < 1) { showToast('Indiquez au moins 1 place','error'); return; }
     if (from===to) { showToast('Départ et arrivée identiques','error'); return; }
     if (date < today) {
       document.getElementById('pub-date-error').style.display = 'block';
@@ -3722,6 +3762,8 @@
       showToast('⚠️ La date est déjà passée, changez de date !', 'error');
       return;
     }
+
+    if (!lockSubmit('pub-trip-submit', 'pub-submit-label')) return;
 
     const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
     const userData = userDoc.data();
@@ -3782,6 +3824,8 @@
       loadTrips();
     } catch(e) {
       showToast('Erreur: ' + e.message,'error');
+    } finally {
+      unlockSubmit('pub-trip-submit', 'pub-submit-label');
     }
   }
 
@@ -3801,6 +3845,8 @@
     }
     if (!from || !to) { showToast('Choisissez un départ et une destination', 'error'); return; }
     if (from.toLowerCase() === to.toLowerCase()) { showToast('Départ et arrivée identiques', 'error'); return; }
+
+    if (!lockSubmit('colis-submit-btn', 'colis-pub-submit-label')) return;
 
     const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
     const userData = userDoc.data();
@@ -3824,11 +3870,14 @@
       const kgTotal = Number(document.getElementById('colis-kg-total').value) || 1;
       const pricePerKg = document.getElementById('colis-price-per-kg').value;
       const flightDate = document.getElementById('colis-flight-date').value;
-      if (!flightDate) { showToast('Indiquez la date du vol', 'error'); return; }
+      if (!flightDate) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Indiquez la date du vol', 'error'); return; }
+      if (!pricePerKg) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Indiquez votre prix par kg', 'error'); return; }
+      if (Number(pricePerKg) <= 0) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Le prix par kg doit être supérieur à 0', 'error'); return; }
       isRoundTrip = document.getElementById('colis-roundtrip').checked;
       if (isRoundTrip) {
         returnDate = document.getElementById('colis-return-date').value;
-        if (!returnDate) { showToast('Indiquez la date du vol retour', 'error'); return; }
+        if (!returnDate) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Indiquez la date du vol retour', 'error'); return; }
+        if (returnDate < flightDate) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Le vol retour doit être après le vol aller', 'error'); return; }
       }
       payload.type = 'offre';
       payload.flightDate = flightDate;
@@ -3839,7 +3888,9 @@
       // scope local, ou scope gp + recherche : même modèle (poids/prix/description)
       const poids = document.getElementById('colis-poids').value;
       const price = document.getElementById('colis-price').value;
-      if (!description) { showToast('Décrivez votre colis', 'error'); return; }
+      if (!description) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Décrivez votre colis', 'error'); return; }
+      if (poids && Number(poids) <= 0) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Le poids doit être supérieur à 0', 'error'); return; }
+      if (price && Number(price) <= 0) { unlockSubmit('colis-submit-btn', 'colis-pub-submit-label'); showToast('Le budget doit être supérieur à 0', 'error'); return; }
       if (scope === 'gp') payload.type = 'recherche';
       payload.poids = poids ? Number(poids) : null;
       payload.price = price ? Number(price) : 0;
@@ -3867,6 +3918,8 @@
       if (scope === 'gp') setColisGpBrowseMode(gpType === 'offre' ? 'offre' : 'recherche');
     } catch(e) {
       showToast('Erreur: ' + e.message, 'error');
+    } finally {
+      unlockSubmit('colis-submit-btn', 'colis-pub-submit-label');
     }
   }
 
@@ -3924,7 +3977,7 @@
       const snap = await getDocs(q);
       if (snap.empty) { container.innerHTML = ''; return; }
       const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-      container.innerHTML = '<div class="section-title" style="margin-bottom:10px">🔁 Trajets récurrents actifs</div>' +
+      container.innerHTML = '<div class="section-title" style="margin-bottom:10px" style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M17 2.5 21 6.5l-4 4"/><path d="M3 11.5v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.5 3 17.5l4-4"/><path d="M21 12.5v1a4 4 0 0 1-4 4H3"/></svg> Trajets récurrents actifs</div>' +
         snap.docs.map(d => {
           const r = d.data();
           return `<div class="trip-card" style="margin-bottom:10px">
@@ -4189,7 +4242,7 @@
 
         const bubble = document.createElement('div');
         bubble.className = 'msg ' + (isMine ? 'mine' : 'theirs');
-        bubble.textContent = m.text + (m.edited ? ' ✏️' : '');
+        bubble.textContent = m.text + (m.edited ? ' (modifié)' : '');
 
         const actions = document.createElement('div');
         actions.className = 'msg-actions';
@@ -4214,7 +4267,7 @@
     editingMsgId = msgId;
     editingMsgTripId = chatId;
     const text = btn.parentElement.querySelector('.msg-action-btn').dataset.text ||
-      btn.closest('.msg-wrap').querySelector('.msg').textContent.replace(' ✏️','');
+      btn.closest('.msg-wrap').querySelector('.msg').textContent.replace(' (modifié)','');
     document.getElementById('chat-input').value = text;
     document.getElementById('chat-input').focus();
     const bar = document.getElementById('edit-msg-bar');
@@ -4558,7 +4611,7 @@
 
   async function loadMyRentals() {
     const list = document.getElementById('my-rentals-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>';
     try {
       const q = query(collection(db, 'rentals'), where('ownerId', '==', currentUser.uid));
       const snap = await getDocs(q);
@@ -4687,7 +4740,7 @@
     document.getElementById(ownListId).style.display = sub === 'mine' ? 'block' : 'none';
     confirmedEl.style.display = sub === 'confirmed' ? 'block' : 'none';
     if (sub === 'confirmed') {
-      confirmedEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+      confirmedEl.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>';
       const res = await renderAcceptedCommitments(kind);
       confirmedEl.innerHTML = res.html;
       document.getElementById('sub-tab-confirmed-count').textContent = res.count;
@@ -4702,7 +4755,7 @@
 
   async function loadMyParcels() {
     const list = document.getElementById('my-parcels-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>';
     try {
       const q = query(collection(db, 'parcels'), where('ownerId', '==', currentUser.uid));
       const snap = await getDocs(q);
@@ -4956,7 +5009,7 @@
 
   async function loadMyTrips(tab) {
     const list = document.getElementById('my-trips-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>';
     try {
       // Onglet "Résa" : on ajoute en tête les demandes passager où ma proposition a été acceptée
       const tripCommitments = tab === 'passenger' ? await renderAcceptedTripProposals() : '';
@@ -5090,7 +5143,7 @@
 
   async function refreshPassengersList(tripId) {
     const list = document.getElementById('passengers-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>';
     const kind = currentPassengersKind;
     const isProposal = kind === 'passager' || kind === 'colis' || kind === 'location';
     const collName = kind === 'colis' ? 'parcelProposals' : (kind === 'location' ? 'rentalProposals' : (kind === 'passager' ? 'proposals' : 'bookings'));
@@ -5139,8 +5192,8 @@
           </div>
           <div class="passenger-actions">
             ${isPending ? `
-              <button class="btn-accept" onclick="acceptBooking('${d.id}')">✓</button>
-              <button class="btn-refuse" onclick="refuseBooking('${d.id}')">✕</button>
+              <button class="btn-accept" onclick="acceptBooking('${d.id}')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+              <button class="btn-refuse" onclick="refuseBooking('${d.id}')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
             ` : ''}
             ${isAccepted ? `<button class="btn-refuse" onclick="refuseBooking('${d.id}')">Annuler</button>` : ''}
           </div>
@@ -5148,7 +5201,7 @@
       });
     } catch(e) {
       console.error('Erreur passagers:', e);
-      list.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur: ${e.message}</div></div>`;
+      list.innerHTML = `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur: ${e.message}</div></div>`;
     }
   }
 
@@ -5269,9 +5322,20 @@
         showToast('Proposition refusée','success');
         return;
       }
+      // On ne rend la place que si la réservation avait été acceptée (donc décomptée).
+      // Refuser une demande encore "en attente" ne doit rien rendre.
+      const bSnap = await getDoc(doc(db, 'bookings', bookingId));
+      const wasAccepted = bSnap.exists() && bSnap.data().status === 'accepted';
       await updateDoc(doc(db, 'bookings', bookingId), { status: 'refused' });
+      if (wasAccepted && currentPassengersTripId) {
+        const tripSnap = await getDoc(doc(db, 'trips', currentPassengersTripId));
+        if (tripSnap.exists()) {
+          const seats = (tripSnap.data().seats || 0) + 1;
+          await setDoc(doc(db, 'trips', currentPassengersTripId), { seats }, { merge: true });
+        }
+      }
       await refreshPassengersList(currentPassengersTripId);
-      showToast('Réservation refusée','success');
+      showToast(wasAccepted ? 'Réservation annulée, place rendue ✅' : 'Réservation refusée','success');
     } catch(e) { showToast('Erreur: ' + e.message,'error'); }
   }
 
@@ -5330,11 +5394,21 @@
   }
 
   // ===== MY REVIEWS =====
+
+  // Rendu des étoiles en SVG (au lieu des caractères ★ ☆, dont l'apparence
+  // varie selon les polices système et rend mal sur certains appareils).
+  function starsSvg(n, size = 16) {
+    const full = '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="#f5c400" stroke="none" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg>';
+    const empty = '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="#f5c400" stroke-width="1.6" stroke-linejoin="round" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg>';
+    const r = Math.max(0, Math.min(5, Math.round(n)));
+    return full.repeat(r) + empty.repeat(5 - r);
+  }
+
   window.openMyReviews = async function() {
     document.getElementById('panel-my-reviews').classList.add('open');
     const ratingEl = document.getElementById('reviews-rating');
     const listEl = document.getElementById('reviews-list');
-    ratingEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div></div>';
+    ratingEl.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div></div>';
     listEl.innerHTML = '';
     try {
       const snap = await getDocs(query(
@@ -5346,23 +5420,23 @@
       snap.forEach(d => reviews.push({ id: d.id, ...d.data() }));
       const total = reviews.length;
       const avg = total > 0 ? (reviews.reduce((s,r) => s + (r.rating||5), 0) / total) : 5;
-      const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+      const stars = starsSvg(avg, 22);
 
       ratingEl.innerHTML = `
         <div style="font-size:48px;font-weight:800;color:var(--orange);line-height:1">${avg.toFixed(1)}</div>
-        <div style="font-size:22px;color:#f5c400;margin:4px 0">${stars}</div>
+        <div style="margin:4px 0;line-height:1">${stars}</div>
         <div style="color:var(--text-muted);font-size:13px">${total} avis reçu${total>1?'s':''}</div>`;
 
       if (total === 0) {
-        listEl.innerHTML = '<div class="empty"><div class="empty-icon">⭐</div><div class="empty-text">Aucun avis pour l\'instant</div></div>';
+        listEl.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg></div><div class="empty-text">Aucun avis pour l\'instant</div></div>';
         return;
       }
       listEl.innerHTML = reviews.map(r => {
-        const stars = '★'.repeat(r.rating||5) + '☆'.repeat(5-(r.rating||5));
+        const stars = starsSvg(r.rating||5, 16);
         const date = r.createdAt ? new Date(r.createdAt.seconds*1000).toLocaleDateString('fr-FR') : '';
         return `<div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-size:16px;color:#f5c400">${stars}</div>
+            <div style="line-height:1">${stars}</div>
             <div style="font-size:11px;color:var(--text-muted)">${date}</div>
           </div>
           ${r.comment ? `<div style="font-size:13px;color:var(--text-muted);font-style:italic">"${r.comment}"</div>` : ''}
@@ -5370,7 +5444,7 @@
         </div>`;
       }).join('');
     } catch(e) {
-      ratingEl.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur</div></div>';
+      ratingEl.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.1"/></svg></div><div class="empty-text">Erreur</div></div>';
     }
   }
 
@@ -5894,7 +5968,7 @@
   window.openNotifications = async function() {
     document.getElementById('panel-notifications').classList.add('open');
     const list = document.getElementById('notif-list');
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-text">Chargement...</div></div>';
+    list.innerHTML = '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3"/><path d="M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/></svg></div><div class="empty-text">Chargement...</div></div>';
     const notifs = await loadNotifications();
     lastLoadedNotifs = notifs;
     if (notifs.length === 0) {

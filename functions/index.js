@@ -257,7 +257,91 @@ exports.onNewRentalProposal = onDocumentCreated("rentalProposals/{proposalId}", 
   );
 });
 
-// ===== 9. Statut d'une proposition location -> notifie la personne intéressée (ou le propriétaire en cas d'annulation) =====
+/**
+ * Notifie les utilisateurs dont une alerte sauvegardée correspond à une nouvelle annonce.
+ * Une alerte correspond si son départ ET sa destination sont contenus dans ceux de
+ * l'annonce (comparaison souple, insensible à la casse). Une alerte sans départ ni
+ * destination est ignorée, sinon elle capterait tout.
+ * L'auteur de l'annonce n'est jamais notifié de sa propre publication.
+ */
+async function notifyMatchingAlerts(listing, { title, bodyFor, data }) {
+  const from = (listing.from || "").toLowerCase().trim();
+  const to = (listing.to || "").toLowerCase().trim();
+  if (!from && !to) return;
+
+  const ownerId = listing.driverId || listing.ownerId || "";
+  const snap = await db.collection("savedSearches").get();
+
+  const recipients = new Set();
+  snap.forEach((d) => {
+    const s = d.data();
+    if (!s.userId || s.userId === ownerId) return;
+
+    const sFrom = (s.from || "").toLowerCase().trim();
+    const sTo = (s.to || "").toLowerCase().trim();
+    if (!sFrom && !sTo) return; // alerte vide : on ne spamme pas
+
+    const fromOk = !sFrom || from.includes(sFrom);
+    const toOk = !sTo || to.includes(sTo);
+    if (fromOk && toOk) recipients.add(s.userId);
+  });
+
+  if (recipients.size === 0) return;
+
+  await Promise.all(
+    [...recipients].map((uid) =>
+      sendPushToUser(uid, title, bodyFor(listing), data)
+    )
+  );
+}
+
+// ===== 10. Nouveau trajet publié -> alerte les utilisateurs concernés =====
+exports.onNewTripPublished = onDocumentCreated("trips/{tripId}", async (event) => {
+  const t = event.data.data();
+  if (!t) return;
+  const isPassenger = (t.type || "conducteur") === "passager";
+  await notifyMatchingAlerts(t, {
+    title: isPassenger ? "Nouvelle demande de passager" : "Nouveau trajet disponible",
+    bodyFor: (l) =>
+      `${l.from || ""} → ${l.to || ""}` +
+      (l.date ? ` le ${l.date}` : "") +
+      (l.price ? ` · ${Number(l.price).toLocaleString("fr-FR")} FCFA` : ""),
+    data: { type: "alert_trip", tripId: event.params.tripId },
+  });
+});
+
+// ===== 11. Nouveau colis publié -> alerte les utilisateurs concernés =====
+exports.onNewParcelPublished = onDocumentCreated("parcels/{parcelId}", async (event) => {
+  const p = event.data.data();
+  if (!p) return;
+  const isGpOffer = p.scope === "gp" && p.type === "offre";
+  await notifyMatchingAlerts(p, {
+    title: isGpOffer ? "Nouveau GP disponible" : "Nouveau colis à transporter",
+    bodyFor: (l) =>
+      `${l.from || ""} → ${l.to || ""}` +
+      (isGpOffer && l.flightDate ? ` · vol du ${l.flightDate}` : ""),
+    data: { type: "alert_parcel", parcelId: event.params.parcelId },
+  });
+});
+
+// ===== 12. Nouvelle location publiée -> alerte les utilisateurs concernés =====
+// Les annonces de location n'ont pas de from/to mais une ville : on la mappe
+// sur les deux champs pour réutiliser la même logique de correspondance.
+exports.onNewRentalPublished = onDocumentCreated("rentals/{rentalId}", async (event) => {
+  const r = event.data.data();
+  if (!r || !r.ville) return;
+  const vehicleName = [r.marque, r.modele].filter(Boolean).join(" ") || "Un véhicule";
+  await notifyMatchingAlerts(
+    { from: r.ville, to: r.ville, ownerId: r.ownerId },
+    {
+      title: "Nouveau véhicule à louer",
+      bodyFor: () =>
+        `${vehicleName} à ${r.ville}` +
+        (r.price ? ` · ${Number(r.price).toLocaleString("fr-FR")} FCFA/jour` : ""),
+      data: { type: "alert_rental", rentalId: event.params.rentalId },
+    }
+  );
+});
 exports.onRentalProposalStatusChange = onDocumentUpdated("rentalProposals/{proposalId}", async (event) => {
   const before = event.data.before.data();
   const after = event.data.after.data();
