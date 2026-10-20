@@ -642,7 +642,7 @@
     </div>
     <div class="input-group">
       <label>Mot de passe</label>
-      <input type="text" id="password-input" placeholder="Minimum 6 caractères"/>
+      <input type="password" id="password-input" placeholder="Minimum 6 caractères"/>
     </div>
     <div style="text-align:right;margin:-8px 0 18px">
       <span onclick="openForgotPassword()" style="font-size:13px;color:var(--orange);font-weight:700;cursor:pointer">Mot de passe oublié ?</span>
@@ -1432,9 +1432,9 @@
         <label>Numéro de téléphone</label>
         <div class="phone-row">
           <div class="flag-prefix">🇸🇳 +221</div>
-          <input type="tel" id="edit-phone" placeholder="77 000 00 00" maxlength="9"/>
+          <input type="tel" id="edit-phone" placeholder="77 000 00 00" maxlength="9" disabled style="opacity:.6"/>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Visible par les passagers ayant une réservation acceptée</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Numéro vérifié par SMS — <a onclick="closePanel('panel-edit-profile');openChangePhone()" style="color:var(--orange);font-weight:700;cursor:pointer;text-decoration:underline">le changer</a></div>
       </div>
     </div>
 
@@ -1999,7 +1999,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, setPersistence, browserLocalPersistence, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut as fbSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePhoneNumber, PhoneAuthProvider, sendPasswordResetEmail, deleteUser, reauthenticateWithCredential, EmailAuthProvider }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, arrayUnion, limit }
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, arrayUnion, limit, runTransaction }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
   import { getStorage, ref as storageRef, uploadBytes, getDownloadURL }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
@@ -4496,10 +4496,11 @@
   window.saveEditProfile = async function() {
     const name = document.getElementById('edit-name').value.trim();
     if (!name) { showToast('Le nom est requis', 'error'); return; }
-    const rawPhone = document.getElementById('edit-phone').value.trim().replace(/\s/g,'');
-    const phone = rawPhone ? '+221' + rawPhone : (currentUser.phoneNumber || '');
+    // Le téléphone n'est plus modifiable depuis ce formulaire (champ en lecture seule) : seul le
+    // flux vérifié par SMS (openChangePhone/confirmChangePhone) peut l'écrire, pour éviter qu'un
+    // numéro non vérifié n'écrase le numéro réel affiché aux autres utilisateurs.
     const data = {
-      name, phone,
+      name,
       carModel: document.getElementById('edit-car-model').value.trim(),
       carColor: document.getElementById('edit-car-color').value.trim(),
       carPlate: document.getElementById('edit-car-plate').value.trim(),
@@ -5224,19 +5225,29 @@
     const kind = currentPassengersKind;
     const cfg = PROPOSAL_CONFIG[kind];
     try {
-      // Cas spécial : colis GP "offre" — on décrémente les kg au lieu de marquer complet d'un coup
+      // Cas spécial : colis GP "offre" — on décrémente les kg au lieu de marquer complet d'un coup.
+      // Transaction Firestore : lecture + écriture atomiques, pour éviter que deux propositions
+      // acceptées en même temps ne décrémentent les kg à partir de la même valeur de départ.
       if (kind === 'colis' && currentPassengersTripId) {
-        const parcelSnap = await getDoc(doc(db, 'parcels', currentPassengersTripId));
-        if (parcelSnap.exists() && parcelSnap.data().scope === 'gp' && parcelSnap.data().type === 'offre') {
-          const parcelData = parcelSnap.data();
-          const proposalSnap = await getDoc(doc(db, 'parcelProposals', bookingId));
-          const proposalKg = proposalSnap.exists() ? (proposalSnap.data().kgDemandes || 1) : 1;
-          const newKgRestants = Math.max(0, (parcelData.kgRestants ?? parcelData.kgTotal) - proposalKg);
-          await updateDoc(doc(db, 'parcelProposals', bookingId), { status: 'accepted' });
-          await setDoc(doc(db, 'parcels', currentPassengersTripId), {
-            kgRestants: newKgRestants,
-            statut: newKgRestants <= 0 ? 'pourvu' : 'actif'
-          }, { merge: true });
+        const parcelRef = doc(db, 'parcels', currentPassengersTripId);
+        const parcelSnap0 = await getDoc(parcelRef);
+        if (parcelSnap0.exists() && parcelSnap0.data().scope === 'gp' && parcelSnap0.data().type === 'offre') {
+          const proposalRef = doc(db, 'parcelProposals', bookingId);
+          await runTransaction(db, async (tx) => {
+            const parcelSnap = await tx.get(parcelRef);
+            const proposalSnap = await tx.get(proposalRef);
+            if (!parcelSnap.exists()) throw new Error('Annonce introuvable');
+            const parcelData = parcelSnap.data();
+            const proposalKg = proposalSnap.exists() ? (proposalSnap.data().kgDemandes || 1) : 1;
+            const kgRestants = parcelData.kgRestants ?? parcelData.kgTotal;
+            if (kgRestants < proposalKg) throw new Error('Il ne reste plus assez de kg disponibles');
+            const newKgRestants = Math.max(0, kgRestants - proposalKg);
+            tx.update(proposalRef, { status: 'accepted' });
+            tx.set(parcelRef, {
+              kgRestants: newKgRestants,
+              statut: newKgRestants <= 0 ? 'pourvu' : 'actif'
+            }, { merge: true });
+          });
           await refreshPassengersList(currentPassengersTripId);
           showToast('Proposition acceptée ✅','success');
           return;
@@ -5263,19 +5274,29 @@
         showToast(cfg.acceptMsg,'success');
         return;
       }
-      // Vérifier qu'il reste bien une place avant de confirmer (anti sur-booking)
+      // Trajet classique : décrémenter une place, de façon atomique, pour éviter que deux demandes
+      // acceptées quasi simultanément sur la dernière place ne passent toutes les deux (anti sur-booking).
       if (currentPassengersTripId) {
-        const tripSnap = await getDoc(doc(db, 'trips', currentPassengersTripId));
-        if (tripSnap.exists()) {
-          const seats = tripSnap.data().seats;
-          if (seats != null && seats <= 0) {
-            showToast('Plus de places disponibles — refusez une autre demande d\'abord', 'error');
-            return;
-          }
-          await setDoc(doc(db, 'trips', currentPassengersTripId), { seats: Math.max(0, (seats || 1) - 1) }, { merge: true });
+        const tripRef = doc(db, 'trips', currentPassengersTripId);
+        const bookingRef = doc(db, 'bookings', bookingId);
+        try {
+          await runTransaction(db, async (tx) => {
+            const tripSnap = await tx.get(tripRef);
+            if (!tripSnap.exists()) throw new Error('Trajet introuvable');
+            const seats = tripSnap.data().seats;
+            if (seats != null && seats <= 0) {
+              throw new Error('Plus de places disponibles — refusez une autre demande d\'abord');
+            }
+            tx.update(bookingRef, { status: 'accepted' });
+            tx.set(tripRef, { seats: Math.max(0, (seats ?? 1) - 1) }, { merge: true });
+          });
+        } catch(txErr) {
+          showToast(txErr.message || 'Erreur lors de l\'acceptation', 'error');
+          return;
         }
+      } else {
+        await updateDoc(doc(db, 'bookings', bookingId), { status: 'accepted' });
       }
-      await updateDoc(doc(db, 'bookings', bookingId), { status: 'accepted' });
       await triggerReferralRewardIfEligible(bookingId);
       await refreshPassengersList(currentPassengersTripId);
       showToast('Réservation acceptée ✅','success');
@@ -5327,15 +5348,26 @@
       }
       // On ne rend la place que si la réservation avait été acceptée (donc décomptée).
       // Refuser une demande encore "en attente" ne doit rien rendre.
-      const bSnap = await getDoc(doc(db, 'bookings', bookingId));
-      const wasAccepted = bSnap.exists() && bSnap.data().status === 'accepted';
-      await updateDoc(doc(db, 'bookings', bookingId), { status: 'refused' });
-      if (wasAccepted && currentPassengersTripId) {
-        const tripSnap = await getDoc(doc(db, 'trips', currentPassengersTripId));
-        if (tripSnap.exists()) {
-          const seats = (tripSnap.data().seats || 0) + 1;
-          await setDoc(doc(db, 'trips', currentPassengersTripId), { seats }, { merge: true });
-        }
+      // Transaction : lecture du statut et restitution de la place dans une seule opération atomique.
+      const bookingRef = doc(db, 'bookings', bookingId);
+      let wasAccepted = false;
+      if (currentPassengersTripId) {
+        const tripRef = doc(db, 'trips', currentPassengersTripId);
+        await runTransaction(db, async (tx) => {
+          const bSnap = await tx.get(bookingRef);
+          wasAccepted = bSnap.exists() && bSnap.data().status === 'accepted';
+          let newSeats = null;
+          if (wasAccepted) {
+            const tripSnap = await tx.get(tripRef);
+            if (tripSnap.exists()) newSeats = (tripSnap.data().seats || 0) + 1;
+          }
+          tx.update(bookingRef, { status: 'refused' });
+          if (newSeats != null) tx.set(tripRef, { seats: newSeats }, { merge: true });
+        });
+      } else {
+        const bSnap = await getDoc(bookingRef);
+        wasAccepted = bSnap.exists() && bSnap.data().status === 'accepted';
+        await updateDoc(bookingRef, { status: 'refused' });
       }
       await refreshPassengersList(currentPassengersTripId);
       showToast(wasAccepted ? 'Réservation annulée, place rendue ✅' : 'Réservation refusée','success');
@@ -5455,20 +5487,28 @@
   window.cancelBooking = async function(bookingId, tripId, status) {
     if (!confirm('Annuler votre réservation ?')) return;
     try {
-      // Remettre la place disponible seulement si elle avait été acceptée (donc décomptée)
-      if (tripId && status === 'accepted') {
-        const tripSnap = await getDoc(doc(db, 'trips', tripId));
-        if (tripSnap.exists()) {
-          const seats = (tripSnap.data().seats || 0) + 1;
-          await setDoc(doc(db, 'trips', tripId), { seats }, { merge: true });
-        }
-      }
       // On marque la réservation comme annulée au lieu de la supprimer : ça garde l'historique
       // et ça permet au conducteur de voir "Annulé par l'utilisateur" (déjà géré dans la liste des
       // demandes côté conducteur, mais jamais déclenché tant que le document était juste supprimé).
-      await setDoc(doc(db, 'bookings', bookingId), {
-        status: 'cancelled', cancelledAt: serverTimestamp()
-      }, { merge: true });
+      // Transaction : on relit le statut réel depuis Firestore (plutôt que de faire confiance au
+      // paramètre "status", qui peut être périmé) et on restitue la place de façon atomique.
+      const bookingRef = doc(db, 'bookings', bookingId);
+      if (tripId) {
+        const tripRef = doc(db, 'trips', tripId);
+        await runTransaction(db, async (tx) => {
+          const bSnap = await tx.get(bookingRef);
+          const wasAccepted = bSnap.exists() && bSnap.data().status === 'accepted';
+          let newSeats = null;
+          if (wasAccepted) {
+            const tripSnap = await tx.get(tripRef);
+            if (tripSnap.exists()) newSeats = (tripSnap.data().seats || 0) + 1;
+          }
+          tx.set(bookingRef, { status: 'cancelled', cancelledAt: serverTimestamp() }, { merge: true });
+          if (newSeats != null) tx.set(tripRef, { seats: newSeats }, { merge: true });
+        });
+      } else {
+        await setDoc(bookingRef, { status: 'cancelled', cancelledAt: serverTimestamp() }, { merge: true });
+      }
       showToast('Réservation annulée ✅', 'success');
       loadMyTrips('passenger');
     } catch(e) {
