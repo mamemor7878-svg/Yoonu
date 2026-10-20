@@ -3529,23 +3529,28 @@
     }
 
     function statusCounts(docs) {
-      let pending=0, accepted=0, refused=0;
+      // 'rated' = réservation acceptée, trajet effectué ET noté : c'est un succès, pas une attente.
+      // 'cancelled' / 'trip_cancelled' / 'listing_deleted' = désistement ou annonce supprimée :
+      // ce n'est ni un refus ni une demande en attente de décision, donc on les isole du taux de match
+      // au lieu de les laisser gonfler artificiellement le compteur "en attente" (et donc fausser le taux).
+      let pending=0, accepted=0, refused=0, cancelled=0;
       docs.forEach(d => {
         const s = d.data().status || 'pending';
-        if (s === 'accepted') accepted++;
+        if (s === 'accepted' || s === 'rated') accepted++;
         else if (s === 'refused') refused++;
+        else if (s === 'cancelled' || s === 'trip_cancelled' || s === 'listing_deleted') cancelled++;
         else pending++;
       });
       const total = pending + accepted + refused;
       const rate = total > 0 ? Math.round((accepted / total) * 100) : 0;
-      return { pending, accepted, refused, total, rate };
+      return { pending, accepted, refused, cancelled, total, rate };
     }
 
     function acceptRow(label, c) {
       return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
         <div>
           <div style="font-size:13px;font-weight:700">${label}</div>
-          <div style="font-size:11.5px;color:var(--text-muted)">${c.accepted} acceptées · ${c.pending} en attente · ${c.refused} refusées</div>
+          <div style="font-size:11.5px;color:var(--text-muted)">${c.accepted} acceptées · ${c.pending} en attente · ${c.refused} refusées${c.cancelled ? ' · ' + c.cancelled + ' annulées' : ''}</div>
         </div>
         <div style="font-size:18px;font-weight:900;color:${c.rate>=50?'var(--green)':'var(--orange)'}">${c.rate}%</div>
       </div>`;
@@ -3798,13 +3803,9 @@
           createdAt: serverTimestamp()
         });
       }
-      // Incrémenter le compteur de trajets du conducteur
-      await setDoc(doc(db, 'users', currentUser.uid), {
-        tripsCount: (userData.tripsCount || 0) + 1
-      }, { merge: true });
-      // Rafraîchir les stats du profil
-      const updatedDoc = await getDoc(doc(db, 'users', currentUser.uid));
-      refreshProfileUI(currentUser, updatedDoc.data());
+      // Remarque : le compteur "tripsCount" n'est plus incrémenté ici. Publier une annonce
+      // n'est pas effectuer un trajet — le compteur est désormais incrémenté dans submitRating(),
+      // au moment où un trajet est confirmé comme réellement effectué (noté par le passager).
       showToast(type === 'passager' ? 'Demande publiée !' : 'Trajet publié !','success');
       // Reset complet du formulaire
       document.getElementById('pub-from').value = '';
@@ -5558,6 +5559,26 @@
         const avg = count > 0 ? Math.round((total / count) * 10) / 10 : 5;
         await setDoc(doc(db, 'users', ratingDriverId), { rating: avg }, { merge: true });
       } catch(e) { /* La mise en cache de la note peut échouer selon les règles Firestore, on continue quand même */ }
+      // Incrémenter le compteur de trajets effectués (conducteur ET passager). Un trajet n'est compté
+      // comme "effectué" qu'une fois noté par le passager, ce qui évite de compter de simples annonces
+      // publiées mais jamais réalisées (l'ancien comportement incrémentait dès la publication).
+      try {
+        const [driverSnap, passengerSnap] = await Promise.all([
+          getDoc(doc(db, 'users', ratingDriverId)),
+          getDoc(doc(db, 'users', currentUser.uid))
+        ]);
+        await Promise.all([
+          setDoc(doc(db, 'users', ratingDriverId), {
+            tripsCount: ((driverSnap.exists() ? driverSnap.data().tripsCount : 0) || 0) + 1
+          }, { merge: true }),
+          setDoc(doc(db, 'users', currentUser.uid), {
+            tripsCount: ((passengerSnap.exists() ? passengerSnap.data().tripsCount : 0) || 0) + 1
+          }, { merge: true })
+        ]);
+        // Rafraîchir l'affichage du profil du passager (le compteur vient de changer)
+        const updatedSelf = await getDoc(doc(db, 'users', currentUser.uid));
+        if (updatedSelf.exists()) refreshProfileUI(currentUser, updatedSelf.data());
+      } catch(e) { /* best-effort : ne bloque pas l'envoi de l'avis si l'incrémentation échoue */ }
       // Marquer le booking comme noté (toujours exécuté, même si la mise à jour ci-dessus échoue)
       if (ratingBookingId) {
         await setDoc(doc(db, 'bookings', ratingBookingId), { status: 'rated', rated: true }, { merge: true });
