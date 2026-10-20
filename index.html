@@ -4289,6 +4289,21 @@
     } catch(e) { showToast('Erreur suppression','error'); }
   }
 
+  // Supprime une conversation de SA propre liste (l'autre participant garde son historique).
+  // On ne supprime pas les documents Firestore : on marque juste la conversation comme masquée
+  // pour cet utilisateur tant qu'il n'y a pas de nouvelle activité (cf. loadConversations).
+  window.deleteConversation = async function(chatId) {
+    if (!confirm('Supprimer cette conversation de votre liste ? Elle réapparaîtra si un nouveau message est échangé.')) return;
+    try {
+      await setDoc(doc(db, 'chats', chatId), {
+        hiddenFor: { [currentUser.uid]: Math.floor(Date.now() / 1000) }
+      }, { merge: true });
+      if (currentChatId === chatId) closeChat();
+      showToast('Conversation supprimée', 'success');
+      loadConversations();
+    } catch(e) { showToast('Erreur suppression', 'error'); }
+  }
+
   async function pushMessage(text) {
     const chatId = document.getElementById('chat-screen').dataset.chatId;
     if (!chatId) { showToast('Conversation introuvable','error'); return; }
@@ -4355,6 +4370,10 @@
         const c = d.data();
         const otherUid = (c.participants || []).find(p => p !== uid) || '';
         const updated = c.updatedAt?.seconds || 0;
+        // Une conversation "supprimée" par l'utilisateur est masquée tant qu'aucune nouvelle
+        // activité (message envoyé ou reçu) n'a eu lieu depuis la suppression ; elle réapparaît
+        // automatiquement sinon. Les messages eux-mêmes ne sont pas effacés pour l'autre participant.
+        const hiddenAt = (c.hiddenFor && c.hiddenFor[uid]) || 0;
         return {
           key: d.id,
           name: (c.names && c.names[otherUid]) || 'Utilisateur',
@@ -4362,9 +4381,16 @@
           lastSenderId: c.lastSenderId || '',
           subtitle: LISTING_LABELS[c.listingCollection] || '',
           updated,
+          hidden: hiddenAt > 0 && hiddenAt >= updated,
           unread: c.lastSenderId && c.lastSenderId !== uid && updated > (lastRead[d.id] || 0)
         };
-      });
+      }).filter(c => !c.hidden);
+
+      if (convs.length === 0) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">💬</div><div class="empty-text">Aucune conversation pour l\'instant</div></div>';
+        updateMsgBadges(0);
+        return;
+      }
 
       convs.sort((a, b) => b.updated - a.updated);
 
@@ -4384,7 +4410,12 @@
             <div class="conv-name" style="${c.unread ? 'font-weight:800' : ''}">${escapeHtml(c.name)}</div>
             <div class="conv-preview" style="${c.unread ? 'color:var(--text);font-weight:600' : ''};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</div>
           </div>
-          ${c.unread ? '<div class="unread-badge">1</div>' : ''}`;
+          <div class="conv-item-actions">
+            ${c.unread ? '<div class="unread-badge">1</div>' : ''}
+            <button class="conv-del-btn" title="Supprimer la conversation" aria-label="Supprimer la conversation" onclick="event.stopPropagation();deleteConversation('${c.key}')">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>`;
         list.appendChild(item);
       });
       updateMsgBadges(unreadTotal);
