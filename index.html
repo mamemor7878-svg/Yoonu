@@ -5042,6 +5042,7 @@
           else if (t.status === 'refused') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Refusée'; }
           else if (t.status === 'trip_cancelled') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Trajet annulé'; }
           else if (t.status === 'rated') { statusClass = 'status-done'; statusLabel = 'Noté <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 6 9 17l-5-5"/></svg>'; }
+          else if (t.status === 'cancelled') { statusClass = 'status-refused'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Annulée'; }
           else { statusClass = 'status-pending'; statusLabel = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg> En attente'; }
         } else {
           statusClass = isUpcoming ? 'status-upcoming' : 'status-done';
@@ -5120,6 +5121,7 @@
           ${tab === 'passenger' && t.status === 'trip_cancelled' ? `<div style="font-size:12px;color:var(--red);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M12 7.5v5.5M12 16.3v.1"/></svg> Le conducteur a annulé ce trajet.</div>` : ''}
           ${tab === 'passenger' && t.status === 'refused' ? `<div style="font-size:12px;color:var(--red);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Le conducteur a refusé votre réservation.</div>` : ''}
           ${tab === 'passenger' && t.status === 'rated' ? `<div style="font-size:12px;color:var(--green);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none" style="vertical-align:-2px"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.1 6.6L12 17.6l-5.8 3 1.1-6.6-4.8-4.6 6.6-.9Z"/></svg> Vous avez noté ce trajet. Merci !</div>` : ''}
+          ${tab === 'passenger' && t.status === 'cancelled' ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><path d="M18 6 6 18M6 6l12 12"/></svg> Vous avez annulé cette réservation.</div>` : ''}
         </div>`;
       }
     } catch(e) {
@@ -5461,8 +5463,12 @@
           await setDoc(doc(db, 'trips', tripId), { seats }, { merge: true });
         }
       }
-      // Supprimer la réservation
-      await deleteDoc(doc(db, 'bookings', bookingId));
+      // On marque la réservation comme annulée au lieu de la supprimer : ça garde l'historique
+      // et ça permet au conducteur de voir "Annulé par l'utilisateur" (déjà géré dans la liste des
+      // demandes côté conducteur, mais jamais déclenché tant que le document était juste supprimé).
+      await setDoc(doc(db, 'bookings', bookingId), {
+        status: 'cancelled', cancelledAt: serverTimestamp()
+      }, { merge: true });
       showToast('Réservation annulée ✅', 'success');
       loadMyTrips('passenger');
     } catch(e) {
